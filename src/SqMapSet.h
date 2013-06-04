@@ -4,11 +4,13 @@ class SqMapSet
 {
 private:
 	
+	//
+	//SQMS File Data Structure
+	//
 	struct SqmsFileHeader
 	{
 		u8 Magic[8];//="SQSQMAPS"
 		u32 Version;
-		u32 Lauguage;
 		u32 SectionBgOffset;//ptr to SqmsSectionHeader<Bg>
 		u32 SectionGlOffset;//ptr to SqmsSectionHeader<Gl>
 		u32 SectionPlOffset;//ptr to SqmsSectionHeader<Pl>
@@ -49,8 +51,25 @@ private:
 	};
 	struct SqmsRomInfo
 	{
+		u8 Rom_name[12];
+		u8 Rom_id[4];
+		u8 Rom_maker_code[2];
+		u8 Rom_product_code;
+		u8 Rom_device_type;
+		u8 Rom_device_caps;
+		u8 Rom_version;
+		u8 Title_icon_pixel
+			[/*block_y*/4]
+			[/*block_x*/4]
+			[/*pixel_y*/8]
+			[/*pixel_x/2*/4];//4 bit per pixel
+		u16 Title_icon_palette[16];
+		u16 Title_text/*[6]*/[128];//Unicode
 	};
 
+	//
+	//SQMS Data
+	//
 	bool m_Loaded;
 	struct SecitemData
 	{
@@ -82,13 +101,15 @@ private:
 			u8 PlId;
 		}*StepList;
 	}* m_StageList;
+	SqmsRomInfo m_RomInfo;
+
 public:
 	SqMapSet(void);
 	~SqMapSet(void);
 
-	void ClearData();
-	bool FileRead(CFile &file);
-	bool FileWrite(CFile &file);
-	bool RomExport(CFile &file);
-	bool RomImport(CFile &file);
+	void Unload();
+	bool Load(CFile &file);
+	bool Save(CFile &file);
+	bool LoadFromRom(CFile &file);
+	bool MakeRom(CFile &file);
 };
