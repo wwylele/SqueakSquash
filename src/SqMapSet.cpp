@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SqMapSet.h"
+#include "NitroRom.h"
 
 SqMapSet::SqMapSet(void):m_Loaded(false)
 {
@@ -11,13 +12,14 @@ SqMapSet::~SqMapSet(void)
 }
 bool SqMapSet::Load(CFile &file)
 {
-	Unload();
+	
 	file.Seek(0,CFile::begin);
 	SqmsFileHeader header;
 	file.Read(&header,sizeof(header));
 
 	//Verify the File Magic
 	if(memcmp(header.Magic,"SQSQMAPS",8) || header.Version!=1)return false;
+
 
 	SqmsSectionHeader sheader;
 	SqmsSecitemHeader siheader;
@@ -33,6 +35,8 @@ bool SqMapSet::Load(CFile &file)
 	file.Seek(header.SectionPlOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
 	if(memcmp(sheader.Magic,"SQPL",4))return false;
+
+	Unload();
 
 	//Read Section Bg
 	file.Seek(header.SectionBgOffset,CFile::begin);
@@ -303,5 +307,23 @@ bool SqMapSet::Save(CFile &file)
 	file.Seek(0,CFile::begin);
 	file.Write(&header,sizeof(header));
 	
+	return true;
+}
+bool SqMapSet::LoadFromRom(CFile &file)
+{
+	//Read the ROM header and verify the ROM
+	Nitro::ROM_HEADER rom_header;
+	file.Seek(0,CFile::begin);
+	file.Read(&rom_header,sizeof(rom_header));
+	const char* rom_name="KIRBY DRO";
+	if(strcmp(rom_name,(char*)rom_header.name))return false;
+
+	//Read RomInfo
+
+	//Search and read .mxi file in the ROM
+	
+
+	Unload();
+
 	return true;
 }
