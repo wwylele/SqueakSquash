@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "NitroRom.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 //The code below is copied from another project of mine,
 //but I forget how it works...
@@ -49,13 +52,15 @@ u16 Nitro::GetSubFileId(CFile& file,const char* pathname)
 			file.Read(&fh,sizeof(fh));
 			name_length=fh&0x7F;
 			is_dir=fh&0x80?true:false;
-			if(!name_length)return 0xFFFF;
+			if(!name_length){delete[]namebuf;return 0xFFFF;}
 			char* name_buf;
 			name_buf=new char[name_length+1];
 			file.Read(name_buf,name_length);
 			name_buf[name_length]=0;
 			if(is_dir==isdir && name_length==fnamelen)
 			{
+				_strupr(name_buf);
+				_strupr(namebuf);
 				if(!strcmp(name_buf,namebuf))
 				{
 					delete[] name_buf;

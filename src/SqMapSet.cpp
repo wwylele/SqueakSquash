@@ -3,6 +3,9 @@
 #include "NitroRom.h"
 #include "NitroCompress.h"
 #include "SqFile.h"
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 SqMapSet::SqMapSet(void):m_Loaded(false)
 {
@@ -163,7 +166,7 @@ void SqMapSet::Unload()
 
 	for(u32 i=0;i<m_StageCount;++i)
 	{
-		for(u32 j=0;j<m_StageList[i].StepCount;++i)
+		for(u32 j=0;j<m_StageList[i].StepCount;++j)
 		{
 			delete[]m_StageList[i].StepList[j].pMxp;
 			delete[]m_StageList[i].StepList[j].pDoe;
@@ -349,6 +352,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			sdtmp.StepCount=mxi.GetStepCount();
 			sdtmp.StepList=new StageData::StepData[sdtmp.StepCount];
 			//Read step data.
+			if(sdtmp.StepCount>100)throw;
 			for(u16 step=0;step<sdtmp.StepCount;++step)
 			{
 				//Read mxp;
@@ -356,10 +360,10 @@ bool SqMapSet::LoadFromRom(CFile &file)
 				buff=new u8[lent];
 				file.Seek(offt,CFile::begin);
 				file.Read(buff,lent);
-				if(*buff=0x30)//Need to uncompress
+				if(*buff==0x30)//Need to uncompress
 				{
 					sdtmp.StepList[step].MxpLen=*(u32*)buff>>8;
-					sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen];
+					sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen+10];
 					Nitro::UncompressRL(buff,sdtmp.StepList[step].pMxp);
 					delete[]buff;
 				}
@@ -428,8 +432,60 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	}
 
 	//Copy stage list from sdlist to m_StageList
+	m_StageCount=sdlist.GetCount();
+	m_StageList=new StageData[m_StageCount];
+	lpos=sdlist.GetHeadPosition();
+	for(u32 i=0;i<m_StageCount;++i)
+	{
+		m_StageList[i]=sdlist.GetNext(lpos);
+	}
 
 	//Read bg,gl,pl
+	CStringA sfname;
+	
+	m_BgCount=bglist.GetCount();
+	m_BgList=new SecitemData[m_BgCount];
+	lpos=bglist.GetHeadPosition();
+	for(u32 i=0;i<m_BgCount;++i)
+	{
+		sfname=bglist.GetNext(lpos);
+		ZeroMemory(m_BgList[i].Name,16);
+		strcpy_s((char*)m_BgList[i].Name,16,(const char*)sfname+4);
+		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_BgList[i].DataLen);
+		m_BgList[i].pData=new u8[m_BgList[i].DataLen];
+		file.Seek(offt,CFile::begin);
+		file.Read(m_BgList[i].pData,m_BgList[i].DataLen);
+	}
 
+	m_GlCount=gllist.GetCount();
+	m_GlList=new SecitemData[m_GlCount];
+	lpos=gllist.GetHeadPosition();
+	for(u32 i=0;i<m_GlCount;++i)
+	{
+		sfname=gllist.GetNext(lpos);
+		ZeroMemory(m_GlList[i].Name,16);
+		strcpy_s((char*)m_GlList[i].Name,16,(const char*)sfname+4);
+		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_GlList[i].DataLen);
+		m_GlList[i].pData=new u8[m_GlList[i].DataLen];
+		file.Seek(offt,CFile::begin);
+		file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
+	}
+
+	m_PlCount=pllist.GetCount();
+	m_PlList=new SecitemData[m_PlCount];
+	lpos=pllist.GetHeadPosition();
+	for(u32 i=0;i<m_PlCount;++i)
+	{
+		sfname=pllist.GetNext(lpos);
+		ZeroMemory(m_PlList[i].Name,16);
+		strcpy_s((char*)m_PlList[i].Name,16,(const char*)sfname+4);
+		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_PlList[i].DataLen);
+		m_PlList[i].pData=new u8[m_PlList[i].DataLen];
+		file.Seek(offt,CFile::begin);
+		file.Read(m_PlList[i].pData,m_PlList[i].DataLen);
+	}
+
+
+	m_Loaded=true;
 	return true;
 }
