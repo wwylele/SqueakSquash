@@ -31,6 +31,7 @@ public:
 		CStringA Bg;
 	};
 	StepInfo &Step(u16 i);
+	u16 GetStepCount();
 private:
 	u16 StepCount;
 	StepInfo *pStep;

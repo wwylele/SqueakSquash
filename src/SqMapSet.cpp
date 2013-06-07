@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SqMapSet.h"
 #include "NitroRom.h"
+#include "NitroCompress.h"
+#include "SqFile.h"
 
 SqMapSet::SqMapSet(void):m_Loaded(false)
 {
@@ -315,15 +317,119 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	Nitro::ROM_HEADER rom_header;
 	file.Seek(0,CFile::begin);
 	file.Read(&rom_header,sizeof(rom_header));
-	const char* rom_name="KIRBY DRO";
-	if(strcmp(rom_name,(char*)rom_header.name))return false;
+	if(strcmp("KIRBY DRO",(char*)rom_header.name))return false;
+
+	Unload();
+
 
 	//Read RomInfo
 
 	//Search and read .mxi file in the ROM
-	
+	CStringA strMxiName;
+	u32 mxioffset,mxilen;
+	u8 *mxitmp;
+	SqMx mxi;
+	CList<StageData> sdlist;
+	CList<CStringA> bglist,gllist,pllist;
+	POSITION lpos;
+	StageData sdtmp;
+	u32 offt,lent;
+	u8* buff;
+	for(u8 a=1;a<10;++a)for(u8 s=1;s<50;++s)
+	{
+		strMxiName.Format("map/a%ds%d.mxi",a,s);
+		if(mxioffset=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,strMxiName),&mxilen))
+		{
+			mxitmp=new u8[mxilen];
+			file.Seek(mxioffset,CFile::begin);
+			file.Read(mxitmp,mxilen);
+			mxi.Load(mxitmp);
+			sdtmp.LevelIdx=a-1;
+			sdtmp.StageIdx=s-1;
+			sdtmp.StepCount=mxi.GetStepCount();
+			sdtmp.StepList=new StageData::StepData[sdtmp.StepCount];
+			//Read step data.
+			for(u16 step=0;step<sdtmp.StepCount;++step)
+			{
+				//Read mxp;
+				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).Ma),&lent);
+				buff=new u8[lent];
+				file.Seek(offt,CFile::begin);
+				file.Read(buff,lent);
+				if(*buff=0x30)//Need to uncompress
+				{
+					sdtmp.StepList[step].MxpLen=*(u32*)buff>>8;
+					sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen];
+					Nitro::UncompressRL(buff,sdtmp.StepList[step].pMxp);
+					delete[]buff;
+				}
+				else{
+					sdtmp.StepList[step].MxpLen=lent;
+					sdtmp.StepList[step].pMxp=buff;
+				}
 
-	Unload();
+				//Read doe;
+				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).De),&lent);
+				buff=new u8[lent];
+				file.Seek(offt,CFile::begin);
+				file.Read(buff,lent);
+				sdtmp.StepList[step].DoeLen=lent;
+				sdtmp.StepList[step].pDoe=buff;
+
+				lpos=bglist.Find(mxi.Step(step).Bg);//Find Bg in name list
+				if(!lpos){//If not finded,Create new
+					bglist.AddTail(mxi.Step(step).Bg);lpos=bglist.GetTailPosition();
+				}
+				sdtmp.StepList[step].BgId=0;
+				//Get the Bg ID
+				while(lpos){
+					bglist.GetPrev(lpos);++sdtmp.StepList[step].BgId;
+				}--sdtmp.StepList[step].BgId;
+
+				lpos=gllist.Find(mxi.Step(step).Fb);//Find FGl in name list
+				if(!lpos){//If not finded,Create new
+					gllist.AddTail(mxi.Step(step).Fb);lpos=gllist.GetTailPosition();
+				}
+				sdtmp.StepList[step].FGlId=0;
+				//Get the FGl ID
+				while(lpos){
+					gllist.GetPrev(lpos);++sdtmp.StepList[step].FGlId;
+				}--sdtmp.StepList[step].FGlId;
+
+				lpos=gllist.Find(mxi.Step(step).Bb);//Find FGl in name list
+				if(!lpos){//If not finded,Create new
+					gllist.AddTail(mxi.Step(step).Bb);lpos=gllist.GetTailPosition();
+				}
+				sdtmp.StepList[step].BGlId=0;
+				//Get the FGl ID
+				while(lpos){
+					gllist.GetPrev(lpos);++sdtmp.StepList[step].BGlId;
+				}--sdtmp.StepList[step].BGlId;
+
+				if(mxi.Step(step).Pl!="")
+				{
+					lpos=pllist.Find(mxi.Step(step).Pl);//Find Bg in name list
+					if(!lpos){//If not finded,Create new
+						pllist.AddTail(mxi.Step(step).Pl);lpos=pllist.GetTailPosition();
+					}
+					sdtmp.StepList[step].PlId=0;
+					//Get the Bg ID
+					while(lpos){
+						pllist.GetPrev(lpos);++sdtmp.StepList[step].PlId;
+					}--sdtmp.StepList[step].PlId;
+				}
+				else sdtmp.StepList[step].PlId=0xFF;
+			}
+
+			sdlist.AddTail(sdtmp);
+
+			delete[]mxitmp;
+		}
+	}
+
+	//Copy stage list from sdlist to m_StageList
+
+	//Read bg,gl,pl
 
 	return true;
 }

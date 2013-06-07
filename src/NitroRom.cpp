@@ -4,7 +4,7 @@
 
 //The code below is copied from another project of mine,
 //but I forget how it works...
-u16 Nitro::GetSubFileId(CFile& file,char* pathname)
+u16 Nitro::GetSubFileId(CFile& file,const char* pathname)
 {
 	file.Seek(0,CFile::begin);
 	ROM_HEADER rom_header;
@@ -92,5 +92,20 @@ u16 Nitro::GetSubFileId(CFile& file,char* pathname)
 	}
 
 	return 0xFFFF;
+
+}
+u32 Nitro::GetSubFileOffset(CFile& file,u16 id,u32* getlen)
+{
+	
+	file.Seek(0,CFile::begin);
+	ROM_HEADER rom_header;
+	file.Read(&rom_header,sizeof(rom_header));
+	if(id>=rom_header.fat_size/sizeof(ROM_FAT))return 0;
+
+	file.Seek(rom_header.fat_offset+sizeof(ROM_FAT)*id,CFile::begin);
+	ROM_FAT fat;
+	file.Read(&fat,sizeof(fat));
+	if(getlen)*getlen=fat.bottom-fat.top;
+	return fat.top;
 
 }

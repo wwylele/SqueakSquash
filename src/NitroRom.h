@@ -1,5 +1,6 @@
 namespace Nitro
 {
+	//The structures below are adapted from the document in NitroSDK
 	struct ROM_HEADER
 	{
 
@@ -49,7 +50,7 @@ namespace Nitro
 		//
 		// 0x0060 - 0x04000 Reserved region for system use
 		//
-		//u8	reserved_B[16];	// Reserved for system (should substitute with 0)
+		//u8	reserved_B[16];
 		u32 reserved_B1;
 		u32 reserved_B2;
 		u32 title_offset;
@@ -69,10 +70,10 @@ namespace Nitro
 	{
 		u32	top;	// Top ROM address of file 
 		u32	bottom;	// Bottom ROM address of file
-	};	// 0x08
+	};	
 
-	u16 GetSubFileId(CFile& file,char* subfilename);
+	u16 GetSubFileId(CFile& file,const char* subfilename);
 
-	u32 GetSubFileOffset(CFile& file,u16 Id);
+	u32 GetSubFileOffset(CFile& file,u16 Id,u32* getlen=0);
 
 }

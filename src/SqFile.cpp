@@ -36,6 +36,7 @@ void SqMx::Unload()
 }
 bool SqMx::Load(const u8* psrc)
 {
+	Unload();
 	Header *head=(Header*)psrc;
 	if(head->Magic!=MAGIC)return false;
 	StepCount=head->StepCount;
@@ -68,5 +69,6 @@ bool SqMx::Load(const u8* psrc)
 
 	return true;
 }
+u16 SqMx::GetStepCount(){return StepCount;}
 bool SqMx::IsValid(){return pStep!=0;}
 SqMx::StepInfo& SqMx::Step(u16 i){ASSERT(i<StepCount);return pStep[i];}
