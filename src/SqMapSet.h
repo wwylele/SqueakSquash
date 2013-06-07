@@ -113,4 +113,5 @@ public:
 	bool Save(CFile &file);
 	bool LoadFromRom(CFile &file);
 	bool MakeRom(CFile &file);
+	void Dump(FILE* pf);
 };

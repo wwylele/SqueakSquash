@@ -124,7 +124,7 @@ bool SqMapSet::Load(CFile &file)
 			m_StageList[i].StepList[j].BgId=spheader.BgId;
 			m_StageList[i].StepList[j].BGlId=spheader.BGlId;
 			m_StageList[i].StepList[j].FGlId=spheader.FGlId;
-			m_StageList[i].StepList[j].FGlId=spheader.FGlId;
+			m_StageList[i].StepList[j].PlId=spheader.PlId;
 			m_StageList[i].StepList[j].pMxp=new u8[m_StageList[i].StepList[j].MxpLen];
 			file.Seek(spheader.MxpOffset,CFile::begin);
 			file.Read(m_StageList[i].StepList[j].pMxp,m_StageList[i].StepList[j].MxpLen);
@@ -326,6 +326,8 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 
 	//Read RomInfo
+	ZeroMemory(&m_RomInfo,sizeof(m_RomInfo));
+	memcpy(&m_RomInfo,&rom_header,22);
 
 	//Search and read .mxi file in the ROM
 	CStringA strMxiName;
@@ -338,7 +340,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	StageData sdtmp;
 	u32 offt,lent;
 	u8* buff;
-	for(u8 a=1;a<10;++a)for(u8 s=1;s<50;++s)
+	for(u8 a=1;a<10;++a)for(u8 s=1;s<15;++s)
 	{
 		strMxiName.Format("map/a%ds%d.mxi",a,s);
 		if(mxioffset=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,strMxiName),&mxilen))
@@ -347,8 +349,8 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			file.Seek(mxioffset,CFile::begin);
 			file.Read(mxitmp,mxilen);
 			mxi.Load(mxitmp);
-			sdtmp.LevelIdx=a-1;
-			sdtmp.StageIdx=s-1;
+			sdtmp.LevelIdx=a;
+			sdtmp.StageIdx=s;
 			sdtmp.StepCount=mxi.GetStepCount();
 			sdtmp.StepList=new StageData::StepData[sdtmp.StepCount];
 			//Read step data.
@@ -488,4 +490,43 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 	m_Loaded=true;
 	return true;
+}
+void SqMapSet::Dump(FILE* pf)
+{
+	if(!m_Loaded)return;
+	fprintf(pf,"====================================\n");
+	fprintf(pf,"Stage-Step tree\n");
+	for(u32 i=0;i<m_StageCount;++i)
+	{
+		fprintf(pf,"[%02d]Level%dStage%02d\n",i,m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
+		for(u16 j=0;j<m_StageList[i].StepCount;++j)
+		{
+			fprintf(pf,"   [step%02d]bg=x%02X,fgl=x%02X,bgl=x%02X,pl=x%02X\n",j,
+				m_StageList[i].StepList[j].BgId,m_StageList[i].StepList[j].FGlId,
+				m_StageList[i].StepList[j].BGlId,m_StageList[i].StepList[j].PlId);
+		}
+	}
+	char nameb[17]={0};
+
+	fprintf(pf,"====================================\n");
+	fprintf(pf,"Bg\n");
+	for(u32 i=0;i<m_BgCount;++i)
+	{
+		memcpy(nameb,m_BgList[i].Name,16);
+		fprintf(pf,"[x%02X]%s\n",i,nameb);
+	}
+	fprintf(pf,"====================================\n");
+	fprintf(pf,"Gl\n");
+	for(u32 i=0;i<m_GlCount;++i)
+	{
+		memcpy(nameb,m_GlList[i].Name,16);
+		fprintf(pf,"[x%02X]%s\n",i,nameb);
+	}
+	fprintf(pf,"====================================\n");
+	fprintf(pf,"Pl\n");
+	for(u32 i=0;i<m_PlCount;++i)
+	{
+		memcpy(nameb,m_PlList[i].Name,16);
+		fprintf(pf,"[x%02X]%s\n",i,nameb);
+	}
 }
