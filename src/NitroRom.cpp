@@ -59,8 +59,8 @@ u16 Nitro::GetSubFileId(CFile& file,const char* pathname)
 			name_buf[name_length]=0;
 			if(is_dir==isdir && name_length==fnamelen)
 			{
-				_strupr(name_buf);
-				_strupr(namebuf);
+				_strlwr(name_buf);
+				_strlwr(namebuf);
 				if(!strcmp(name_buf,namebuf))
 				{
 					delete[] name_buf;

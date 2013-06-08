@@ -7,6 +7,8 @@
 #define new DEBUG_NEW
 #endif
 
+
+
 SqMapSet::SqMapSet(void):m_Loaded(false)
 {
 }
@@ -336,10 +338,12 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	SqMx mxi;
 	CList<StageData> sdlist;
 	CList<CStringA> bglist,gllist,pllist;
+	BgDef(bglist);GlDef(gllist);PlDef(pllist);
 	POSITION lpos;
 	StageData sdtmp;
 	u32 offt,lent;
 	u8* buff;
+	char cbuff[21];
 	for(u8 a=1;a<10;++a)for(u8 s=1;s<15;++s)
 	{
 		strMxiName.Format("map/a%ds%d.mxi",a,s);
@@ -359,6 +363,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			{
 				//Read mxp;
 				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).Ma),&lent);
+				if(!offt)throw;
 				buff=new u8[lent];
 				file.Seek(offt,CFile::begin);
 				file.Read(buff,lent);
@@ -376,14 +381,17 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 				//Read doe;
 				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).De),&lent);
+				if(!offt)throw;
 				buff=new u8[lent];
 				file.Seek(offt,CFile::begin);
 				file.Read(buff,lent);
 				sdtmp.StepList[step].DoeLen=lent;
 				sdtmp.StepList[step].pDoe=buff;
 
-				lpos=bglist.Find(mxi.Step(step).Bg);//Find Bg in name list
-				if(!lpos){//If not finded,Create new
+				strcpy_s(cbuff,20,mxi.Step(step).Bg);
+				_strlwr(cbuff);
+				lpos=bglist.Find(cbuff);//Find Bg in name list
+				if(!lpos){//If not finded,Add new
 					bglist.AddTail(mxi.Step(step).Bg);lpos=bglist.GetTailPosition();
 				}
 				sdtmp.StepList[step].BgId=0;
@@ -392,8 +400,10 @@ bool SqMapSet::LoadFromRom(CFile &file)
 					bglist.GetPrev(lpos);++sdtmp.StepList[step].BgId;
 				}--sdtmp.StepList[step].BgId;
 
-				lpos=gllist.Find(mxi.Step(step).Fb);//Find FGl in name list
-				if(!lpos){//If not finded,Create new
+				strcpy_s(cbuff,20,mxi.Step(step).Fb);
+				_strlwr(cbuff);
+				lpos=gllist.Find(cbuff);//Find FGl in name list
+				if(!lpos){//If not finded,Add new
 					gllist.AddTail(mxi.Step(step).Fb);lpos=gllist.GetTailPosition();
 				}
 				sdtmp.StepList[step].FGlId=0;
@@ -402,24 +412,28 @@ bool SqMapSet::LoadFromRom(CFile &file)
 					gllist.GetPrev(lpos);++sdtmp.StepList[step].FGlId;
 				}--sdtmp.StepList[step].FGlId;
 
-				lpos=gllist.Find(mxi.Step(step).Bb);//Find FGl in name list
-				if(!lpos){//If not finded,Create new
+				strcpy_s(cbuff,20,mxi.Step(step).Bb);
+				_strlwr(cbuff);
+				lpos=gllist.Find(cbuff);//Find BGl in name list
+				if(!lpos){//If not finded,Add new
 					gllist.AddTail(mxi.Step(step).Bb);lpos=gllist.GetTailPosition();
 				}
 				sdtmp.StepList[step].BGlId=0;
-				//Get the FGl ID
+				//Get the BGl ID
 				while(lpos){
 					gllist.GetPrev(lpos);++sdtmp.StepList[step].BGlId;
 				}--sdtmp.StepList[step].BGlId;
 
 				if(mxi.Step(step).Pl!="")
 				{
-					lpos=pllist.Find(mxi.Step(step).Pl);//Find Bg in name list
-					if(!lpos){//If not finded,Create new
+					strcpy_s(cbuff,20,mxi.Step(step).Pl);
+					_strlwr(cbuff);
+					lpos=pllist.Find(cbuff);//Find Pl in name list
+					if(!lpos){//If not finded,Add new
 						pllist.AddTail(mxi.Step(step).Pl);lpos=pllist.GetTailPosition();
 					}
 					sdtmp.StepList[step].PlId=0;
-					//Get the Bg ID
+					//Get the Pl ID
 					while(lpos){
 						pllist.GetPrev(lpos);++sdtmp.StepList[step].PlId;
 					}--sdtmp.StepList[step].PlId;
@@ -454,6 +468,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_BgList[i].Name,16);
 		strcpy_s((char*)m_BgList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_BgList[i].DataLen);
+		if(!offt)throw;
 		m_BgList[i].pData=new u8[m_BgList[i].DataLen];
 		file.Seek(offt,CFile::begin);
 		file.Read(m_BgList[i].pData,m_BgList[i].DataLen);
@@ -468,6 +483,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_GlList[i].Name,16);
 		strcpy_s((char*)m_GlList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_GlList[i].DataLen);
+		if(!offt)throw;
 		m_GlList[i].pData=new u8[m_GlList[i].DataLen];
 		file.Seek(offt,CFile::begin);
 		file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
@@ -482,6 +498,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_PlList[i].Name,16);
 		strcpy_s((char*)m_PlList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_PlList[i].DataLen);
+		if(!offt)throw;
 		m_PlList[i].pData=new u8[m_PlList[i].DataLen];
 		file.Seek(offt,CFile::begin);
 		file.Read(m_PlList[i].pData,m_PlList[i].DataLen);
@@ -529,4 +546,57 @@ void SqMapSet::Dump(FILE* pf)
 		memcpy(nameb,m_PlList[i].Name,16);
 		fprintf(pf,"[x%02X]%s\n",i,nameb);
 	}
+}
+
+void SqMapSet::BgDef(CList<CStringA> &list)
+{
+	CStringA str;
+	for(int i=0;i<0x28;++i)
+	{
+		str.Format("map/d_viw_%02x%s.nsbtx",i,i==0x20?"a":"");
+		list.AddTail(str);
+	}
+}
+void SqMapSet::GlDef(CList<CStringA> &list)
+{
+	CStringA str;
+	for(int i=0;i<0x3E;++i)
+	{
+		if(i!=0x1F){str.Format("map/%02x_b.bin",i);list.AddTail(str);}
+		if(i!=0x1F&&i!=3){str.Format("map/%02x_f.bin",i);list.AddTail(str);}
+		
+	}
+	list.AddTail("map/chainbomb.bin");
+	list.AddTail("map/front.bin");
+	list.AddTail("map/nudemap.bin");
+	list.AddTail("map/nudemap2.bin");
+	list.AddTail("map/nudemap3.bin");
+	list.AddTail("map/nudemap_b.bin");
+	list.AddTail("map/nudemap_f.bin");
+}
+void SqMapSet::PlDef(CList<CStringA> &list)
+{
+	list.AddTail("map/p_0f.pal");
+	list.AddTail("map/p_1a.pal");
+	list.AddTail("map/p_21.pal");
+	list.AddTail("map/p_22.pal");
+	list.AddTail("map/p_23.pal");
+	list.AddTail("map/p_24.pal");
+	list.AddTail("map/p_26.pal");
+	list.AddTail("map/p_2b.pal");
+	list.AddTail("map/p_2d.pal");
+	list.AddTail("map/pa_08.pal");
+	list.AddTail("map/pa_09.pal");
+	list.AddTail("map/pa_11.pal");
+	list.AddTail("map/pa_12.pal");
+	list.AddTail("map/pa_15.pal");
+	list.AddTail("map/pa_19.pal");
+	list.AddTail("map/pa_1c.pal");
+	list.AddTail("map/pa_22.pal");
+	list.AddTail("map/pa_27.pal");
+	list.AddTail("map/pa_29.pal");
+	list.AddTail("map/pa_2d.pal");
+	list.AddTail("map/pa_30.pal");
+
+
 }

@@ -104,6 +104,13 @@ private:
 	}* m_StageList;
 	SqmsRomInfo m_RomInfo;
 
+	//
+	//
+	//
+	static void BgDef(CList<CStringA> &bglist);
+	static void GlDef(CList<CStringA> &gllist);
+	static void PlDef(CList<CStringA> &pllist);
+
 public:
 	SqMapSet(void);
 	~SqMapSet(void);
