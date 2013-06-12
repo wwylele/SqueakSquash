@@ -328,8 +328,12 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 
 	//Read RomInfo
+	Nitro::ROM_TITLE rom_title;
 	ZeroMemory(&m_RomInfo,sizeof(m_RomInfo));
 	memcpy(&m_RomInfo,&rom_header,22);
+	file.Seek(rom_header.title_offset,CFile::begin);
+	file.Read(&rom_title,sizeof(rom_title));
+	memcpy(&m_RomInfo.Title_icon_pixel,&rom_title.icon_pixel,512+32+1536);
 
 	//Search and read .mxi file in the ROM
 	CStringA strMxiName;
@@ -344,7 +348,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	u32 offt,lent;
 	u8* buff;
 	char cbuff[21];
-	for(u8 a=1;a<10;++a)for(u8 s=1;s<15;++s)
+	for(u8 a=1;a<10;++a)for(u8 s=1;s<12;++s)
 	{
 		strMxiName.Format("map/a%ds%d.mxi",a,s);
 		if(mxioffset=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,strMxiName),&mxilen))
@@ -363,30 +367,41 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			{
 				//Read mxp;
 				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).Ma),&lent);
-				if(!offt)throw;
-				buff=new u8[lent];
-				file.Seek(offt,CFile::begin);
-				file.Read(buff,lent);
-				if(*buff==0x30)//Need to uncompress
-				{
-					sdtmp.StepList[step].MxpLen=*(u32*)buff>>8;
-					sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen+10];
-					Nitro::UncompressRL(buff,sdtmp.StepList[step].pMxp);
-					delete[]buff;
+				if(offt){
+					buff=new u8[lent];
+					file.Seek(offt,CFile::begin);
+					file.Read(buff,lent);
+					if(*buff==0x30)//Need to uncompress
+					{
+						sdtmp.StepList[step].MxpLen=*(u32*)buff>>8;
+						sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen+10];
+						Nitro::UncompressRL(buff,sdtmp.StepList[step].pMxp);
+						delete[]buff;
+					}
+					else{
+						sdtmp.StepList[step].MxpLen=lent;
+						sdtmp.StepList[step].pMxp=buff;
+					}
 				}
-				else{
-					sdtmp.StepList[step].MxpLen=lent;
-					sdtmp.StepList[step].pMxp=buff;
+				else
+				{
+					sdtmp.StepList[step].MxpLen=0;
+					sdtmp.StepList[step].pMxp=new u8[1];
 				}
 
 				//Read doe;
 				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).De),&lent);
-				if(!offt)throw;
-				buff=new u8[lent];
-				file.Seek(offt,CFile::begin);
-				file.Read(buff,lent);
-				sdtmp.StepList[step].DoeLen=lent;
-				sdtmp.StepList[step].pDoe=buff;
+				if(offt){
+					buff=new u8[lent];
+					file.Seek(offt,CFile::begin);
+					file.Read(buff,lent);
+					sdtmp.StepList[step].DoeLen=lent;
+					sdtmp.StepList[step].pDoe=buff;
+				}
+				else{
+					sdtmp.StepList[step].DoeLen=0;
+					sdtmp.StepList[step].pDoe=new u8[1];
+				}
 
 				strcpy_s(cbuff,20,mxi.Step(step).Bg);
 				_strlwr(cbuff);

@@ -71,6 +71,18 @@ namespace Nitro
 		u32	top;	// Top ROM address of file 
 		u32	bottom;	// Bottom ROM address of file
 	};	
+	struct ROM_TITLE
+	{
+		u8 unk_A[32];
+		u8 icon_pixel
+			[/*block_y*/4]
+			[/*block_x*/4]
+			[/*pixel_y*/8]
+			[/*pixel_x/2*/4];//4 bit per pixel
+		u16 icon_palette[16];
+		u16 title[6][128];//Unicode
+	};
+
 
 	u16 GetSubFileId(CFile& file,const char* subfilename);
 

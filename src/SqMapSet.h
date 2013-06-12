@@ -59,13 +59,14 @@ private:
 		u8 Rom_device_type;
 		u8 Rom_device_caps;
 		u8 Rom_version;
+
 		u8 Title_icon_pixel
 			[/*block_y*/4]
 			[/*block_x*/4]
 			[/*pixel_y*/8]
 			[/*pixel_x/2*/4];//4 bit per pixel
 		u16 Title_icon_palette[16];
-		u16 Title_text/*[6]*/[128];//Unicode
+		u16 Title_text[6][128];//Unicode
 	};
 
 	//
