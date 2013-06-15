@@ -615,3 +615,40 @@ void SqMapSet::PlDef(CList<CStringA> &list)
 
 
 }
+u32 SqMapSet::GetSecitemCount(u8 SiSwitch)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	return m_SecitemCount[SiSwitch];
+}
+u8* SqMapSet::GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	if(pGetLen)*pGetLen=m_SecitemList[SiSwitch][index].DataLen;
+	return m_SecitemList[SiSwitch][index].pData;
+}
+u8* SqMapSet::ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	delete[] m_SecitemList[SiSwitch][index].pData;
+	m_SecitemList[SiSwitch][index].DataLen=Len;
+	return m_SecitemList[SiSwitch][index].pData=new u8[Len];
+}
+void SqMapSet::GetSecitemName(u8 SiSwitch,u32 index,char *pname)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	memcpy(pname,m_SecitemList[SiSwitch][index].Name,16);
+}
+void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
+}

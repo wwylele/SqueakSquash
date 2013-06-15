@@ -4,7 +4,6 @@
 class SqMapSet
 {
 private:
-	
 	//
 	//SQMS File Data Structure
 	//
@@ -69,6 +68,7 @@ private:
 		u16 Title_text[6][128];//Unicode
 	};
 
+private:
 	//
 	//SQMS Data
 	//
@@ -79,12 +79,21 @@ private:
 		u32 DataLen;
 		u8* pData;
 	};
-	u32 m_BgCount;
+	/*u32 m_BgCount;
 	SecitemData* m_BgList;
 	u32 m_GlCount;
 	SecitemData* m_GlList;
 	u32 m_PlCount;
-	SecitemData* m_PlList;
+	SecitemData* m_PlList;*/
+	u32 m_SecitemCount[3];
+	#define m_BgCount m_SecitemCount[0]
+	#define m_GlCount m_SecitemCount[1]
+	#define m_PlCount m_SecitemCount[2]
+	SecitemData* m_SecitemList[3];
+	#define m_BgList m_SecitemList[0]
+	#define m_GlList m_SecitemList[1]
+	#define m_PlList m_SecitemList[2]
+	
 	u32 m_StageCount;
 	struct StageData
 	{
@@ -103,8 +112,10 @@ private:
 			u8 PlId;
 		}*StepList;
 	}* m_StageList;
+public:
 	SqmsRomInfo m_RomInfo;
 
+private:
 	//
 	//
 	//
@@ -122,4 +133,36 @@ public:
 	bool LoadFromRom(CFile &file);
 	bool MakeRom(CFile &file);
 	void Dump(FILE* pf);
+
+public:
+	u32 GetSecitemCount(u8 SiSwitch);
+	u8 *GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen);
+	u8 *ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len);
+	void GetSecitemName(u8 SiSwitch,u32 index,char *pname);
+	void SetSecitemName(u8 SiSwitch,u32 index,char *pname);
+
+	#define GetBgCount() GetSecitemCount(0)
+	#define GetGlCount() GetSecitemCount(1)
+	#define GetPlCount() GetSecitemCount(2)
+	#define GetBgBuffer(index,pGetLen) GetSecitemBuffer(0,index,pGetLen)
+	#define GetGlBuffer(index,pGetLen) GetSecitemBuffer(1,index,pGetLen)
+	#define GetPlBuffer(index,pGetLen) GetSecitemBuffer(2,index,pGetLen)
+	#define ResizeBgBuffer(index,Len) ResizeSecitemBuffer(0,index,Len)
+	#define ResizeGlBuffer(index,Len) ResizeSecitemBuffer(1,index,Len)
+	#define ResizePlBuffer(index,Len) ResizeSecitemBuffer(2,index,Len)
+	#define GetBgName(index,pname) GetSecitemName(0,index,pname)
+	#define GetGlName(index,pname) GetSecitemName(1,index,pname)
+	#define GetPlName(index,pname) GetSecitemName(2,index,pname)
+	#define SetBgName(index,pname) SetSecitemName(0,index,pname)
+	#define SetGlName(index,pname) SetSecitemName(1,index,pname)
+	#define SetPlName(index,pname) SetSecitemName(2,index,pname)
+
+	u32 GetStageIndex(u8 levelidx,u8 substageidx);//Get the main index of a stage by level index and sub stage index
+	//the StageIdx below means the main index of a stage, and you can get its value by GetStageIndex()
+	u16 GetStepCount(u32 StageIdx);
+	u8 *GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
+	u8 *GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
+	void GetStageInfo(u32 StageIdx,u8* Bg,u8* BGl,u8* FGl,u8* Pl);//Bg/BGl/FGl/Pl =0      means not to get the value
+	void SetStageInfo(u32 StageIdx,u8  Bg,u8  BGl,u8  FGl,u8  Pl);//Bg/BGl/FGl/Pl =0xFFFE means not to set the value
+
 };
