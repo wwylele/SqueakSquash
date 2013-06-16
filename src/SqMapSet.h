@@ -135,11 +135,16 @@ public:
 	void Dump(FILE* pf);
 
 public:
+
+	u32 FindSecitem(u8 *GetSiSwitch,char* pname);//return 0xFFFFFFFF means not found
+
 	u32 GetSecitemCount(u8 SiSwitch);
 	u8 *GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen);
 	u8 *ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len);
 	void GetSecitemName(u8 SiSwitch,u32 index,char *pname);
 	void SetSecitemName(u8 SiSwitch,u32 index,char *pname);
+	u8 *NewSecitem(u8 SiSwitch,u32 Len,char *pname);
+	void DeleteSecitem(u8 SiSwitch,u32 index);
 
 	#define GetBgCount() GetSecitemCount(0)
 	#define GetGlCount() GetSecitemCount(1)
@@ -156,6 +161,9 @@ public:
 	#define SetBgName(index,pname) SetSecitemName(0,index,pname)
 	#define SetGlName(index,pname) SetSecitemName(1,index,pname)
 	#define SetPlName(index,pname) SetSecitemName(2,index,pname)
+	#define NewBg(Len,pname) NewSecitem(0,Len,pname);
+	#define NewGl(Len,pname) NewSecitem(1,Len,pname);
+	#define NewPl(Len,pname) NewSecitem(2,Len,pname);
 
 	//Get the main index of a stage by level index and sub stage index
 	//Return 0xFFFFFFFF means not found the stage

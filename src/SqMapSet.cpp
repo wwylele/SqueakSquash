@@ -615,6 +615,23 @@ void SqMapSet::PlDef(CList<CStringA> &list)
 
 
 }
+u32 SqMapSet::FindSecitem(u8 *GetSiSwitch,char* pname)
+{
+	ASSERT(m_Loaded);
+	for(u8 ss=0;ss<3;++ss)
+	{
+		for(u32 i=0;i<m_SecitemCount[ss];++i)
+		{
+			if(strcmp((char*)m_SecitemList[ss][i].Name,pname)==0)
+			{
+				if(GetSiSwitch)*GetSiSwitch=ss;
+				return i;
+			}
+		}
+	}
+	return 0xFFFFFFFF;
+
+}
 u32 SqMapSet::GetSecitemCount(u8 SiSwitch)
 {
 	ASSERT(m_Loaded);
@@ -652,6 +669,63 @@ void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
 	ASSERT(SiSwitch<3);
 	ASSERT(index<m_SecitemCount[SiSwitch]);
 	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
+}
+u8 *SqMapSet::NewSecitem(u8 SiSwitch,u32 Len,char *pname)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	SecitemData *NewSecitemList=new SecitemData[++m_SecitemCount[SiSwitch]];
+	memcpy(NewSecitemList,m_SecitemList[SiSwitch],(m_SecitemCount[SiSwitch]-1)*sizeof(SecitemData));
+	delete[] m_SecitemList[SiSwitch];
+	m_SecitemList[SiSwitch]=NewSecitemList;
+	memcpy(m_SecitemList[SiSwitch][m_SecitemCount[SiSwitch]-1].Name,pname,16);
+	m_SecitemList[SiSwitch][m_SecitemCount[SiSwitch]-1].DataLen=Len;
+	return m_SecitemList[SiSwitch][m_SecitemCount[SiSwitch]-1].pData=new u8[Len];
+}
+void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(m_SecitemCount[SiSwitch]>1);//At least two Secitem before delete one
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	//Delete the Secitem data
+	delete[] m_SecitemList[SiSwitch][index].pData;
+
+	//Create new Secitem List
+	SecitemData* NewSecitemList=new SecitemData[--m_SecitemCount[SiSwitch]];
+	//Copy the old list to the new one
+	if(index)memcpy(NewSecitemList,
+		m_SecitemList[SiSwitch],
+		index*sizeof(SecitemData));
+	if(index<m_SecitemCount[SiSwitch])memcpy(NewSecitemList+index,
+		m_SecitemList[SiSwitch]+index+1,
+		(m_SecitemCount[SiSwitch]-index)*sizeof(SecitemData));
+	//Delete the old list
+	delete[] m_SecitemList[SiSwitch];
+	m_SecitemList[SiSwitch]=NewSecitemList;
+
+	//Adapt the step info
+	for(u32 i=0;i<m_StageCount;++i)for(u16 j=0;j<m_StageList[i].StepCount;++j)
+	{
+		if(SiSwitch==0)
+		{
+			if(m_StageList[i].StepList[j].BgId==index)m_StageList[i].StepList[j].BgId=0;
+			if(m_StageList[i].StepList[j].BgId>index)--m_StageList[i].StepList[j].BgId;
+		}
+		else if(SiSwitch==1)
+		{
+			if(m_StageList[i].StepList[j].BGlId==index)m_StageList[i].StepList[j].BGlId=0;
+			if(m_StageList[i].StepList[j].BGlId>index)--m_StageList[i].StepList[j].BGlId;
+			if(m_StageList[i].StepList[j].FGlId==index)m_StageList[i].StepList[j].FGlId=0;
+			if(m_StageList[i].StepList[j].FGlId>index)--m_StageList[i].StepList[j].FGlId;
+		}
+		else if(SiSwitch==2)
+		{
+			if(m_StageList[i].StepList[j].PlId==index)m_StageList[i].StepList[j].PlId=0;
+			if(m_StageList[i].StepList[j].PlId>index
+				&& m_StageList[i].StepList[j].PlId!=0xFF)--m_StageList[i].StepList[j].PlId;
+		}
+	}
 }
 u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
 {
