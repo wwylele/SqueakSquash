@@ -157,12 +157,18 @@ public:
 	#define SetGlName(index,pname) SetSecitemName(1,index,pname)
 	#define SetPlName(index,pname) SetSecitemName(2,index,pname)
 
-	u32 GetStageIndex(u8 levelidx,u8 substageidx);//Get the main index of a stage by level index and sub stage index
+	//Get the main index of a stage by level index and sub stage index
+	//Return 0xFFFFFFFF means not found the stage
+	u32 GetStageIndex(u8 levelidx,u8 substageidx);
 	//the StageIdx below means the main index of a stage, and you can get its value by GetStageIndex()
+
 	u16 GetStepCount(u32 StageIdx);
 	u8 *GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
 	u8 *GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
-	void GetStageInfo(u32 StageIdx,u8* Bg,u8* BGl,u8* FGl,u8* Pl);//Bg/BGl/FGl/Pl =0      means not to get the value
-	void SetStageInfo(u32 StageIdx,u8  Bg,u8  BGl,u8  FGl,u8  Pl);//Bg/BGl/FGl/Pl =0xFFFE means not to set the value
+
+	//Bg/BGl/FGl/Pl =0    means not to get the value
+	void GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl);
+	//Bg/BGl/FGl/Pl =0xFE means not to set the value
+	void SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8  Pl);
 
 };

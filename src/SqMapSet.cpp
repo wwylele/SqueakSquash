@@ -634,6 +634,7 @@ u8* SqMapSet::ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len)
 	ASSERT(m_Loaded);
 	ASSERT(SiSwitch<3);
 	ASSERT(index<m_SecitemCount[SiSwitch]);
+	ASSERT(Len);
 	delete[] m_SecitemList[SiSwitch][index].pData;
 	m_SecitemList[SiSwitch][index].DataLen=Len;
 	return m_SecitemList[SiSwitch][index].pData=new u8[Len];
@@ -651,4 +652,59 @@ void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
 	ASSERT(SiSwitch<3);
 	ASSERT(index<m_SecitemCount[SiSwitch]);
 	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
+}
+u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
+{
+	ASSERT(m_Loaded);
+	for(u32 i=0;i<m_StageCount;++i)
+	{
+		if(m_StageList[i].LevelIdx==levelidx && m_StageList[i].StageIdx==substageidx)
+			return i;
+	}
+	return 0xFFFFFFFF;
+
+}
+u16 SqMapSet::GetStepCount(u32 StageIdx)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	return m_StageList[StageIdx].StepCount;
+
+}
+
+u8 *SqMapSet::GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].MxpLen;
+	return m_StageList[StageIdx].StepList[StepIndex].pMxp;
+}
+u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
+	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
+}
+void SqMapSet::GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(Bg)*Bg=m_StageList[StageIdx].StepList[StepIndex].BgId;
+	if(BGl)*Bg=m_StageList[StageIdx].StepList[StepIndex].BGlId;
+	if(FGl)*Bg=m_StageList[StageIdx].StepList[StepIndex].FGlId;
+	if(Pl)*Bg=m_StageList[StageIdx].StepList[StepIndex].PlId;
+}
+void SqMapSet::SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8  Pl)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(Bg!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=Bg;
+	if(BGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=BGl;
+	if(FGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=FGl;
+	if(Pl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=Pl;
 }
