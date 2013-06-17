@@ -721,9 +721,8 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 		}
 		else if(SiSwitch==2)
 		{
-			if(m_StageList[i].StepList[j].PlId==index)m_StageList[i].StepList[j].PlId=0;
-			if(m_StageList[i].StepList[j].PlId>index
-				&& m_StageList[i].StepList[j].PlId!=0xFF)--m_StageList[i].StepList[j].PlId;
+			if(m_StageList[i].StepList[j].PlId>=index)m_StageList[i].StepList[j].PlId=0xFF;
+				
 		}
 	}
 }
@@ -781,4 +780,48 @@ void SqMapSet::SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8 
 	if(BGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=BGl;
 	if(FGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=FGl;
 	if(Pl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=Pl;
+}
+u8 *SqMapSet::ResizeMxpBuffer(u32 StageIdx,u16 StepIndex,u32 Len)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	ASSERT(Len);
+	delete[] m_StageList[StageIdx].StepList[StepIndex].pMxp;
+	m_StageList[StageIdx].StepList[StepIndex].MxpLen=Len;
+	return m_StageList[StageIdx].StepList[StepIndex].pMxp=new u8[Len];
+}
+u8 *SqMapSet::ResizeDoeBuffer(u32 StageIdx,u16 StepIndex,u32 Len)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	ASSERT(Len);
+	delete[] m_StageList[StageIdx].StepList[StepIndex].pDoe;
+	m_StageList[StageIdx].StepList[StepIndex].DoeLen=Len;
+	return m_StageList[StageIdx].StepList[StepIndex].pDoe=new u8[Len];
+}
+void SqMapSet::DeleteStep(u32 StageIdx,u16 StepIndex)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(m_StageList[StageIdx].StepCount>1);//At least two Step before delete one
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+
+	//Delete the Step data
+	delete[] m_StageList[StageIdx].StepList[StepIndex].pMxp;
+	delete[] m_StageList[StageIdx].StepList[StepIndex].pDoe;
+
+	//Create new Step List
+	StageData::StepData* NewStepList=new StageData::StepData[--m_StageList[StageIdx].StepCount];
+	//Copy the old list to the new one
+	if(StepIndex)memcpy(NewStepList,
+		m_StageList[StageIdx].StepList,
+		StepIndex*sizeof(StageData::StepData));
+	if(StepIndex<m_StageList[StageIdx].StepCount)memcpy(NewStepList+StepIndex,
+		m_StageList[StageIdx].StepList+StepIndex+1,
+		(m_StageList[StageIdx].StepCount-StepIndex)*sizeof(StageData::StepData));
+	//Delete the old list
+	delete[] m_StageList[StageIdx].StepList;
+	m_StageList[StageIdx].StepList=NewStepList;
 }

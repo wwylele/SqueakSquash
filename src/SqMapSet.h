@@ -161,9 +161,12 @@ public:
 	#define SetBgName(index,pname) SetSecitemName(0,index,pname)
 	#define SetGlName(index,pname) SetSecitemName(1,index,pname)
 	#define SetPlName(index,pname) SetSecitemName(2,index,pname)
-	#define NewBg(Len,pname) NewSecitem(0,Len,pname);
-	#define NewGl(Len,pname) NewSecitem(1,Len,pname);
-	#define NewPl(Len,pname) NewSecitem(2,Len,pname);
+	#define NewBg(Len,pname) NewSecitem(0,Len,pname)
+	#define NewGl(Len,pname) NewSecitem(1,Len,pname)
+	#define NewPl(Len,pname) NewSecitem(2,Len,pname)
+	#define DeleteBg(index) DeleteSecitem(0,index)
+	#define DeleteGl(index) DeleteSecitem(1,index)
+	#define DeletePl(index) DeleteSecitem(2,index)
 
 	//Get the main index of a stage by level index and sub stage index
 	//Return 0xFFFFFFFF means not found the stage
@@ -173,6 +176,9 @@ public:
 	u16 GetStepCount(u32 StageIdx);
 	u8 *GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
 	u8 *GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
+	u8 *ResizeMxpBuffer(u32 StageIdx,u16 StepIndex,u32 Len);
+	u8 *ResizeDoeBuffer(u32 StageIdx,u16 StepIndex,u32 Len);
+	void DeleteStep(u32 StageIdx,u16 StepIndex);
 
 	//Bg/BGl/FGl/Pl =0    means not to get the value
 	void GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl);
