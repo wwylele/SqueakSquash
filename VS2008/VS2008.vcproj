@@ -181,30 +181,20 @@
 	</References>
 	<Files>
 		<Filter
-			Name="源文件"
-			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
+			Name="Windows"
+			Filter="h;hpp;hxx;hm;inl;inc;xsd"
+			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
 				RelativePath="..\src\Main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\MainFrm.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\stdafx.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="头文件"
-			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
-			>
-			<File
 				RelativePath="..\src\Main.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\MainFrm.cpp"
 				>
 			</File>
 			<File
@@ -213,6 +203,10 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\stdafx.cpp"
 				>
 			</File>
 			<File
@@ -225,12 +219,48 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="资源文件"
+			Name="res"
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
 				RelativePath=".\VS2008.rc"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="SqsqData"
+			>
+			<File
+				RelativePath="..\src\NitroCompress.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\NitroCompress.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\NitroRom.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\NitroRom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqFile.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqMapSet.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqMapSet.h"
 				>
 			</File>
 		</Filter>
