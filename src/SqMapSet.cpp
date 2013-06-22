@@ -350,16 +350,22 @@ bool SqMapSet::Save(CFile &file)
 }
 bool SqMapSet::LoadFromRom(CFile &file)
 {
+	PrintLog("SqMapSet::LoadFromRom>\n");
 	//Read the ROM header and verify the ROM
 	Nitro::ROM_HEADER rom_header;
 	file.Seek(0,CFile::begin);
 	file.Read(&rom_header,sizeof(rom_header));
-	if(strcmp("KIRBY DRO",(char*)rom_header.name))return false;
+	if(strcmp("KIRBY DRO",(char*)rom_header.name))
+	{
+		PrintLog("Wrong ROM Magic\n");
+		return false;
+	}
 
 	Unload();
 
 
 	//Read RomInfo
+	PrintLog("Read RomInfo\n");
 	Nitro::ROM_TITLE rom_title;
 	ZeroMemory(&m_RomInfo,sizeof(m_RomInfo));
 	memcpy(&m_RomInfo,&rom_header,22);
@@ -368,6 +374,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	memcpy(&m_RomInfo.Title_icon_pixel,&rom_title.icon_pixel,512+32+1536);
 
 	//Search and read .mxi file in the ROM
+	PrintLog("Search and read .mxi file in the ROM\n");
 	CStringA strMxiName;
 	u32 mxioffset,mxilen;
 	u8 *mxitmp;
@@ -385,6 +392,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		strMxiName.Format("map/a%ds%d.mxi",a,s);
 		if(mxioffset=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,strMxiName),&mxilen))
 		{
+			PrintLog("Read %s\n",(const char*)strMxiName);
 			mxitmp=new u8[mxilen];
 			file.Seek(mxioffset,CFile::begin);
 			file.Read(mxitmp,mxilen);
@@ -495,6 +503,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	}
 
 	//Copy stage list from sdlist to m_StageList
+	PrintLog("Copy stage list\n");
 	m_StageCount=sdlist.GetCount();
 	m_StageList=new StageData[m_StageCount];
 	lpos=sdlist.GetHeadPosition();
@@ -506,6 +515,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	//Read bg,gl,pl
 	CStringA sfname;
 	
+	PrintLog("Read Bg\n");
 	m_BgCount=bglist.GetCount();
 	m_BgList=new SecitemData[m_BgCount];
 	lpos=bglist.GetHeadPosition();
@@ -521,6 +531,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		file.Read(m_BgList[i].pData,m_BgList[i].DataLen);
 	}
 
+	PrintLog("Read Gl\n");
 	m_GlCount=gllist.GetCount();
 	m_GlList=new SecitemData[m_GlCount];
 	lpos=gllist.GetHeadPosition();
@@ -536,6 +547,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
 	}
 
+	PrintLog("Read Pl\n");
 	m_PlCount=pllist.GetCount();
 	m_PlList=new SecitemData[m_PlCount];
 	lpos=pllist.GetHeadPosition();
@@ -553,6 +565,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 
 	m_Loaded=true;
+	PrintLog("SqMapSet::ReadFromRom done\n");
 	return true;
 }
 void SqMapSet::Dump(FILE* pf)

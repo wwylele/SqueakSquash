@@ -17,8 +17,11 @@ IMPLEMENT_DYNAMIC(CMainFrame, CFrameWnd)
 BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_OPEN,&CMainFrame::OnTbOpen)
+	ON_COMMAND(ID_SAVE,&CMainFrame::OnTbSave)
+	ON_COMMAND(ID_SAVEAS,&CMainFrame::OnTbSaveas)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
+	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnNMClickFileTreeFile)
 END_MESSAGE_MAP()
 
 
@@ -52,12 +55,20 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_FileTree.Create(WS_CHILD | WS_VISIBLE |WS_BORDER|
 		TVS_LINESATROOT|TVS_HASBUTTONS|TVS_FULLROWSELECT|
-		TVS_HASLINES|TVS_SHOWSELALWAYS|TVS_SINGLEEXPAND ,
-		ZeroRect,this,0);
+		TVS_HASLINES|TVS_SHOWSELALWAYS ,
+		ZeroRect,this,ID_FILETREE);
+
+	m_StaticDesc.Create(_T("..."),WS_CHILD | WS_VISIBLE,ZeroRect,this);
 	
 	return 0;
 }
+void CMainFrame::OnSize(UINT nType, int cx, int cy)
+{
+	CFrameWnd::OnSize(nType, cx, cy);
 
+	m_FileTree.MoveWindow(0,30,200,cy-35);
+	m_StaticDesc.MoveWindow(202,30,400,200);
+}
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
 	if( !CFrameWnd::PreCreateWindow(cs) )
@@ -72,16 +83,79 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 	return TRUE;
 }
 
+void CMainFrame::OnTbSaveas()
+{
+	if(!m_SqMapSet.IsLoaded())return;
+	CFile file;
 
+	TCHAR strPath[1000]={0};
+	//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
+	CFileDialog filedlg(FALSE,_T("sqms"),_T("NewMapSet.sqms"),OFN_OVERWRITEPROMPT,
+		_T("SqueakSquashMapSet|*.sqms||"),this);
+	filedlg.GetOFN().lpstrInitialDir=strPath;
+	filedlg.GetOFN().lpstrTitle=_T("Set the file path...");
+	if(filedlg.DoModal()==IDCANCEL)return;
+	CString strFileName=filedlg.GetPathName();
+	if(!file.Open(strFileName,CFile::modeCreate|CFile::modeWrite))
+	{
+		MessageBox(_T("Fail to create the file."),_T("Error"),MB_ICONERROR);
+		return;
+	}
+	m_StrFileName=strFileName;
 
+	if(!m_SqMapSet.Save(file))
+	{
+		MessageBox(_T("SqMapSet::Save:Fail to save the file."),_T("Error"),MB_ICONERROR);
+	}
+	file.Close();
+}
+void CMainFrame::OnTbSave()
+{
+	if(!m_SqMapSet.IsLoaded())return;
+	CFile file;
+	if(m_StrFileName==_T(""))
+	{
+		TCHAR strPath[1000]={0};
+		//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
+		CFileDialog filedlg(FALSE,_T("sqms"),_T("NewMapSet.sqms"),OFN_OVERWRITEPROMPT,
+			_T("SqueakSquashMapSet|*.sqms||"),this);
+		filedlg.GetOFN().lpstrInitialDir=strPath;
+		filedlg.GetOFN().lpstrTitle=_T("Set the file path...");
+		if(filedlg.DoModal()==IDCANCEL)return;
+		CString strFileName=filedlg.GetPathName();
+		if(!file.Open(strFileName,CFile::modeCreate|CFile::modeWrite))
+		{
+			MessageBox(_T("Fail to create the file."),_T("Error"),MB_ICONERROR);
+			return;
+		}
+		m_StrFileName=strFileName;
+	}
+	else
+	{
+		if(!file.Open(m_StrFileName,CFile::modeCreate|CFile::modeWrite))
+		{
+			MessageBox(_T("Fail to save the file."),_T("Error"),MB_ICONERROR);
+			return;
+		}
+	}
+	if(!m_SqMapSet.Save(file))
+	{
+		MessageBox(_T("SqMapSet::Save:Fail to save the file."),_T("Error"),MB_ICONERROR);
+	}
+	file.Close();
+	
+}
 void CMainFrame::OnTbOpen()
 {
 	TCHAR strPath[1000]={0};
 	//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
-
 	
 	CFileDialog filedlg(TRUE,0,0,OFN_HIDEREADONLY,
-		_T("SqueakSquash map set|*.*||"),this);
+		_T("All supported files|*.sqms;*.nds;*.bin|")
+		_T("SqueakSquashMapSet(*.sqms)|*.sqms|")
+		_T("Nitro ROM(*.nds;*.bin)|*.nds;*.bin|")
+		_T("All files(*.*)|*.*|")
+		_T("|"),this);
 	filedlg.GetOFN().lpstrInitialDir=strPath;
 	if(filedlg.DoModal()==IDCANCEL)return;
 	CString strFileName=filedlg.GetPathName();
@@ -93,9 +167,25 @@ void CMainFrame::OnTbOpen()
 	}
 	if(!m_SqMapSet.Load(file))
 	{
-		MessageBox(_T("SqMapSet:Fail to load"),_T("Error"),MB_ICONERROR);
-		file.Close();
-		return;
+		//Fail to load it as a map set,try to load it as a ROM
+		MessageBox(_T("The program is going to load the file as a ROM.\n")
+			_T("It may take about a minute and the window will not response to your request when loading."),
+			_T("SqueakSquash"));
+		if(!m_SqMapSet.LoadFromRom(file))
+		{
+			MessageBox(_T("Fail to load the file"),_T("Error"),MB_ICONERROR);
+			file.Close();
+			return;
+		}
+		else
+		{
+			MessageBox(_T("Success to load from ROM"),_T("SqueakSquash"));
+			m_StrFileName=_T("");
+		}
+	}
+	else
+	{
+		m_StrFileName=strFileName;
 	}
 	file.Close();
 
@@ -132,43 +222,26 @@ void CMainFrame::FlushFileTree()
 	for(u32 i=0;i<m_SqMapSet.GetBgCount();++i)
 	{
 		m_SqMapSet.GetBgName(i,strn);
-#ifdef _UNICODE
-		str.Format(L"%S",strn);
-#else
-		str.Format("%s",strn);
-#endif
+		str.Format(FORMAT_S2S,strn);
 		m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,i,m_htiBg,TVI_LAST);
 	}
 	for(u32 i=0;i<m_SqMapSet.GetGlCount();++i)
 	{
 		m_SqMapSet.GetGlName(i,strn);
-#ifdef _UNICODE
-		str.Format(L"%S",strn);
-#else
-		str.Format("%s",strn);
-#endif
+		str.Format(FORMAT_S2S,strn);
 		m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,i,m_htiGl,TVI_LAST);
 	}
 	for(u32 i=0;i<m_SqMapSet.GetPlCount();++i)
 	{
 		m_SqMapSet.GetPlName(i,strn);
-#ifdef _UNICODE
-		str.Format(L"%S",strn);
-#else
-		str.Format("%s",strn);
-#endif
+		str.Format(FORMAT_S2S,strn);
 		m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,i,m_htiPl,TVI_LAST);
 	}
 }
 
 
 
-void CMainFrame::OnSize(UINT nType, int cx, int cy)
-{
-	CFrameWnd::OnSize(nType, cx, cy);
 
-	m_FileTree.MoveWindow(0,30,200,cy-35);
-}
 
 BOOL CMainFrame::OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -185,4 +258,81 @@ BOOL CMainFrame::OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult)
 
 	*pResult=0;
 	return TRUE;
+}
+void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	char strn[16];
+	if(m_SqMapSet.IsLoaded())
+	{
+		HTREEITEM tic=m_FileTree.GetSelectedItem();
+
+		CString str;
+		if(tic==m_htiRom)
+		{
+			str=_T("ROM");
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(tic==m_htiMap)
+		{
+			str.Format(_T("Stage Count:%u"),m_SqMapSet.GetStageCount());
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(tic==m_htiBg)
+		{
+			str.Format(_T("Background Count:%u"),m_SqMapSet.GetBgCount());
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(tic==m_htiGl)
+		{
+			str.Format(_T("Texture Count:%u"),m_SqMapSet.GetGlCount());
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(tic==m_htiPl)
+		{
+			str.Format(_T("Palatte Count:%u"),m_SqMapSet.GetPlCount());
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(m_FileTree.GetParentItem(tic)==m_htiMap)
+		{
+			u32 i=0;
+			u8 l,s;
+			for(;i<(u32)m_htiMapi.GetCount();++i)if(m_htiMapi[i]==tic)break;
+			m_SqMapSet.GetStageInfo(i,&l,&s);
+			str.Format(_T("Level%u:Stage%u\nStep Count:%u"),l,s,m_SqMapSet.GetStepCount(i));
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(m_FileTree.GetParentItem(tic)==m_htiBg)
+		{
+			m_SqMapSet.GetBgName(m_FileTree.GetItemData(tic),strn);
+			str.Format(_T("Background:")FORMAT_S2S,strn);
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(m_FileTree.GetParentItem(tic)==m_htiGl)
+		{
+			m_SqMapSet.GetGlName(m_FileTree.GetItemData(tic),strn);
+			str.Format(_T("Texture:")FORMAT_S2S,strn);
+			m_StaticDesc.SetWindowText(str);
+		}
+		else if(m_FileTree.GetParentItem(tic)==m_htiPl)
+		{
+			m_SqMapSet.GetPlName(m_FileTree.GetItemData(tic),strn);
+			str.Format(_T("Palatte:")FORMAT_S2S,strn);
+			m_StaticDesc.SetWindowText(str);
+		}
+		else
+		{
+			HTREEITEM htiStage=m_FileTree.GetParentItem(tic);
+			if(m_FileTree.GetParentItem(htiStage)==m_htiMap)
+			{
+				u32 i=0;
+				u8 l,s;
+				for(;i<(u32)m_htiMapi.GetCount();++i)if(m_htiMapi[i]==htiStage)break;
+				m_SqMapSet.GetStageInfo(i,&l,&s);
+				str.Format(_T("Level%u:Stage%u:Step%02u"),l,s,m_FileTree.GetItemData(tic));
+				m_StaticDesc.SetWindowText(str);
+			}
+		}
+	}
+
+	*pResult=0;
 }
