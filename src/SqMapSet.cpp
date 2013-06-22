@@ -3,7 +3,7 @@
 #include "SqMapSet.h"
 #include "NitroRom.h"
 #include "NitroCompress.h"
-#include "SqFile.h"
+#include "SqMx.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

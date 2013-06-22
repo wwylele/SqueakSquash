@@ -4,6 +4,7 @@
 #include "Main.h"
 
 #include "MainFrm.h"
+#include "SqB.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -22,6 +23,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
 	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnNMClickFileTreeFile)
+	ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
 
 
@@ -58,7 +60,16 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		TVS_HASLINES|TVS_SHOWSELALWAYS ,
 		ZeroRect,this,ID_FILETREE);
 
-	m_StaticDesc.Create(_T("..."),WS_CHILD | WS_VISIBLE,ZeroRect,this);
+	m_StaticDesc.Create(_T("..."),WS_CHILD|WS_VISIBLE,ZeroRect,this);
+	m_StaticPrvw.Create(_T(""),WS_CHILD|WS_VISIBLE|SS_OWNERDRAW,ZeroRect,this,ID_STATIC_PRVW);
+
+	CDC *pDC=GetDC();
+	m_DCPrvw.CreateCompatibleDC(pDC);
+	m_BmpPrvw.CreateCompatibleBitmap(pDC,BMP_PRVW_W,BMP_PRVW_H);
+	m_DCPrvw.SelectObject(&m_BmpPrvw);
+	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
+
+	ReleaseDC(pDC);
 	
 	return 0;
 }
@@ -68,6 +79,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	m_FileTree.MoveWindow(0,30,200,cy-35);
 	m_StaticDesc.MoveWindow(202,30,400,200);
+	m_StaticPrvw.MoveWindow(202,250,cx-220,cy-280);
 }
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -242,7 +254,17 @@ void CMainFrame::FlushFileTree()
 
 
 
-
+void CMainFrame::PaintGlPrvw(u32 index)
+{
+	SqB sqb;
+	sqb.Load(m_SqMapSet.GetGlBuffer(index,0));
+	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
+	for(u32 i=0;i<sqb.GetTileCount();++i)
+	{
+		sqb.DrawTile(&m_DCPrvw,i,(i%32)*8,i/32*8);
+	}
+	m_StaticPrvw.RedrawWindow();
+}
 BOOL CMainFrame::OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult)
 {
 	TOOLTIPTEXT *pTTT = (TOOLTIPTEXT *)pNMHDR;
@@ -312,6 +334,7 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 			m_SqMapSet.GetGlName(m_FileTree.GetItemData(tic),strn);
 			str.Format(_T("Texture:")FORMAT_S2S,strn);
 			m_StaticDesc.SetWindowText(str);
+			PaintGlPrvw(m_FileTree.GetItemData(tic));
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiPl)
 		{
@@ -335,4 +358,14 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 	}
 
 	*pResult=0;
+}
+
+
+void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
+{
+	if(nIDCtl==ID_STATIC_PRVW)
+	{
+		BitBlt(lpDrawItemStruct->hDC,0,0,500,500,m_DCPrvw.GetSafeHdc(),0,0,SRCCOPY);
+	}
+	//CFrameWnd::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }

@@ -27,16 +27,21 @@ protected:
 	CArray<HTREEITEM> m_htiMapi;
 
 	CStatic m_StaticDesc;
-
+	CStatic m_StaticPrvw;
+#define ID_STATIC_PRVW 20002
 
 	CString m_StrFileName;
-
+	CDC m_DCPrvw;
+	CBitmap m_BmpPrvw;
+#define BMP_PRVW_W 500
+#define BMP_PRVW_H 500
 
 	SqMapSet m_SqMapSet;
 public:
 	virtual ~CMainFrame();
 
 	void FlushFileTree();
+	void PaintGlPrvw(u32 index);
 
 
 protected:
@@ -53,6 +58,7 @@ public:
 	afx_msg void OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult);
 
 
+	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 };
 
 

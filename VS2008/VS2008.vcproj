@@ -256,11 +256,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\SqFile.cpp"
+				RelativePath="..\src\SqB.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\SqFile.h"
+				RelativePath="..\src\SqB.h"
 				>
 			</File>
 			<File
@@ -269,6 +269,14 @@
 			</File>
 			<File
 				RelativePath="..\src\SqMapSet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqMx.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqMx.h"
 				>
 			</File>
 		</Filter>
