@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Main.h"
 #include "SqMapSet.h"
 #include "NitroRom.h"
 #include "NitroCompress.h"
@@ -17,15 +18,23 @@ SqMapSet::~SqMapSet(void)
 {
 	Unload();
 }
+bool SqMapSet::IsLoaded(){return m_Loaded;}
 bool SqMapSet::Load(CFile &file)
 {
+	PrintLog("SqMapSet::Load>\n");
 	
 	file.Seek(0,CFile::begin);
 	SqmsFileHeader header;
 	file.Read(&header,sizeof(header));
 
 	//Verify the File Magic
-	if(memcmp(header.Magic,"SQSQMAPS",8) || header.Version!=1)return false;
+	if(memcmp(header.Magic,"SQSQMAPS",8) || header.Version!=1){
+		PrintLog("Fail to load\nMagic=%c%c%c%c%c%c%c%c\nFile Version=%d\n",
+			header.Magic[0],header.Magic[1],header.Magic[2],header.Magic[3],
+			header.Magic[4],header.Magic[5],header.Magic[6],header.Magic[7],
+			header.Version);
+		return false;
+	}
 
 
 	SqmsSectionHeader sheader;
@@ -33,22 +42,37 @@ bool SqMapSet::Load(CFile &file)
 	u32 fpos,fpos2;
 
 	//Verify the Sections Magic
+	PrintLog("Verify the Sections Magic\n");
 	file.Seek(header.SectionBgOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
-	if(memcmp(sheader.Magic,"SQBG",4))return false;
+	if(memcmp(sheader.Magic,"SQBG",4))
+	{
+		PrintLog("Wrong SectionBg Magic\n");
+		return false;
+	}
 	file.Seek(header.SectionGlOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
-	if(memcmp(sheader.Magic,"SQGL",4))return false;
+	if(memcmp(sheader.Magic,"SQGL",4))
+	{
+		PrintLog("Wrong SectionGl Magic\n");
+		return false;
+	}
 	file.Seek(header.SectionPlOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
-	if(memcmp(sheader.Magic,"SQPL",4))return false;
+	if(memcmp(sheader.Magic,"SQPL",4))
+	{
+		PrintLog("Wrong SectionPl Magic\n");
+		return false;
+	}
 
 	Unload();
 
 	//Read Section Bg
+	PrintLog("Read Section Bg\n");
 	file.Seek(header.SectionBgOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
 	m_BgCount=sheader.Count;
+	PrintLog("Bg Count=%u\n",m_BgCount);
 	m_BgList=new SecitemData[m_BgCount];
 	fpos=(u32)file.GetPosition();
 	for(u32 i=0;i<m_BgCount;++i)
@@ -65,9 +89,11 @@ bool SqMapSet::Load(CFile &file)
 	}
 
 	//Read Section Gl
+	PrintLog("Read Section Gl\n");
 	file.Seek(header.SectionGlOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
 	m_GlCount=sheader.Count;
+	PrintLog("Gl Count=%u\n",m_GlCount);
 	m_GlList=new SecitemData[m_GlCount];
 	fpos=(u32)file.GetPosition();
 	for(u32 i=0;i<m_GlCount;++i)
@@ -84,9 +110,11 @@ bool SqMapSet::Load(CFile &file)
 	}
 
 	//Read Section Pl
+	PrintLog("Read Section Pl\n");
 	file.Seek(header.SectionPlOffset,CFile::begin);
 	file.Read(&sheader,sizeof(sheader));
 	m_PlCount=sheader.Count;
+	PrintLog("Pl Count=%u\n",m_PlCount);
 	m_PlList=new SecitemData[m_PlCount];
 	fpos=(u32)file.GetPosition();
 	for(u32 i=0;i<m_PlCount;++i)
@@ -103,7 +131,9 @@ bool SqMapSet::Load(CFile &file)
 	}
 
 	//Read Stage-Step-Map tree
+	PrintLog("Read Stage-Step-Map tree\n");
 	m_StageCount=header.StageCount;
+	PrintLog("Stage Count=%u\n",m_StageCount);
 	m_StageList=new StageData[m_StageCount];
 	SqmsStageHeader stheader;
 	SqmsStepHeader spheader;
@@ -140,10 +170,12 @@ bool SqMapSet::Load(CFile &file)
 	}
 	
 	//Read RomInfo
+	PrintLog("Read RomInfo\n");
 	file.Seek(header.RomInfoOffset,CFile::begin);
 	file.Read(&m_RomInfo,sizeof(m_RomInfo));
 
 	m_Loaded=true;
+	PrintLog("SqMapSet::Load done\n");
 	return true;
 
 }
@@ -725,6 +757,14 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 				
 		}
 	}
+}
+u32 SqMapSet::GetStageCount(){ASSERT(m_Loaded);return m_StageCount;}
+void SqMapSet::GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	if(plevelidx)*plevelidx=m_StageList[StageIdx].LevelIdx;
+	if(psubstageidx)*psubstageidx=m_StageList[StageIdx].StageIdx;
 }
 u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
 {

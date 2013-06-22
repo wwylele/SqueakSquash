@@ -8,7 +8,8 @@
 
 #include "../VS2008/resource.h"      
 
-
+void OpenConsole();
+#define PrintLog printf
 
 class CSqsqApp : public CWinApp
 {

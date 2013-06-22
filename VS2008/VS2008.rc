@@ -49,46 +49,85 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Dialog
+// Toolbar
 //
 
-IDR_MAINFRAME DIALOGEX 0, 0, 316, 183
-STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dialog"
-FONT 8, "MS Shell Dlg", 400, 0, 0x1
+IDR_MAINFRAME TOOLBAR  16, 16
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,205,162,50,14
-    PUSHBUTTON      "取消",IDCANCEL,259,162,50,14
+    BUTTON      ID_OPEN
+    BUTTON      ID_SAVE
+    BUTTON      ID_SAVEAS
+    BUTTON      ID_SAVEFINAL
+    BUTTON      ID_TESTGAME
 END
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// DESIGNINFO
+// Bitmap
 //
 
-#ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+IDR_MAINFRAME           BITMAP                  "Maintoolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
 BEGIN
-    IDR_MAINFRAME, DIALOG
+    BLOCK "StringFileInfo"
     BEGIN
-        LEFTMARGIN, 7
-        RIGHTMARGIN, 309
-        TOPMARGIN, 7
-        BOTTOMMARGIN, 176
+        BLOCK "080404b0"
+        BEGIN
+            VALUE "FileDescription", "SqueakSquash"
+            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "InternalName", "SqueakSquash"
+            VALUE "LegalCopyright", "Copyright (C) 2013"
+            VALUE "OriginalFilename", "SqueakSquash.exe"
+            VALUE "ProductName", "SqueakSquash"
+            VALUE "ProductVersion", "1, 0, 0, 1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x804, 1200
     END
 END
-#endif    // APSTUDIO_INVOKED
 
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Menu
+// Icon
 //
 
-IDR_MAINFRAME MENU 
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "Main.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
 BEGIN
-    MENUITEM "Menu",                        0
+    ID_OPEN                 "Open"
+    ID_SAVE                 "Save"
+    ID_SAVEAS               "Save as"
+    ID_SAVEFINAL            "Make ROM"
+    ID_TESTGAME             "Test game"
 END
 
 #endif    // 中文(中华人民共和国) resources

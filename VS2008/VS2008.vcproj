@@ -224,6 +224,14 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\Main.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\Maintoolbar.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\VS2008.rc"
 				>
 			</File>

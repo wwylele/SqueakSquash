@@ -133,6 +133,7 @@ public:
 	bool LoadFromRom(CFile &file);
 	bool MakeRom(CFile &file);
 	void Dump(FILE* pf);
+	bool IsLoaded();
 
 public:
 
@@ -167,6 +168,10 @@ public:
 	#define DeleteBg(index) DeleteSecitem(0,index)
 	#define DeleteGl(index) DeleteSecitem(1,index)
 	#define DeletePl(index) DeleteSecitem(2,index)
+
+
+	u32 GetStageCount();
+	void GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx);
 
 	//Get the main index of a stage by level index and sub stage index
 	//Return 0xFFFFFFFF means not found the stage

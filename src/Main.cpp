@@ -8,7 +8,37 @@
 #define new DEBUG_NEW
 #endif
 
+HANDLE hConsole=0;
+void OpenConsole()
+{
 
+	if (hConsole) return;
+
+	hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	DWORD fileType = GetFileType(hConsole);
+
+	bool shouldRedirectStdout = fileType == FILE_TYPE_UNKNOWN;
+
+	bool attached = false;
+	if(AttachConsole(-1))
+		attached = true;
+	if(!attached)
+	{
+		if (!AllocConsole()) return;
+
+		SetConsoleCP(GetACP());
+		SetConsoleOutputCP(GetACP());
+	}
+	SetConsoleTitle(_T("SqueakSquash Console"));
+
+	if(shouldRedirectStdout)
+	{
+		freopen("CONOUT$", "w", stdout);
+		freopen("CONOUT$", "w", stderr);
+		freopen("CONIN$", "r", stdin);
+	}
+
+}
 
 BEGIN_MESSAGE_MAP(CSqsqApp, CWinApp)
 
@@ -49,15 +79,15 @@ BOOL CSqsqApp::InitInstance()
 	}
 	AfxEnableControlContainer();
 	
+	OpenConsole();
+	PrintLog("SqueakSquash:\n");
 
 	CMainFrame* pFrame = new CMainFrame;
 	if (!pFrame)
 		return FALSE;
 	m_pMainWnd = pFrame;
 
-	pFrame->LoadFrame(IDR_MAINFRAME,
-		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, NULL,
-		NULL);
+	pFrame->Create(0,_T("KIRBY......Squeak--->Squash!!!"));
 
 
 	pFrame->ShowWindow(SW_SHOW);
