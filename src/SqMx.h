@@ -1,26 +1,17 @@
 #pragma once
 
 
-class SqBase
-{
-public:
-	virtual bool Load(const u8* psrc)=0;
-	virtual bool IsValid()=0;
-	bool LoadFromFile(LPCTSTR fname);
-	virtual void Unload()=0;
-
-};
 
 
-class SqMx:public SqBase
+class SqMx
 {
 public:
 	SqMx(void);
 	~SqMx(void);
 
-	virtual bool Load(const u8* psrc);
-	virtual bool IsValid();
-	virtual void Unload();
+	bool Load(const u8* psrc);
+	bool IsLoaded();
+	void Unload();
 	struct StepInfo
 	{
 		CStringA Ma;

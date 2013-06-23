@@ -15,7 +15,8 @@ public:
 	SqB(void);
 	~SqB(void);
 	bool Load(const u8* psrc);
-	bool IsValid();
+	bool IsLoaded();
+	void Unload();
 
 	u16 Pal[0x100];
 	TILE& Tile(u32 i);

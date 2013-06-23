@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 #include "NitroCompress.h"
 
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 u32 Nitro::UncompressRL( const u8 *srcp, u8 *destp )
 {
     const u8 *pSrc  = srcp;

@@ -129,7 +129,7 @@
 				MinimalRebuild="false"
 				RuntimeLibrary="0"
 				EnableFunctionLevelLinking="true"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -277,6 +277,14 @@
 			</File>
 			<File
 				RelativePath="..\src\SqMx.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqPl1.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqPl1.h"
 				>
 			</File>
 		</Filter>

@@ -1,5 +1,10 @@
 #include "stdafx.h"
 #include "SqB.h"
+
+
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 COLORREF R5G5B5X1toR8G8B8X8(u16 value)
 {
 	return RGB(
@@ -45,21 +50,24 @@ SqB::SqB():pTile(0),pPalLine(0)
 }
 SqB::~SqB()
 {
-	if(pTile)delete[]pTile;
-	if(pPalLine)delete[]pPalLine;
+	Unload();
 }
-bool SqB::IsValid()
+bool SqB::IsLoaded()
 {
 	return pTile!=0;
 }
-bool SqB::Load(const u8* psrc)
+void SqB::Unload()
 {
-	if(*(u32*)psrc!=0x10)return false;
-	if(*(u32*)(psrc+4)!=0x200)return false;
-	if(*(u32*)(psrc+8)!=*(u32*)(psrc+12) *32)return false;
-	memcpy(Pal,psrc+0x10,0x200);
 	if(pTile)delete[]pTile;
 	if(pPalLine)delete[]pPalLine;
+}
+bool SqB::Load(const u8* psrc)
+{
+	ASSERT(*(u32*)psrc==0x10);
+	ASSERT(*(u32*)(psrc+4)==0x200);
+	ASSERT(*(u32*)(psrc+8)==*(u32*)(psrc+12) *32);
+	memcpy(Pal,psrc+0x10,0x200);
+	Unload();
 	TileCount=*(u32*)(psrc+12);
 	pTile=new TILE[TileCount];
 	pPalLine=new u8[TileCount];

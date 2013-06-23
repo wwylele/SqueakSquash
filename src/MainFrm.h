@@ -33,15 +33,17 @@ protected:
 	CString m_StrFileName;
 	CDC m_DCPrvw;
 	CBitmap m_BmpPrvw;
-#define BMP_PRVW_W 500
-#define BMP_PRVW_H 500
+#define BMP_PRVW_W 512
+#define BMP_PRVW_H 512
 
 	SqMapSet m_SqMapSet;
 public:
 	virtual ~CMainFrame();
 
 	void FlushFileTree();
+	void PaintBgPrvw(u32 index);
 	void PaintGlPrvw(u32 index);
+	void PaintPlPrvw(u32 index);
 
 
 protected:

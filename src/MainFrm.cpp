@@ -5,11 +5,12 @@
 
 #include "MainFrm.h"
 #include "SqB.h"
+#include "SqPl1.h"
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
 
 // CMainFrame
 
@@ -78,8 +79,8 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 
 	m_FileTree.MoveWindow(0,30,200,cy-35);
-	m_StaticDesc.MoveWindow(202,30,400,200);
-	m_StaticPrvw.MoveWindow(202,250,cx-220,cy-280);
+	m_StaticDesc.MoveWindow(202,30,400,100);
+	m_StaticPrvw.MoveWindow(202,130,cx-220,cy-180);
 }
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -254,14 +255,55 @@ void CMainFrame::FlushFileTree()
 
 
 
+void CMainFrame::PaintBgPrvw(u32 index)
+{
+	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
+
+	m_StaticPrvw.RedrawWindow();
+}
+
 void CMainFrame::PaintGlPrvw(u32 index)
 {
 	SqB sqb;
 	sqb.Load(m_SqMapSet.GetGlBuffer(index,0));
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
-	for(u32 i=0;i<sqb.GetTileCount();++i)
+	for(u16 i=0;i<sqb.GetTileCount();++i)
 	{
-		sqb.DrawTile(&m_DCPrvw,i,(i%32)*8,i/32*8);
+		sqb.DrawTile(&m_DCPrvw,i,256+((i&31)<<3),(i>>5)<<3);
+	}
+	for(u32 i=0;i<0x100;++i)
+	{
+		m_DCPrvw.FillRect((LPRECT)&CRect(
+			(i&15)<<4,(i>>4)<<4,((i&15)<<4)+16,((i>>4)<<4)+16),
+			&CBrush(R5G5B5X1toR8G8B8X8(sqb.Pal[i])));
+	}
+	m_StaticPrvw.RedrawWindow();
+}
+void CMainFrame::PaintPlPrvw(u32 index)
+{
+	
+	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
+	u8* pPl=m_SqMapSet.GetPlBuffer(index,0);
+	if(*(u16*)pPl==2)
+	{
+		for(u32 i=0;i<0x100;++i)
+		{
+			m_DCPrvw.FillRect((LPRECT)&CRect(
+				(i&15)<<4,(i>>4)<<4,((i&15)<<4)+16,((i>>4)<<4)+16),
+				&CBrush(R5G5B5X1toR8G8B8X8(*((u16*)pPl+i+1))));
+		}
+	}
+	else
+	{
+		SqPl1 sqpl1;
+		sqpl1.Load(pPl);
+		for(u8 line=0;line<16;++line)for(u8 frame=0;frame<sqpl1.GetFrameCount(line);++frame)for(u8 i=0;i<16;++i)
+		{
+			m_DCPrvw.FillRect((LPRECT)&CRect(
+				i<<4,(line<<4)+frame,(i<<4)+16,(line<<4)+frame+1
+				),&CBrush(R5G5B5X1toR8G8B8X8(sqpl1.GetFrame(line,frame).Pl[i])));
+				
+		}
 	}
 	m_StaticPrvw.RedrawWindow();
 }
@@ -328,6 +370,7 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 			m_SqMapSet.GetBgName(m_FileTree.GetItemData(tic),strn);
 			str.Format(_T("Background:")FORMAT_S2S,strn);
 			m_StaticDesc.SetWindowText(str);
+			PaintBgPrvw(m_FileTree.GetItemData(tic));
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiGl)
 		{
@@ -339,8 +382,10 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 		else if(m_FileTree.GetParentItem(tic)==m_htiPl)
 		{
 			m_SqMapSet.GetPlName(m_FileTree.GetItemData(tic),strn);
-			str.Format(_T("Palatte:")FORMAT_S2S,strn);
+			str.Format(_T("Palatte:")FORMAT_S2S
+				_T("\nType=%d"),strn,*m_SqMapSet.GetPlBuffer(m_FileTree.GetItemData(tic),0));
 			m_StaticDesc.SetWindowText(str);
+			PaintPlPrvw(m_FileTree.GetItemData(tic));
 		}
 		else
 		{
@@ -365,7 +410,7 @@ void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	if(nIDCtl==ID_STATIC_PRVW)
 	{
-		BitBlt(lpDrawItemStruct->hDC,0,0,500,500,m_DCPrvw.GetSafeHdc(),0,0,SRCCOPY);
+		BitBlt(lpDrawItemStruct->hDC,0,0,BMP_PRVW_W,BMP_PRVW_H,m_DCPrvw.GetSafeHdc(),0,0,SRCCOPY);
 	}
 	//CFrameWnd::OnDrawItem(nIDCtl, lpDrawItemStruct);
 }

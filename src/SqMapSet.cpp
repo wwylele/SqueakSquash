@@ -392,7 +392,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		strMxiName.Format("map/a%ds%d.mxi",a,s);
 		if(mxioffset=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,strMxiName),&mxilen))
 		{
-			PrintLog("Read %s\n",(const char*)strMxiName);
+			PrintLog("Read %s",(const char*)strMxiName);
 			mxitmp=new u8[mxilen];
 			file.Seek(mxioffset,CFile::begin);
 			file.Read(mxitmp,mxilen);
@@ -405,6 +405,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			if(sdtmp.StepCount>100)throw;
 			for(u16 step=0;step<sdtmp.StepCount;++step)
 			{
+				PrintLog("|");
 				//Read mxp;
 				offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,mxi.Step(step).Ma),&lent);
 				if(offt){
@@ -495,6 +496,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 				}
 				else sdtmp.StepList[step].PlId=0xFF;
 			}
+			PrintLog("\n");
 
 			sdlist.AddTail(sdtmp);
 
@@ -503,24 +505,27 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	}
 
 	//Copy stage list from sdlist to m_StageList
-	PrintLog("Copy stage list\n");
+	PrintLog("Copy stage list");
 	m_StageCount=sdlist.GetCount();
 	m_StageList=new StageData[m_StageCount];
 	lpos=sdlist.GetHeadPosition();
 	for(u32 i=0;i<m_StageCount;++i)
 	{
+		PrintLog("|");
 		m_StageList[i]=sdlist.GetNext(lpos);
 	}
+	PrintLog("\n");
 
 	//Read bg,gl,pl
 	CStringA sfname;
 	
-	PrintLog("Read Bg\n");
+	PrintLog("Read Bg");
 	m_BgCount=bglist.GetCount();
 	m_BgList=new SecitemData[m_BgCount];
 	lpos=bglist.GetHeadPosition();
 	for(u32 i=0;i<m_BgCount;++i)
 	{
+		PrintLog("|");
 		sfname=bglist.GetNext(lpos);
 		ZeroMemory(m_BgList[i].Name,16);
 		strcpy_s((char*)m_BgList[i].Name,16,(const char*)sfname+4);
@@ -530,13 +535,15 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		file.Seek(offt,CFile::begin);
 		file.Read(m_BgList[i].pData,m_BgList[i].DataLen);
 	}
+	PrintLog("\n");
 
-	PrintLog("Read Gl\n");
+	PrintLog("Read Gl");
 	m_GlCount=gllist.GetCount();
 	m_GlList=new SecitemData[m_GlCount];
 	lpos=gllist.GetHeadPosition();
 	for(u32 i=0;i<m_GlCount;++i)
 	{
+		PrintLog("|");
 		sfname=gllist.GetNext(lpos);
 		ZeroMemory(m_GlList[i].Name,16);
 		strcpy_s((char*)m_GlList[i].Name,16,(const char*)sfname+4);
@@ -546,13 +553,15 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		file.Seek(offt,CFile::begin);
 		file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
 	}
+	PrintLog("\n");
 
-	PrintLog("Read Pl\n");
+	PrintLog("Read Pl");
 	m_PlCount=pllist.GetCount();
 	m_PlList=new SecitemData[m_PlCount];
 	lpos=pllist.GetHeadPosition();
 	for(u32 i=0;i<m_PlCount;++i)
 	{
+		PrintLog("|");
 		sfname=pllist.GetNext(lpos);
 		ZeroMemory(m_PlList[i].Name,16);
 		strcpy_s((char*)m_PlList[i].Name,16,(const char*)sfname+4);
@@ -562,6 +571,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		file.Seek(offt,CFile::begin);
 		file.Read(m_PlList[i].pData,m_PlList[i].DataLen);
 	}
+	PrintLog("\n");
 
 
 	m_Loaded=true;
