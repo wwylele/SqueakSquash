@@ -80,7 +80,7 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 
 	m_FileTree.MoveWindow(0,30,200,cy-35);
 	m_StaticDesc.MoveWindow(202,30,400,100);
-	m_StaticPrvw.MoveWindow(202,130,cx-220,cy-180);
+	m_StaticPrvw.MoveWindow(202,130,cx-220,cy-145);
 }
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -202,6 +202,22 @@ void CMainFrame::OnTbOpen()
 	}
 	file.Close();
 
+	/*FILE* of=fopen("nsbtx.txt","wt");
+	char strn[16];
+	u32 len;
+	for(u32 i=0;i<m_SqMapSet.GetBgCount();++i)
+	{
+		m_SqMapSet.GetBgName(i,strn);
+		fprintf(of,"\n%s:\t",strn);
+		for(u32 j=0;j<0xB0;++j)
+		{
+			fprintf(of,"%02X ",m_SqMapSet.GetBgBuffer(i,&len)[j]);
+		}
+		fprintf(of,"Len=%08X",len);
+	}
+
+	fclose(of);*/
+
 	FlushFileTree();
 }
 
@@ -258,6 +274,21 @@ void CMainFrame::FlushFileTree()
 void CMainFrame::PaintBgPrvw(u32 index)
 {
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
+	u32 Len;
+	u8 *p;
+	p=m_SqMapSet.GetBgBuffer(index,&Len);
+	
+	//if(Len==0x202A4)
+	Len&=0xF0000;
+	{
+		u8* pD=p+0xA4;
+		u16 *pP=(u16*)(p+Len+0xA4);
+		
+		for(u32 i=0;i<Len;++i)
+		{
+			m_DCPrvw.SetPixel(i%(Len>>8),i/(Len>>8),R5G5B5X1toR8G8B8X8(pP[pD[i]]));
+		}
+	}
 
 	m_StaticPrvw.RedrawWindow();
 }
