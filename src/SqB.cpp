@@ -84,14 +84,17 @@ u8& SqB::PalLine(u32 i)
 	return pPalLine[i];
 }
 u32 SqB::GetTileCount(){return TileCount;}
-void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y)
+void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip)
 {
 
-	u16 i=chardt&0x3FF;
+	
 	bool flipx=chardt&1024 ? true:false;
+	flipx=flipx&&flip;
 	bool flipy=chardt&2048 ? true:false;
+	flipy=flipy&&flip;
+	if(flip)chardt&=0x3FF;
 	for(int bx=0;bx<8;++bx)for(int by=0;by<8;++by)
 	{
-		pDC->SetPixel(x+bx,y+by,R5G5B5X1toR8G8B8X8(Pal[pTile[i].Get(flipx?7-bx:bx,flipy?7-by:by)|(pPalLine[i]<<4)]));
+		pDC->SetPixel(x+bx,y+by,R5G5B5X1toR8G8B8X8(Pal[pTile[chardt].Get(flipx?7-bx:bx,flipy?7-by:by)|(pPalLine[chardt]<<4)]));
 	}
 }

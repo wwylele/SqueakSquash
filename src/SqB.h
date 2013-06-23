@@ -23,7 +23,7 @@ public:
 	u8& PalLine(u32 i);
 	u32 GetTileCount();
 
-	void DrawTile(CDC* pDC,u16 chardt,int x,int y);
+	void DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip=false);
 private:
 	
 	u32 TileCount;
