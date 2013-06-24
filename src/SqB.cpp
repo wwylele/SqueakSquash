@@ -77,24 +77,28 @@ bool SqB::Load(const u8* psrc)
 }
 TILE& SqB::Tile(u32 i)
 {
+	ASSERT(IsLoaded());
 	return pTile[i];
 }
 u8& SqB::PalLine(u32 i)
 {
+	ASSERT(IsLoaded());
 	return pPalLine[i];
 }
-u32 SqB::GetTileCount(){return TileCount;}
-void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip)
+u32 SqB::GetTileCount(){ASSERT(IsLoaded());return TileCount;}
+void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip,bool tran)
 {
-
+	ASSERT(IsLoaded());
 	
 	bool flipx=chardt&1024 ? true:false;
 	flipx=flipx&&flip;
 	bool flipy=chardt&2048 ? true:false;
 	flipy=flipy&&flip;
 	if(flip)chardt&=0x3FF;
+	u8 pali;
 	for(int bx=0;bx<8;++bx)for(int by=0;by<8;++by)
 	{
-		pDC->SetPixel(x+bx,y+by,R5G5B5X1toR8G8B8X8(Pal[pTile[chardt].Get(flipx?7-bx:bx,flipy?7-by:by)|(pPalLine[chardt]<<4)]));
+		pali=pTile[chardt].Get(flipx?7-bx:bx,flipy?7-by:by);
+		if(pali||(!tran))pDC->SetPixel(x+bx,y+by,R5G5B5X1toR8G8B8X8(Pal[pali|(pPalLine[chardt]<<4)]));
 	}
 }

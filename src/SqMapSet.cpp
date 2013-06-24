@@ -830,9 +830,9 @@ void SqMapSet::GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8*
 	ASSERT(StageIdx<m_StageCount);
 	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
 	if(Bg)*Bg=m_StageList[StageIdx].StepList[StepIndex].BgId;
-	if(BGl)*Bg=m_StageList[StageIdx].StepList[StepIndex].BGlId;
-	if(FGl)*Bg=m_StageList[StageIdx].StepList[StepIndex].FGlId;
-	if(Pl)*Bg=m_StageList[StageIdx].StepList[StepIndex].PlId;
+	if(BGl)*BGl=m_StageList[StageIdx].StepList[StepIndex].BGlId;
+	if(FGl)*FGl=m_StageList[StageIdx].StepList[StepIndex].FGlId;
+	if(Pl)*Pl=m_StageList[StageIdx].StepList[StepIndex].PlId;
 }
 void SqMapSet::SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8  Pl)
 {
@@ -840,9 +840,9 @@ void SqMapSet::SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8 
 	ASSERT(StageIdx<m_StageCount);
 	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
 	if(Bg!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=Bg;
-	if(BGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=BGl;
-	if(FGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=FGl;
-	if(Pl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BgId=Pl;
+	if(BGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].BGlId=BGl;
+	if(FGl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].FGlId=FGl;
+	if(Pl!=0xFE)m_StageList[StageIdx].StepList[StepIndex].PlId=Pl;
 }
 u8 *SqMapSet::ResizeMxpBuffer(u32 StageIdx,u16 StepIndex,u32 Len)
 {

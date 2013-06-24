@@ -266,6 +266,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\SqMa.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqMa.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\SqMapSet.cpp"
 				>
 			</File>

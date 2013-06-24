@@ -10,6 +10,7 @@
 
 void OpenConsole();
 #define PrintLog printf
+void GetProductVersion(CString *pstr,UINT *pu);
 
 class CSqsqApp : public CWinApp
 {

@@ -3,9 +3,11 @@
 #pragma once
 
 #ifdef _UNICODE
-#define FORMAT_S2S L"%S"
+#define FORMAT_A2T L"%S"
+#define FORMAT_W2T L"%s"
 #else
-#define FORMAT_S2S "%s"
+#define FORMAT_A2T "%s"
+#define FORMAT_W2T "%S"
 #endif
 
 class CMainFrame : public CFrameWnd
@@ -33,14 +35,17 @@ protected:
 	CString m_StrFileName;
 	CDC m_DCPrvw;
 	CBitmap m_BmpPrvw;
-#define BMP_PRVW_W 512
-#define BMP_PRVW_H 512
+//#define BMP_PRVW_W 1024
+//#define BMP_PRVW_H 512
+	int BMP_PRVW_W,BMP_PRVW_H;
 
 	SqMapSet m_SqMapSet;
 public:
 	virtual ~CMainFrame();
 
 	void FlushFileTree();
+	void PaintRomPrvw();
+	void PaintStepPrvw(u32 Stage,u16 Step);
 	void PaintBgPrvw(u32 index);
 	void PaintGlPrvw(u32 index);
 	void PaintPlPrvw(u32 index);
