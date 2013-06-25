@@ -12,4 +12,4 @@ Change Log
 - A simple viewer of the maps,the backgrounds,the textures and the palettes of a ROM.
 
 
-* The "ROM" above means the ROM of the game "Kirby Squeak Squad"
+[The "ROM" above means the ROM of the game "Kirby Squeak Squad"]
