@@ -402,7 +402,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			sdtmp.StepCount=mxi.GetStepCount();
 			sdtmp.StepList=new StageData::StepData[sdtmp.StepCount];
 			//Read step data.
-			if(sdtmp.StepCount>100)throw;
+			ASSERT(sdtmp.StepCount<100);
 			for(u16 step=0;step<sdtmp.StepCount;++step)
 			{
 				PrintLog("|");
@@ -428,6 +428,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 				{
 					sdtmp.StepList[step].MxpLen=0;
 					sdtmp.StepList[step].pMxp=new u8[1];
+					PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)mxi.Step(step).Ma);
 				}
 
 				//Read doe;
@@ -530,7 +531,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_BgList[i].Name,16);
 		strcpy_s((char*)m_BgList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_BgList[i].DataLen);
-		if(!offt)throw;
+		ASSERT(offt);
 		m_BgList[i].pData=new u8[m_BgList[i].DataLen];
 		file.Seek(offt,CFile::begin);
 		file.Read(m_BgList[i].pData,m_BgList[i].DataLen);
@@ -548,10 +549,18 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_GlList[i].Name,16);
 		strcpy_s((char*)m_GlList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_GlList[i].DataLen);
-		if(!offt)throw;
-		m_GlList[i].pData=new u8[m_GlList[i].DataLen];
-		file.Seek(offt,CFile::begin);
-		file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
+		if(offt)
+		{
+			m_GlList[i].pData=new u8[m_GlList[i].DataLen];
+			file.Seek(offt,CFile::begin);
+			file.Read(m_GlList[i].pData,m_GlList[i].DataLen);
+		}
+		else
+		{
+			m_GlList[i].pData=CreateGl(&m_GlList[i].DataLen);
+			PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)sfname);
+
+		}
 	}
 	PrintLog("\n");
 
@@ -566,7 +575,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		ZeroMemory(m_PlList[i].Name,16);
 		strcpy_s((char*)m_PlList[i].Name,16,(const char*)sfname+4);
 		offt=Nitro::GetSubFileOffset(file,Nitro::GetSubFileId(file,sfname),&m_PlList[i].DataLen);
-		if(!offt)throw;
+		ASSERT(offt);
 		m_PlList[i].pData=new u8[m_PlList[i].DataLen];
 		file.Seek(offt,CFile::begin);
 		file.Read(m_PlList[i].pData,m_PlList[i].DataLen);
@@ -630,19 +639,20 @@ void SqMapSet::BgDef(CList<CStringA> &list)
 void SqMapSet::GlDef(CList<CStringA> &list)
 {
 	CStringA str;
-	for(int i=0;i<0x3E;++i)
+	for(int i=0;i<0x3E/*0x40*/;++i)//0x40 is the range of USA ROM,larger than JAP ROM
 	{
 		if(i!=0x1F){str.Format("map/%02x_b.bin",i);list.AddTail(str);}
 		if(i!=0x1F&&i!=3){str.Format("map/%02x_f.bin",i);list.AddTail(str);}
 		
 	}
 	list.AddTail("map/chainbomb.bin");
-	list.AddTail("map/front.bin");
+	//the files below are not existed in the USA ROM, so delete them
+	/*list.AddTail("map/front.bin");
 	list.AddTail("map/nudemap.bin");
 	list.AddTail("map/nudemap2.bin");
 	list.AddTail("map/nudemap3.bin");
 	list.AddTail("map/nudemap_b.bin");
-	list.AddTail("map/nudemap_f.bin");
+	list.AddTail("map/nudemap_f.bin");*/
 }
 void SqMapSet::PlDef(CList<CStringA> &list)
 {
@@ -887,4 +897,15 @@ void SqMapSet::DeleteStep(u32 StageIdx,u16 StepIndex)
 	//Delete the old list
 	delete[] m_StageList[StageIdx].StepList;
 	m_StageList[StageIdx].StepList=NewStepList;
+}
+
+u8* SqMapSet::CreateGl(u32* pGetLen)
+{
+	u8* pData=new u8[34320];
+	ZeroMemory(pData,34320);
+	((u32*)pData)[0]=0x10;
+	((u32*)pData)[1]=0x200;
+	((u32*)pData)[2]=0x8000;
+	((u32*)pData)[3]=0x400;
+	return pData;
 }

@@ -190,4 +190,6 @@ public:
 	//Bg/BGl/FGl/Pl =0xFE means not to set the value
 	void SetStepInfo(u32 StageIdx,u16 StepIndex,u8  Bg,u8  BGl,u8  FGl,u8  Pl);
 
+	static u8* CreateGl(u32* pGetLen);
+
 };
