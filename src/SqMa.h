@@ -35,14 +35,31 @@ public:
 	~SqMa(void);
 	
 	bool Load(const u8* psrc);
-	bool IsLoaded();
+	inline bool IsLoaded(){return pGrid!=0;}
 	void Unload();
 
-	GridData & Grid(u8 x,u8 y);
-	u8 GetW();
-	u8 GetH();
-	BLOCK_MAPPING & BlockMappingA(u16 i);
-	BLOCK_MAPPING & BlockMappingB(u16 i);
+	inline GridData & Grid(u8 x,u8 y)
+	{
+		ASSERT(IsLoaded());
+		ASSERT(x<w);
+		ASSERT(y<h);
+		return pGrid[x+y*w];
+	}
+	inline u8 GetW(){ASSERT(IsLoaded());return w;}
+	inline u8 GetH(){ASSERT(IsLoaded());return h;}
+	inline BLOCK_MAPPING& BlockMappingA(u16 i)
+	{
+		ASSERT(IsLoaded());
+		ASSERT(i<BlockMappingCountA);
+		return pBlockMappingA[i];
+	}
+	inline BLOCK_MAPPING& BlockMappingB(u16 i)
+	{
+		ASSERT(IsLoaded());
+		ASSERT(i<BlockMappingCountB);
+		return pBlockMappingB[i];
+	}
+
 private:
 	u8 w,h;
 	GridData *pGrid;

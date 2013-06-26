@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Nitro.h"
 
 class SqMapSet
 {
@@ -64,7 +64,7 @@ private:
 			[/*block_x*/4]
 			[/*pixel_y*/8]
 			[/*pixel_x/2*/4];//4 bit per pixel
-		u16 Title_icon_palette[16];
+		Nitro::Color15 Title_icon_palette[16];
 		u16 Title_text[6][128];//Unicode
 	};
 
@@ -133,13 +133,18 @@ public:
 	bool LoadFromRom(CFile &file);
 	bool MakeRom(CFile &file);
 	void Dump(FILE* pf);
-	bool IsLoaded();
+	inline bool IsLoaded(){return m_Loaded;}
 
 public:
 
 	u32 FindSecitem(u8 *GetSiSwitch,char* pname);//return 0xFFFFFFFF means not found
 
-	u32 GetSecitemCount(u8 SiSwitch);
+	inline u32 GetSecitemCount(u8 SiSwitch)
+	{
+		ASSERT(m_Loaded);
+		ASSERT(SiSwitch<3);
+		return m_SecitemCount[SiSwitch];
+	}
 	u8 *GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen);
 	u8 *ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len);
 	void GetSecitemName(u8 SiSwitch,u32 index,char *pname);
@@ -170,7 +175,7 @@ public:
 	#define DeletePl(index) DeleteSecitem(2,index)
 
 
-	u32 GetStageCount();
+	inline u32 GetStageCount(){ASSERT(m_Loaded);return m_StageCount;}
 	void GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx);
 
 	//Get the main index of a stage by level index and sub stage index
@@ -178,7 +183,12 @@ public:
 	u32 GetStageIndex(u8 levelidx,u8 substageidx);
 	//the StageIdx below means the main index of a stage, and you can get its value by GetStageIndex()
 
-	u16 GetStepCount(u32 StageIdx);
+	inline u16 GetStepCount(u32 StageIdx)
+	{
+		ASSERT(m_Loaded);
+		ASSERT(StageIdx<m_StageCount);
+		return m_StageList[StageIdx].StepCount;
+	}
 	u8 *GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
 	u8 *GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen=0);
 	u8 *ResizeMxpBuffer(u32 StageIdx,u16 StepIndex,u32 Len);

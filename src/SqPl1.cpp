@@ -26,7 +26,7 @@ void SqPl1::Unload()
 	}
 	ZeroMemory(PlLineList,sizeof(PlLineList));
 }
-bool SqPl1::IsLoaded(){return loaded;}
+
 bool SqPl1::Load(const u8* psrc)
 {
 	if(*(u16*)psrc!=1)return false;
@@ -49,17 +49,4 @@ bool SqPl1::Load(const u8* psrc)
 	}
 	loaded=true;
 	return true;
-}
-u8 SqPl1::GetFrameCount(u8 Line)
-{
-	ASSERT(loaded);
-	ASSERT(Line<16);
-	return PlLineList[Line].FrameCount;
-}
-SqPl1::PlFrame& SqPl1::GetFrame(u8 Line,u8 FrameIdx)
-{
-	ASSERT(loaded);
-	ASSERT(Line<16);
-	ASSERT(FrameIdx<PlLineList[Line].FrameCount);
-	return PlLineList[Line].FrameList[FrameIdx];
 }

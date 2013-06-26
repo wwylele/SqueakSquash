@@ -1,4 +1,5 @@
 #pragma once
+#include "Nitro.h"
 
 class SqPl1
 {
@@ -6,15 +7,26 @@ public:
 	SqPl1(void);
 	~SqPl1(void);
 	bool Load(const u8* psrc);
-	bool IsLoaded();
+	inline bool IsLoaded(){return loaded;}
 	void Unload();
 	struct PlFrame
 	{
 		u8 Time;
-		u16 Pl[16];
+		Nitro::Color15 Pl[16];
 	};
-	u8 GetFrameCount(u8 Line);
-	PlFrame& GetFrame(u8 Line,u8 FrameIdx);
+	inline u8 GetFrameCount(u8 Line)
+	{
+		ASSERT(loaded);
+		ASSERT(Line<16);
+		return PlLineList[Line].FrameCount;
+	}
+	inline PlFrame& GetFrame(u8 Line,u8 FrameIdx)
+	{
+		ASSERT(loaded);
+		ASSERT(Line<16);
+		ASSERT(FrameIdx<PlLineList[Line].FrameCount);
+		return PlLineList[Line].FrameList[FrameIdx];
+	}
 	
 private:
 	bool loaded;

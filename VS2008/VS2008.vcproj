@@ -242,6 +242,10 @@
 			Name="SqsqData"
 			>
 			<File
+				RelativePath="..\src\Nitro.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\NitroCompress.cpp"
 				>
 			</File>

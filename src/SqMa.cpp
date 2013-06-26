@@ -5,7 +5,7 @@
 SqMa::SqMa(void):pGrid(0),pBlockMappingA(0),pBlockMappingB(0){}
 
 SqMa::~SqMa(void){Unload();}
-bool SqMa::IsLoaded(){return pGrid!=0;}
+
 bool SqMa::Load(const u8* psrc)
 {
 
@@ -39,24 +39,5 @@ void SqMa::Unload()
 	if(pBlockMappingA)delete[] pBlockMappingA;
 	if(pBlockMappingB)delete[] pBlockMappingB;
 }
-SqMa::GridData& SqMa::Grid(u8 x,u8 y)
-{
-	ASSERT(IsLoaded());
-	ASSERT(x<w);
-	ASSERT(y<h);
-	return pGrid[x+y*w];
-}
-u8 SqMa::GetW(){ASSERT(IsLoaded());return w;}
-u8 SqMa::GetH(){ASSERT(IsLoaded());return h;}
-SqMa::BLOCK_MAPPING& SqMa::BlockMappingA(u16 i)
-{
-	ASSERT(IsLoaded());
-	ASSERT(i<BlockMappingCountA);
-	return pBlockMappingA[i];
-}
-SqMa::BLOCK_MAPPING& SqMa::BlockMappingB(u16 i)
-{
-	ASSERT(IsLoaded());
-	ASSERT(i<BlockMappingCountB);
-	return pBlockMappingB[i];
-}
+
+

@@ -357,7 +357,7 @@ void CMainFrame::PaintRomPrvw()
 		{
 			pixl=m_SqMapSet.m_RomInfo.Title_icon_pixel[by][bx][ty][tx/2]&0xF;
 		}
-		m_DCPrvw.SetPixel((bx<<3)+tx,(by<<3)+ty,R5G5B5X1toR8G8B8X8(m_SqMapSet.m_RomInfo.Title_icon_palette[pixl]));
+		m_DCPrvw.SetPixel((bx<<3)+tx,(by<<3)+ty,Nitro::Color15to24(m_SqMapSet.m_RomInfo.Title_icon_palette[pixl]));
 		
 	}
 	m_StaticPrvw.RedrawWindow();
@@ -374,18 +374,18 @@ void CMainFrame::PaintBgPrvw(u32 index)
 	Len&=0xF0000;
 
 	u8* pD=p+0xA4;
-	u16 *pP=(u16*)(p+Len+0xA4);
+	Nitro::Color15 *pP=(Nitro::Color15*)(p+Len+0xA4);
 	
 	for(u32 i=0;i<Len;++i)
 	{
-		m_DCPrvw.SetPixel(i%(Len>>8),i/(Len>>8),R5G5B5X1toR8G8B8X8(pP[pD[i]]));
+		m_DCPrvw.SetPixel(i%(Len>>8),i/(Len>>8),Nitro::Color15to24(pP[pD[i]]));
 	}
 	
 	for(u32 i=0;i<0x100;++i)
 	{
 		m_DCPrvw.FillRect((LPRECT)&CRect(
 			256+((i&15)<<4),256+((i>>4)<<4),256+((i&15)<<4)+16,256+((i>>4)<<4)+16),
-			&CBrush(R5G5B5X1toR8G8B8X8(pP[i])));
+			&CBrush(Nitro::Color15to24(pP[i])));
 	}
 
 	m_StaticPrvw.RedrawWindow();
@@ -404,7 +404,7 @@ void CMainFrame::PaintGlPrvw(u32 index)
 	{
 		m_DCPrvw.FillRect((LPRECT)&CRect(
 			(i&15)<<4,(i>>4)<<4,((i&15)<<4)+16,((i>>4)<<4)+16),
-			&CBrush(R5G5B5X1toR8G8B8X8(sqb.Pal[i])));
+			&CBrush(Nitro::Color15to24(sqb.Pal[i])));
 	}
 	m_StaticPrvw.RedrawWindow();
 }
@@ -419,7 +419,7 @@ void CMainFrame::PaintPlPrvw(u32 index)
 		{
 			m_DCPrvw.FillRect((LPRECT)&CRect(
 				(i&15)<<4,(i>>4)<<4,((i&15)<<4)+16,((i>>4)<<4)+16),
-				&CBrush(R5G5B5X1toR8G8B8X8(*((u16*)pPl+i+1))));
+				&CBrush(Nitro::Color15to24(*((Nitro::Color15*)pPl+i+1))));
 		}
 	}
 	else
@@ -430,7 +430,7 @@ void CMainFrame::PaintPlPrvw(u32 index)
 		{
 			m_DCPrvw.FillRect((LPRECT)&CRect(
 				i<<4,(line<<4)+frame,(i<<4)+16,(line<<4)+frame+1
-				),&CBrush(R5G5B5X1toR8G8B8X8(sqpl1.GetFrame(line,frame).Pl[i])));
+				),&CBrush(Nitro::Color15to24(sqpl1.GetFrame(line,frame).Pl[i])));
 				
 		}
 	}

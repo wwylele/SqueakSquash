@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "Main.h"
 #include "SqMapSet.h"
-#include "NitroRom.h"
-#include "NitroCompress.h"
 #include "SqMx.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -18,7 +16,7 @@ SqMapSet::~SqMapSet(void)
 {
 	Unload();
 }
-bool SqMapSet::IsLoaded(){return m_Loaded;}
+
 bool SqMapSet::Load(CFile &file)
 {
 	PrintLog("SqMapSet::Load>\n");
@@ -697,20 +695,8 @@ u32 SqMapSet::FindSecitem(u8 *GetSiSwitch,char* pname)
 	return 0xFFFFFFFF;
 
 }
-u32 SqMapSet::GetSecitemCount(u8 SiSwitch)
-{
-	ASSERT(m_Loaded);
-	ASSERT(SiSwitch<3);
-	return m_SecitemCount[SiSwitch];
-}
-u8* SqMapSet::GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen)
-{
-	ASSERT(m_Loaded);
-	ASSERT(SiSwitch<3);
-	ASSERT(index<m_SecitemCount[SiSwitch]);
-	if(pGetLen)*pGetLen=m_SecitemList[SiSwitch][index].DataLen;
-	return m_SecitemList[SiSwitch][index].pData;
-}
+
+
 u8* SqMapSet::ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len)
 {
 	ASSERT(m_Loaded);
@@ -721,20 +707,8 @@ u8* SqMapSet::ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len)
 	m_SecitemList[SiSwitch][index].DataLen=Len;
 	return m_SecitemList[SiSwitch][index].pData=new u8[Len];
 }
-void SqMapSet::GetSecitemName(u8 SiSwitch,u32 index,char *pname)
-{
-	ASSERT(m_Loaded);
-	ASSERT(SiSwitch<3);
-	ASSERT(index<m_SecitemCount[SiSwitch]);
-	memcpy(pname,m_SecitemList[SiSwitch][index].Name,16);
-}
-void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
-{
-	ASSERT(m_Loaded);
-	ASSERT(SiSwitch<3);
-	ASSERT(index<m_SecitemCount[SiSwitch]);
-	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
-}
+
+
 u8 *SqMapSet::NewSecitem(u8 SiSwitch,u32 Len,char *pname)
 {
 	ASSERT(m_Loaded);
@@ -791,14 +765,8 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 		}
 	}
 }
-u32 SqMapSet::GetStageCount(){ASSERT(m_Loaded);return m_StageCount;}
-void SqMapSet::GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx)
-{
-	ASSERT(m_Loaded);
-	ASSERT(StageIdx<m_StageCount);
-	if(plevelidx)*plevelidx=m_StageList[StageIdx].LevelIdx;
-	if(psubstageidx)*psubstageidx=m_StageList[StageIdx].StageIdx;
-}
+
+
 u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
 {
 	ASSERT(m_Loaded);
@@ -810,30 +778,10 @@ u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
 	return 0xFFFFFFFF;
 
 }
-u16 SqMapSet::GetStepCount(u32 StageIdx)
-{
-	ASSERT(m_Loaded);
-	ASSERT(StageIdx<m_StageCount);
-	return m_StageList[StageIdx].StepCount;
 
-}
 
-u8 *SqMapSet::GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
-{
-	ASSERT(m_Loaded);
-	ASSERT(StageIdx<m_StageCount);
-	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
-	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].MxpLen;
-	return m_StageList[StageIdx].StepList[StepIndex].pMxp;
-}
-u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
-{
-	ASSERT(m_Loaded);
-	ASSERT(StageIdx<m_StageCount);
-	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
-	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
-	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
-}
+
+
 void SqMapSet::GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl)
 {
 	ASSERT(m_Loaded);
@@ -908,4 +856,49 @@ u8* SqMapSet::CreateGl(u32* pGetLen)
 	((u32*)pData)[2]=0x8000;
 	((u32*)pData)[3]=0x400;
 	return pData;
+}
+u8 *SqMapSet::GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	if(pGetLen)*pGetLen=m_SecitemList[SiSwitch][index].DataLen;
+	return m_SecitemList[SiSwitch][index].pData;
+}
+void SqMapSet::GetSecitemName(u8 SiSwitch,u32 index,char *pname)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	memcpy(pname,m_SecitemList[SiSwitch][index].Name,16);
+}
+void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
+{
+	ASSERT(m_Loaded);
+	ASSERT(SiSwitch<3);
+	ASSERT(index<m_SecitemCount[SiSwitch]);
+	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
+}
+void SqMapSet::GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	if(plevelidx)*plevelidx=m_StageList[StageIdx].LevelIdx;
+	if(psubstageidx)*psubstageidx=m_StageList[StageIdx].StageIdx;
+}
+u8 *SqMapSet::GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].MxpLen;
+	return m_StageList[StageIdx].StepList[StepIndex].pMxp;
+}
+u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
+	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
 }
