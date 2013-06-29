@@ -902,3 +902,94 @@ u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
 	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
 	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
 }
+u32 SqMapSet::GetSubFileCount()
+{
+	ASSERT(m_Loaded);
+	u32 count;
+	count=m_BgCount+m_GlCount+m_PlCount+m_StageCount;
+	for(u32 i=0;i<m_StageCount;++i)count+=m_StageList[i].StepCount*2;
+	return count;
+}
+
+bool SqMapSet::MakeRom(CFile &file)
+{
+	ASSERT(m_Loaded);
+	file.Seek(0,CFile::begin);
+	struct NSFA
+	{
+		CStringA name;
+		u8* pData;
+		u32 DataLen;
+	} nsfa;
+	CList<NSFA> nsfal;
+
+	//Bg File
+	for(u32 i=0;i<m_BgCount;++i)
+	{
+		nsfa.name.Format("%X.b",i);
+		nsfa.pData=m_BgList[i].pData;
+		nsfa.DataLen=m_BgList[i].DataLen;
+		nsfal.AddTail(nsfa);
+	}
+
+	//Gl File
+	for(u32 i=0;i<m_GlCount;++i)
+	{
+		nsfa.name.Format("%X.g",i);
+		nsfa.pData=m_GlList[i].pData;
+		nsfa.DataLen=m_GlList[i].DataLen;
+		nsfal.AddTail(nsfa);
+	}
+
+	//Pl File
+	for(u32 i=0;i<m_PlCount;++i)
+	{
+		nsfa.name.Format("%X.p",i);
+		nsfa.pData=m_PlList[i].pData;
+		nsfa.DataLen=m_PlList[i].DataLen;
+		nsfal.AddTail(nsfa);
+	}
+
+	//Stage-Step File
+	SqMx sqmx;
+	u8** mxi=new u8*[m_StageCount];
+	u32* mxiLen=new u32[m_StageCount];
+	for(u32 i=0;i<m_StageCount;++i)
+	{
+		//Create a mxi file
+		//
+		//...
+		//sqmx.Make(&mxi[i],&mxiLen[i]);
+		nsfa.name.Format("a%ds%d.mxi",m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
+		nsfa.pData=mxi[i];
+		nsfa.DataLen=mxiLen[i];
+		nsfal.AddTail(nsfa);
+
+		//Step File
+		for(u16 j=0;j<m_StageList[i].StepCount;++j)
+		{
+			nsfa.name.Format("a%ds%ds%d.mxp",
+				m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
+			nsfa.pData=m_StageList[i].StepList[j].pMxp;
+			nsfa.DataLen=m_StageList[i].StepList[j].MxpLen;
+			nsfal.AddTail(nsfa);
+			nsfa.name.Format("a%ds%ds%d.doe",
+				m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
+			nsfa.pData=m_StageList[i].StepList[j].pDoe;
+			nsfa.DataLen=m_StageList[i].StepList[j].DoeLen;
+			nsfal.AddTail(nsfa);
+		}
+	}
+
+	//Import the file into the ROM
+	//
+	///...
+	//
+
+	//Clear the mxi file
+	for(u32 i=0;i<m_StageCount;++i)delete[] mxi[i];
+	delete[] mxi;
+	delete[] mxiLen;
+
+	return true;
+}

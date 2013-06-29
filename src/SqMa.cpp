@@ -2,7 +2,13 @@
 #include "SqMa.h"
 
 
-SqMa::SqMa(void):pGrid(0),pBlockMappingA(0),pBlockMappingB(0){}
+SqMa::SqMa(void):
+	pGrid(0),
+	pBlockMappingA(0),
+	pBlockMappingB(0),
+	pSection10(0),
+	pDoor(0)
+{}
 
 SqMa::~SqMa(void){Unload();}
 
@@ -14,6 +20,7 @@ bool SqMa::Load(const u8* psrc)
 	Unload();
 	w=*(psrc+head.SectionOff[0]);
 	h=*(psrc+head.SectionOff[0]+1);
+
 	pGrid=new GridData[w*h];
 	for(u16 i=0;i<w*h;++i)
 	{
@@ -24,12 +31,22 @@ bool SqMa::Load(const u8* psrc)
 		pGrid[i].det[1]=*((u32*)(psrc+head.SectionOff[7])+i);
 		pGrid[i].det[2]=*((u32*)(psrc+head.SectionOff[8])+i);
 	}
+
 	BlockMappingCountA=*(u16*)(psrc+head.SectionOff[1]);
 	BlockMappingCountB=*(u16*)(psrc+head.SectionOff[2]);
 	pBlockMappingA=new BLOCK_MAPPING[BlockMappingCountA];
 	pBlockMappingB=new BLOCK_MAPPING[BlockMappingCountB];
 	memcpy(pBlockMappingA,psrc+head.SectionOff[1]+2,sizeof(BLOCK_MAPPING)*BlockMappingCountA);
 	memcpy(pBlockMappingB,psrc+head.SectionOff[2]+2,sizeof(BLOCK_MAPPING)*BlockMappingCountB);
+
+	u16 Section10Len=*(u16*)(psrc+head.SectionOff[10]);
+	pSection10=new u8[Section10Len];
+	memcpy(pSection10,psrc+head.SectionOff[10],Section10Len);
+
+	DoorCount=*(u16*)(psrc+head.SectionOff[11]);
+	pDoor=new DOOR[DoorCount];
+	memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(DOOR));
+
 	return true;
 	
 }
@@ -38,6 +55,8 @@ void SqMa::Unload()
 	if(pGrid)delete[] pGrid;
 	if(pBlockMappingA)delete[] pBlockMappingA;
 	if(pBlockMappingB)delete[] pBlockMappingB;
+	if(pSection10)delete[] pSection10;
+	if(pDoor)delete[] pDoor;
 }
 
 

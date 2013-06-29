@@ -16,6 +16,10 @@ public:
 	{
 		u16 mapping[4];
 	};
+	struct DOOR
+	{
+		u8 dt[10];
+	};
 	
 	struct Header
 	{
@@ -59,11 +63,22 @@ public:
 		ASSERT(i<BlockMappingCountB);
 		return pBlockMappingB[i];
 	}
+	inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
+	inline u16 GetDoorCount(){ASSERT(IsLoaded());return DoorCount;}
+	inline DOOR &Door(u16 i)
+	{
+		ASSERT(IsLoaded());
+		ASSERT(i<DoorCount);
+		return pDoor[i];
+	}
 
 private:
 	u8 w,h;
 	GridData *pGrid;
 	u16 BlockMappingCountA,BlockMappingCountB;
 	BLOCK_MAPPING *pBlockMappingA,*pBlockMappingB;
+	u8 *pSection10;
+	u16 DoorCount;
+	DOOR* pDoor;
 	
 };

@@ -222,6 +222,8 @@ void CMainFrame::OnTbOpen()
 
 	fclose(of);*/
 
+	PrintLog("SubFileCount=%u\n",m_SqMapSet.GetSubFileCount());
+
 	FlushFileTree();
 }
 
@@ -295,9 +297,38 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	TempDC.SelectObject(&TempBmp);
 	ReleaseDC(pDC);
 
-	for(u8 y=0;y<sqma.GetH();++y)for(u8 x=0;x<sqma.GetW();++x)
+	//Section10
+	/*u8 *ps10=sqma.Section10();
+	u16 s10len=*(u16*)ps10;
+	PrintLog("S10:\n");
+	for(u16 i=2;i<s10len;++i)
 	{
+		PrintLog("%02X ",ps10[i]);
+		if(!((i-1)&15))PrintLog("\n");
+	}
+	PrintLog("\n");*/
+	
+	//Section11(Door)
+	PrintLog("S11:\n");
+	for(u16 i=0;i<sqma.GetDoorCount();++i)
+	{
+		for(u16 j=0;j<10;++j)
+		{
+			PrintLog("%02X ",sqma.Door(i).dt[j]);
+		}
+		PrintLog("\n");
+	}
+	PrintLog("\n");
 
+	//CStringA ofn;
+	//u8 l,s;
+	//m_SqMapSet.GetStageInfo(Stage,&l,&s);
+	//ofn.Format("a%ds%ds%d.det.txt",l,s,Step);
+	//FILE *pf=fopen(ofn,"wt");
+
+	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)
+	{
+		//fprintf(pf,"%08X|",sqma.Grid(x,y).det[1]);
 		bb.DrawTile(&TempDC,
 			sqma.BlockMappingB(sqma.Grid(x,y).gra[1]).mapping[0],
 			(x<<4)+0,(y<<4)+0,true,true);
@@ -322,7 +353,10 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 		fb.DrawTile(&TempDC,
 			sqma.BlockMappingA(sqma.Grid(x,y).gra[0]).mapping[3],
 			(x<<4)+8,(y<<4)+8,true,true);
-	}
+	}/*fprintf(pf,"\n");*/}
+
+	//fclose(pf);
+
 	int strtw,strth;
 	float q;
 	if(dw<=BMP_PRVW_W && dh<=BMP_PRVW_H){
