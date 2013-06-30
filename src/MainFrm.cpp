@@ -22,6 +22,7 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_OPEN,&CMainFrame::OnTbOpen)
 	ON_COMMAND(ID_SAVE,&CMainFrame::OnTbSave)
 	ON_COMMAND(ID_SAVEAS,&CMainFrame::OnTbSaveas)
+	ON_COMMAND(ID_MAKE,&CMainFrame::OnTbMake)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
 	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnNMClickFileTreeFile)
@@ -582,4 +583,12 @@ void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 		BitBlt(lpDrawItemStruct->hDC,0,0,BMP_PRVW_W,BMP_PRVW_H,m_DCPrvw.GetSafeHdc(),0,0,SRCCOPY);
 	}
 	//CFrameWnd::OnDrawItem(nIDCtl, lpDrawItemStruct);
+}
+
+
+void CMainFrame::OnTbMake()
+{
+	CFile file;
+	file.Open(_T("aaa.txt"),CFile::modeCreate|CFile::modeWrite);
+	m_SqMapSet.MakeRom(file);
 }

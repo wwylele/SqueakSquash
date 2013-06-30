@@ -61,6 +61,7 @@ public:
 	afx_msg void OnTbOpen();
 	afx_msg void OnTbSave();
 	afx_msg void OnTbSaveas();
+	afx_msg void OnTbMake();
 	afx_msg BOOL OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult);
 

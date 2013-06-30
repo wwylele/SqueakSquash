@@ -10,8 +10,10 @@ public:
 	~SqMx(void);
 
 	bool Load(const u8* psrc);
+	void Create(u16 StepCount);
 	bool IsLoaded();
 	void Unload();
+	void Make(u8 **ppData,u32 *pLen);
 	struct StepInfo
 	{
 		CStringA Ma;
@@ -19,10 +21,12 @@ public:
 		CStringA Bb;
 		CStringA De;
 		CStringA Pl;
-		CStringA Bg;
+		CStringA Bg;//"3D"
 	};
 	StepInfo &Step(u16 i);
 	u16 GetStepCount();
+	u8 LevelIndex;
+	u8 StageIndex;
 private:
 	u16 StepCount;
 	StepInfo *pStep;

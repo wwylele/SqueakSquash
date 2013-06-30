@@ -422,10 +422,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 						sdtmp.StepList[step].pMxp=buff;
 					}
 				}
-				else
+				else//Not find the mxp file,so create one.
 				{
-					sdtmp.StepList[step].MxpLen=0;
-					sdtmp.StepList[step].pMxp=new u8[1];
+					sdtmp.StepList[step].MxpLen=16;
+					sdtmp.StepList[step].pMxp=new u8[16];
+					ZeroMemory(sdtmp.StepList[step].pMxp,0);
 					PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)mxi.Step(step).Ma);
 				}
 
@@ -438,9 +439,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 					sdtmp.StepList[step].DoeLen=lent;
 					sdtmp.StepList[step].pDoe=buff;
 				}
-				else{
-					sdtmp.StepList[step].DoeLen=0;
-					sdtmp.StepList[step].pDoe=new u8[1];
+				else{//Not find the doe file,so create one.
+					sdtmp.StepList[step].DoeLen=16;
+					sdtmp.StepList[step].pDoe=new u8[16];
+					ZeroMemory(sdtmp.StepList[step].pDoe,0);
+					PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)mxi.Step(step).De);
 				}
 
 				strcpy_s(cbuff,20,mxi.Step(step).Bg);
@@ -913,6 +916,7 @@ u32 SqMapSet::GetSubFileCount()
 
 bool SqMapSet::MakeRom(CFile &file)
 {
+	PrintLog("SqMapSet::MakeRom>\n");
 	ASSERT(m_Loaded);
 	file.Seek(0,CFile::begin);
 	struct NSFA
@@ -923,7 +927,10 @@ bool SqMapSet::MakeRom(CFile &file)
 	} nsfa;
 	CList<NSFA> nsfal;
 
+	POSITION pos;
+
 	//Bg File
+	PrintLog("List Bg File\n");
 	for(u32 i=0;i<m_BgCount;++i)
 	{
 		nsfa.name.Format("%X.b",i);
@@ -933,6 +940,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	}
 
 	//Gl File
+	PrintLog("List Gl File\n");
 	for(u32 i=0;i<m_GlCount;++i)
 	{
 		nsfa.name.Format("%X.g",i);
@@ -942,6 +950,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	}
 
 	//Pl File
+	PrintLog("List Pl File\n");
 	for(u32 i=0;i<m_PlCount;++i)
 	{
 		nsfa.name.Format("%X.p",i);
@@ -951,34 +960,53 @@ bool SqMapSet::MakeRom(CFile &file)
 	}
 
 	//Stage-Step File
+	PrintLog("List .mxi.mxp.doe File\n");
 	SqMx sqmx;
 	u8** mxi=new u8*[m_StageCount];
-	u32* mxiLen=new u32[m_StageCount];
+	CList<u8*> mxpl;
+	u8* mxp;
+	u32 accum=0;
 	for(u32 i=0;i<m_StageCount;++i)
 	{
 		//Create a mxi file
-		//
-		//...
-		//sqmx.Make(&mxi[i],&mxiLen[i]);
-		nsfa.name.Format("a%ds%d.mxi",m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
-		nsfa.pData=mxi[i];
-		nsfa.DataLen=mxiLen[i];
-		nsfal.AddTail(nsfa);
+		sqmx.Create(m_StageList[i].StepCount);
 
 		//Step File
 		for(u16 j=0;j<m_StageList[i].StepCount;++j)
 		{
-			nsfa.name.Format("a%ds%ds%d.mxp",
-				m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
-			nsfa.pData=m_StageList[i].StepList[j].pMxp;
-			nsfa.DataLen=m_StageList[i].StepList[j].MxpLen;
+			//sqmx.Step(j).Ma.Format("a%ds%ds%d.mxp",
+			//	m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
+			sqmx.Step(j).Ma.Format("%X.m",accum);
+			nsfa.name=sqmx.Step(j).Ma;
+			mxp=new u8[m_StageList[i].StepList[j].MxpLen];
+			nsfa.pData=mxp;
+			nsfa.DataLen=Nitro::CompressRL(m_StageList[i].StepList[j].pMxp,m_StageList[i].StepList[j].MxpLen,mxp);
+			mxpl.AddTail(mxp);
 			nsfal.AddTail(nsfa);
-			nsfa.name.Format("a%ds%ds%d.doe",
-				m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
+
+			//sqmx.Step(j).De.Format("a%ds%ds%d.doe",
+			//	m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
+			sqmx.Step(j).De.Format("%X.d",accum);
+			nsfa.name=sqmx.Step(j).De;
 			nsfa.pData=m_StageList[i].StepList[j].pDoe;
 			nsfa.DataLen=m_StageList[i].StepList[j].DoeLen;
 			nsfal.AddTail(nsfa);
+
+			++accum;
+
+			sqmx.Step(j).Bg.Format("%X.b",m_StageList[i].StepList[j].BgId);
+			sqmx.Step(j).Bb.Format("%X.g",m_StageList[i].StepList[j].BGlId);
+			sqmx.Step(j).Fb.Format("%X.g",m_StageList[i].StepList[j].FGlId);
+			if(m_StageList[i].StepList[j].PlId!=0xFF)
+				sqmx.Step(j).Pl.Format("%X.p",m_StageList[i].StepList[j].PlId);
+			else
+				sqmx.Step(j).Pl="";
 		}
+
+		nsfa.name.Format("a%ds%d.mxi",m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
+		sqmx.Make(&mxi[i],&nsfa.DataLen);
+		nsfa.pData=mxi[i];
+		nsfal.AddTail(nsfa);
 	}
 
 	//Import the file into the ROM
@@ -986,10 +1014,10 @@ bool SqMapSet::MakeRom(CFile &file)
 	///...
 	//
 
-	//Clear the mxi file
+	//Clear the mxi,mxp file
 	for(u32 i=0;i<m_StageCount;++i)delete[] mxi[i];
 	delete[] mxi;
-	delete[] mxiLen;
+	for(pos=mxpl.GetHeadPosition();pos;)delete[] mxpl.GetNext(pos);
 
 	return true;
 }
