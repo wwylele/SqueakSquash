@@ -589,6 +589,8 @@ void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 void CMainFrame::OnTbMake()
 {
 	CFile file;
-	file.Open(_T("aaa.txt"),CFile::modeCreate|CFile::modeWrite);
+	::CopyFile(_T("D:\\Personal\\My Documents\\wwylele\\GitHub\\SqSqTestProj\\kirbysqsq-jp.nds")
+		,_T("kirbynew.nds"),FALSE);
+	file.Open(_T("kirbynew.nds"),CFile::modeReadWrite);
 	m_SqMapSet.MakeRom(file);
 }

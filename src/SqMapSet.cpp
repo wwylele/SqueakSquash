@@ -918,7 +918,18 @@ bool SqMapSet::MakeRom(CFile &file)
 {
 	PrintLog("SqMapSet::MakeRom>\n");
 	ASSERT(m_Loaded);
+
+	//Verify the ROM
 	file.Seek(0,CFile::begin);
+	Nitro::ROM_HEADER rom_header;
+	file.Seek(0,CFile::begin);
+	file.Read(&rom_header,sizeof(rom_header));
+	if(strcmp("KIRBY DRO",(char*)rom_header.name))
+	{
+		PrintLog("Wrong ROM Magic\n");
+		return false;
+	}
+
 	struct NSFA
 	{
 		CStringA name;
@@ -933,7 +944,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	PrintLog("List Bg File\n");
 	for(u32 i=0;i<m_BgCount;++i)
 	{
-		nsfa.name.Format("%X.b",i);
+		nsfa.name.Format("%Xzb",i);
 		nsfa.pData=m_BgList[i].pData;
 		nsfa.DataLen=m_BgList[i].DataLen;
 		nsfal.AddTail(nsfa);
@@ -943,7 +954,8 @@ bool SqMapSet::MakeRom(CFile &file)
 	PrintLog("List Gl File\n");
 	for(u32 i=0;i<m_GlCount;++i)
 	{
-		nsfa.name.Format("%X.g",i);
+		if(!strcmp((char*)m_GlList[i].Name,"chainbomb.bin"))nsfa.name="chainbomb.bin";
+		else nsfa.name.Format("%Xzg",i);
 		nsfa.pData=m_GlList[i].pData;
 		nsfa.DataLen=m_GlList[i].DataLen;
 		nsfal.AddTail(nsfa);
@@ -953,7 +965,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	PrintLog("List Pl File\n");
 	for(u32 i=0;i<m_PlCount;++i)
 	{
-		nsfa.name.Format("%X.p",i);
+		nsfa.name.Format("%Xzp",i);
 		nsfa.pData=m_PlList[i].pData;
 		nsfa.DataLen=m_PlList[i].DataLen;
 		nsfal.AddTail(nsfa);
@@ -970,14 +982,17 @@ bool SqMapSet::MakeRom(CFile &file)
 	{
 		//Create a mxi file
 		sqmx.Create(m_StageList[i].StepCount);
+		sqmx.LevelIndex=m_StageList[i].LevelIdx;
+		sqmx.StageIndex=m_StageList[i].StageIdx;
 
 		//Step File
 		for(u16 j=0;j<m_StageList[i].StepCount;++j)
 		{
 			//sqmx.Step(j).Ma.Format("a%ds%ds%d.mxp",
 			//	m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
-			sqmx.Step(j).Ma.Format("%X.m",accum);
+			sqmx.Step(j).Ma.Format("%Xzm",accum);
 			nsfa.name=sqmx.Step(j).Ma;
+			sqmx.Step(j).Ma="map/"+sqmx.Step(j).Ma;
 			mxp=new u8[m_StageList[i].StepList[j].MxpLen];
 			nsfa.pData=mxp;
 			nsfa.DataLen=Nitro::CompressRL(m_StageList[i].StepList[j].pMxp,m_StageList[i].StepList[j].MxpLen,mxp);
@@ -986,19 +1001,20 @@ bool SqMapSet::MakeRom(CFile &file)
 
 			//sqmx.Step(j).De.Format("a%ds%ds%d.doe",
 			//	m_StageList[i].LevelIdx,m_StageList[i].StageIdx,j+1);
-			sqmx.Step(j).De.Format("%X.d",accum);
+			sqmx.Step(j).De.Format("%Xzd",accum);
 			nsfa.name=sqmx.Step(j).De;
+			sqmx.Step(j).De="map/"+sqmx.Step(j).De;
 			nsfa.pData=m_StageList[i].StepList[j].pDoe;
 			nsfa.DataLen=m_StageList[i].StepList[j].DoeLen;
 			nsfal.AddTail(nsfa);
 
 			++accum;
 
-			sqmx.Step(j).Bg.Format("%X.b",m_StageList[i].StepList[j].BgId);
-			sqmx.Step(j).Bb.Format("%X.g",m_StageList[i].StepList[j].BGlId);
-			sqmx.Step(j).Fb.Format("%X.g",m_StageList[i].StepList[j].FGlId);
+			sqmx.Step(j).Bg.Format("map/%Xzb",m_StageList[i].StepList[j].BgId);
+			sqmx.Step(j).Bb.Format("map/%Xzg",m_StageList[i].StepList[j].BGlId);
+			sqmx.Step(j).Fb.Format("map/%Xzg",m_StageList[i].StepList[j].FGlId);
 			if(m_StageList[i].StepList[j].PlId!=0xFF)
-				sqmx.Step(j).Pl.Format("%X.p",m_StageList[i].StepList[j].PlId);
+				sqmx.Step(j).Pl.Format("map/%Xzp",m_StageList[i].StepList[j].PlId);
 			else
 				sqmx.Step(j).Pl="";
 		}
@@ -1010,9 +1026,74 @@ bool SqMapSet::MakeRom(CFile &file)
 	}
 
 	//Import the file into the ROM
-	//
-	///...
-	//
+
+	u32 fpos_fnt,fpos_fat,fpos_fim;
+	Nitro::ROM_FNTDir fntdir;
+	file.Seek(rom_header.fnt_offset,CFile::begin);//Seek to the Root folder
+	file.Read(&fntdir,sizeof(fntdir));
+	file.Seek(rom_header.fnt_offset+fntdir.entry_start,CFile::begin);//Seek to the Root Dir
+	//search for the folder "map"
+	u8 fh;
+	u8 name_length;
+	char namebuf[4]={0};
+	u16 folderid;
+	while(1)
+	{
+		file.Read(&fh,1);
+		name_length=fh&0x7F;
+		if(name_length==3)//Length"map"==3
+		{
+			file.Read(namebuf,3);
+			if(!strcmp(_strlwr(namebuf),"map"))
+			{
+				file.Read(&folderid,2);
+				break;
+			}	
+		}
+		else
+		{
+			file.Seek(name_length,CFile::current);
+		}
+		if(fh&0x80)file.Seek(2,CFile::current);
+	}
+	//Seek to the map Dir
+	file.Seek(rom_header.fnt_offset+(folderid-0xF000)*sizeof(fntdir),CFile::begin);
+	file.Read(&fntdir,sizeof(fntdir));
+	fpos_fnt=rom_header.fnt_offset+fntdir.entry_start;
+	fpos_fat=rom_header.fat_offset+fntdir.entry_file_id*sizeof(Nitro::ROM_FAT);
+	//Search for the data end
+	file.Seek(-1,CFile::end);
+	u8 ff=0xFF;
+	//while(ff==0xFF){file.Read(&ff,1);file.Seek(-2,CFile::current);}
+	fpos_fim=((u32)file.GetPosition()+0x18)&0xFFFFFFF0;
+	//Import all file
+	Nitro::ROM_FAT fat;
+	for(pos=nsfal.GetHeadPosition();pos;)
+	{
+		nsfa=nsfal.GetNext(pos);
+		//FNT
+		file.Seek(fpos_fnt,CFile::begin);
+		fh=nsfa.name.GetLength();
+		file.Write(&fh,1);
+		file.Write((const char*)nsfa.name,fh);
+		fpos_fnt=(u32)file.GetPosition();
+		//FAT
+		file.Seek(fpos_fat,CFile::begin);
+		fat.top=fpos_fim;
+		fat.bottom=fpos_fim+nsfa.DataLen;
+		file.Write(&fat,sizeof(fat));
+		fpos_fat=(u32)file.GetPosition();
+		//FIM
+		file.Seek(fpos_fim,CFile::begin);
+		file.Write(nsfa.pData,nsfa.DataLen);
+		fpos_fim=((u32)file.GetPosition()+0x10)&0xFFFFFFF0;
+	}
+	//FNT end
+	file.Seek(fpos_fnt,CFile::begin);
+	fh=0;
+	file.Write(&fh,1);
+
+
 
 	//Clear the mxi,mxp file
 	for(u32 i=0;i<m_StageCount;++i)delete[] mxi[i];

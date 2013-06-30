@@ -103,6 +103,7 @@ void SqMx::Make(u8 **ppData,u32 *pLen)
 
 	*pLen=(u32)file.GetLength();
 	*ppData=new u8[*pLen];
+	file.Seek(0,CFile::begin);
 	file.Read(*ppData,*pLen);
 	file.Close();
 	CFile::Remove(TMP_FILE);
