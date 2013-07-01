@@ -1,11 +1,10 @@
-// D:\Personal\My Documents\wwylele\GitHub\SqueakSquash\src\DlgMakeRom.cpp : 实现文件
-//
+
 
 #include "stdafx.h"
 #include "D:\Personal\My Documents\wwylele\GitHub\SqueakSquash\src\DlgMakeRom.h"
 
 
-// CDlgMakeRom 对话框
+
 
 IMPLEMENT_DYNAMIC(CDlgMakeRom, CDialog)
 
