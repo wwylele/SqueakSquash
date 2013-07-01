@@ -2,8 +2,9 @@
 
 #include "stdafx.h"
 #include "Main.h"
-
 #include "MainFrm.h"
+#include "DlgMakeRom.h"
+
 #include "SqB.h"
 #include "SqPl1.h"
 #include "SqMa.h"
@@ -168,7 +169,7 @@ void CMainFrame::OnTbOpen()
 	TCHAR strPath[1000]={0};
 	//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
 	
-	CFileDialog filedlg(TRUE,0,0,OFN_HIDEREADONLY,
+	CFileDialog filedlg(TRUE,0,0,0,
 		_T("All supported files|*.sqms;*.nds;*.bin|")
 		_T("SqueakSquashMapSet(*.sqms)|*.sqms|")
 		_T("Nitro ROM(*.nds;*.bin)|*.nds;*.bin|")
@@ -588,9 +589,13 @@ void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 
 void CMainFrame::OnTbMake()
 {
-	CFile file;
+	if(!m_SqMapSet.IsLoaded())return;
+	/*CFile file;
 	::CopyFile(_T("D:\\Personal\\My Documents\\wwylele\\GitHub\\SqSqTestProj\\kirbysqsq-jp.nds")
 		,_T("kirbynew.nds"),FALSE);
 	file.Open(_T("kirbynew.nds"),CFile::modeReadWrite);
-	m_SqMapSet.MakeRom(file);
+	m_SqMapSet.MakeRom(file);*/
+	CDlgMakeRom dlg;
+	dlg.m_pMapSet=&m_SqMapSet;
+	dlg.DoModal();
 }

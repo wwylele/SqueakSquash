@@ -68,6 +68,7 @@ END
 //
 
 IDR_MAINFRAME           BITMAP                  "Maintoolbar.bmp"
+IDB_MAKEROM             BITMAP                  "MAKEROM.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -115,6 +116,46 @@ END
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "Main.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_MAKEROM DIALOGEX 0, 0, 228, 132
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Make ROM"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    PUSHBUTTON      "Close",IDOK,168,114,60,18
+    CONTROL         107,IDC_STATIC,"Static",SS_BITMAP,0,0,89,110
+    EDITTEXT        IDC_EDIT_MR_ROM,90,0,138,18,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT_MR_NEWROM,90,72,138,18,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_MR_ROM,90,18,138,18
+    PUSHBUTTON      "...",IDC_BUTTON_MR_NEWROM,90,90,138,18
+    EDITTEXT        IDC_EDIT_MR_MAPSET,90,36,138,18,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "Make ROM!",IDC_BUTTON_MAKEROM,0,114,168,18
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_MAKEROM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 125
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

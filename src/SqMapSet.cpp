@@ -1027,6 +1027,7 @@ bool SqMapSet::MakeRom(CFile &file)
 
 	//Import the file into the ROM
 
+	PrintLog("Search for FNT,FAT entry\n");
 	u32 fpos_fnt,fpos_fat,fpos_fim;
 	Nitro::ROM_FNTDir fntdir;
 	file.Seek(rom_header.fnt_offset,CFile::begin);//Seek to the Root folder
@@ -1062,11 +1063,20 @@ bool SqMapSet::MakeRom(CFile &file)
 	fpos_fnt=rom_header.fnt_offset+fntdir.entry_start;
 	fpos_fat=rom_header.fat_offset+fntdir.entry_file_id*sizeof(Nitro::ROM_FAT);
 	//Search for the data end
-	file.Seek(-1,CFile::end);
-	u8 ff=0xFF;
-	//while(ff==0xFF){file.Read(&ff,1);file.Seek(-2,CFile::current);}
-	fpos_fim=((u32)file.GetPosition()+0x18)&0xFFFFFFF0;
-	//Import all file
+	PrintLog("Search for FIM entry\n");
+	u32 flen=(u32)file.GetLength();
+	u8* psrc,*psrce;
+	{
+		HANDLE hFileMapping=CreateFileMapping(file.m_hFile,0,PAGE_READONLY,0,0,0);
+		psrc=(u8*)MapViewOfFile(hFileMapping,FILE_MAP_READ,0,0,0);
+		psrce=psrc+flen-1;
+		for(;*psrce==0xFF;--psrce);
+		UnmapViewOfFile(psrc);
+		CloseHandle(hFileMapping);
+	}
+	fpos_fim=(psrce-psrc+0x18)&0xFFFFFFF0;
+	//Write all file in
+	PrintLog("Write all file in\n");
 	Nitro::ROM_FAT fat;
 	for(pos=nsfal.GetHeadPosition();pos;)
 	{
@@ -1093,12 +1103,22 @@ bool SqMapSet::MakeRom(CFile &file)
 	fh=0;
 	file.Write(&fh,1);
 
-
+	//ROM Header;
+	const char* rom_rename="KIRBYWWYLELE";
+	memcpy(rom_header.name,rom_rename,12);
+	memcpy(&rom_header.id,&m_RomInfo.Rom_id,10);
+	++rom_header.device_caps;
+	file.Seek(0,CFile::begin);
+	file.Write(&rom_header,sizeof(rom_header));
+	file.Seek(rom_header.title_offset,CFile::begin);
+	file.Write(&m_RomInfo.Title_icon_pixel,512+32+1536);
 
 	//Clear the mxi,mxp file
+	PrintLog("Clear\n");
 	for(u32 i=0;i<m_StageCount;++i)delete[] mxi[i];
 	delete[] mxi;
 	for(pos=mxpl.GetHeadPosition();pos;)delete[] mxpl.GetNext(pos);
 
+	PrintLog("SqMapSet::MakeRom done\n");
 	return true;
 }

@@ -188,6 +188,14 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\src\DlgMakeRom.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgMakeRom.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Main.cpp"
 				>
 			</File>
@@ -231,6 +239,10 @@
 			</File>
 			<File
 				RelativePath=".\Maintoolbar.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\MAKEROM.bmp"
 				>
 			</File>
 			<File
@@ -304,5 +316,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="VS2008.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
