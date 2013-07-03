@@ -1109,7 +1109,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	memcpy(&rom_header.id,&m_RomInfo.Rom_id,10);
 	++rom_header.device_caps;
 	file.Seek(0,CFile::begin);
-	file.Write(&rom_header,sizeof(rom_header));
+	//file.Write(&rom_header,sizeof(rom_header));
 	file.Seek(rom_header.title_offset,CFile::begin);
 	file.Write(&m_RomInfo.Title_icon_pixel,512+32+1536);
 

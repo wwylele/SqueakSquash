@@ -227,6 +227,14 @@
 				RelativePath="..\src\targetver.h"
 				>
 			</File>
+			<File
+				RelativePath="..\src\WndWait.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\WndWait.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="res"

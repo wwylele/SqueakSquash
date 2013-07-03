@@ -2,7 +2,7 @@
 #include "afxwin.h"
 #include "Main.h"
 #include "SqMapSet.h"
-
+#include "WndWait.h"
 
 class CDlgMakeRom : public CDialog
 {

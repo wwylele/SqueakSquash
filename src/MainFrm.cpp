@@ -4,6 +4,7 @@
 #include "Main.h"
 #include "MainFrm.h"
 #include "DlgMakeRom.h"
+#include "WndWait.h"
 
 #include "SqB.h"
 #include "SqPl1.h"
@@ -77,6 +78,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
 
 	ReleaseDC(pDC);
+
+	CWndWait::InitWndWait();
 	
 	return 0;
 }
@@ -190,14 +193,17 @@ void CMainFrame::OnTbOpen()
 		MessageBox(_T("The program is going to load the file as a ROM.\n")
 			_T("It may take about a minute and the window will not response to your request when loading."),
 			_T("SqueakSquash"));
+		CWndWait::ShowWndWait();
 		if(!m_SqMapSet.LoadFromRom(file))
 		{
+			CWndWait::HideWndWait();
 			MessageBox(_T("Fail to load the file"),_T("Error"),MB_ICONERROR);
 			file.Close();
 			return;
 		}
 		else
 		{
+			CWndWait::HideWndWait();
 			MessageBox(_T("Success to load from ROM"),_T("SqueakSquash"));
 			m_StrFileName=_T("");
 		}
@@ -590,11 +596,6 @@ void CMainFrame::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 void CMainFrame::OnTbMake()
 {
 	if(!m_SqMapSet.IsLoaded())return;
-	/*CFile file;
-	::CopyFile(_T("D:\\Personal\\My Documents\\wwylele\\GitHub\\SqSqTestProj\\kirbysqsq-jp.nds")
-		,_T("kirbynew.nds"),FALSE);
-	file.Open(_T("kirbynew.nds"),CFile::modeReadWrite);
-	m_SqMapSet.MakeRom(file);*/
 	CDlgMakeRom dlg;
 	dlg.m_pMapSet=&m_SqMapSet;
 	dlg.DoModal();

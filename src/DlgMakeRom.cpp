@@ -81,13 +81,16 @@ void CDlgMakeRom::OnMakeRom()
 			_T("Fail"),MB_ICONERROR);
 		return;
 	}
+	CWndWait::ShowWndWait();
 	if(!m_pMapSet->MakeRom(file))
 	{
+		CWndWait::HideWndWait();
 		MessageBox(_T("Fail to Make ROM."),
 			_T("Fail"),MB_ICONERROR);
 		file.Close();
 		return;
 	}
+	CWndWait::HideWndWait();
 	MessageBox(_T("Success to Make ROM"),_T("Success"),0);
 	file.Close();
 }
