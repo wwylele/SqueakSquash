@@ -1,6 +1,7 @@
 #pragma once
 #include "Nitro.h"
 
+#define ROM_LOCK_FILE "wwylele_LOCK"
 class SqMapSet
 {
 private:

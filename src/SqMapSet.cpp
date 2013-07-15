@@ -358,6 +358,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		PrintLog("Wrong ROM Magic\n");
 		return false;
 	}
+	if(Nitro::GetSubFileId(file,"map/"ROM_LOCK_FILE)!=0xFFFF)
+	{
+		PrintLog("Detected ROM_LOCK_FILE\n");
+		return false;
+	}
 
 	Unload();
 
@@ -648,12 +653,13 @@ void SqMapSet::GlDef(CList<CStringA> &list)
 	}
 	list.AddTail("map/chainbomb.bin");
 	//the files below are not existed in the USA ROM, so delete them
-	/*list.AddTail("map/front.bin");
+	//Undo
+	list.AddTail("map/front.bin");
 	list.AddTail("map/nudemap.bin");
 	list.AddTail("map/nudemap2.bin");
 	list.AddTail("map/nudemap3.bin");
 	list.AddTail("map/nudemap_b.bin");
-	list.AddTail("map/nudemap_f.bin");*/
+	list.AddTail("map/nudemap_f.bin");
 }
 void SqMapSet::PlDef(CList<CStringA> &list)
 {
@@ -929,6 +935,11 @@ bool SqMapSet::MakeRom(CFile &file)
 		PrintLog("Wrong ROM Magic\n");
 		return false;
 	}
+	if(Nitro::GetSubFileId(file,"map/"ROM_LOCK_FILE)!=0xFFFF)
+	{
+		PrintLog("Detected ROM_LOCK_FILE\n");
+		return false;
+	}
 
 	struct NSFA
 	{
@@ -939,6 +950,14 @@ bool SqMapSet::MakeRom(CFile &file)
 	CList<NSFA> nsfal;
 
 	POSITION pos;
+
+	//ROM_LOCK_FILE
+	PrintLog("List ROM_LOCK_FILE File\n");
+	u8 dummydata_ROM_LOCK_FILE=0;
+	nsfa.name=ROM_LOCK_FILE;
+	nsfa.pData=&dummydata_ROM_LOCK_FILE;
+	nsfa.DataLen=1;
+	nsfal.AddTail(nsfa);
 
 	//Bg File
 	PrintLog("List Bg File\n");
@@ -1104,14 +1123,17 @@ bool SqMapSet::MakeRom(CFile &file)
 	file.Write(&fh,1);
 
 	//ROM Header;
+	//Unfinished because of the CRC calculation
+	/*
 	const char* rom_rename="KIRBYWWYLELE";
 	memcpy(rom_header.name,rom_rename,12);
 	memcpy(&rom_header.id,&m_RomInfo.Rom_id,10);
 	++rom_header.device_caps;
 	file.Seek(0,CFile::begin);
-	//file.Write(&rom_header,sizeof(rom_header));
+	file.Write(&rom_header,sizeof(rom_header));
 	file.Seek(rom_header.title_offset,CFile::begin);
 	file.Write(&m_RomInfo.Title_icon_pixel,512+32+1536);
+	*/
 
 	//Clear the mxi,mxp file
 	PrintLog("Clear\n");
