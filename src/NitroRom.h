@@ -1,6 +1,7 @@
 namespace Nitro
 {
 	//The structures below are adapted from the document in NitroSDK
+	//
 	struct ROM_HEADER
 	{
 
@@ -47,17 +48,32 @@ namespace Nitro
 		//	ARM7
 		u32	sub_ovt_offset;	// Top ROM offset
 		u32	sub_ovt_size;	// Table size 
+
 		//
-		// 0x0060 - 0x04000 Reserved region for system use
+		// 0x0060 - 0x04000 Reserved region for system B
 		//
 		//u8	reserved_B[16];
 		u32 reserved_B1;
 		u32 reserved_B2;
 		u32 title_offset;
-		u32 reserved_B4;
+		u16 CRC16;
+		u16 ROMtimeout;
 
+		/*
 		u8	reserved_C[4*1024-0x70];	// Reserved for system C
 		u8	reserved_D[12*1024];	// Reserved for system D
+		*/
+		u32     ARM9unk;
+		u32     ARM7unk;
+       
+		u8      unknown3c[8];
+		u32     ROMSize;
+		u32     HeaderSize;
+		u8      unknown5[56];
+		u8      logo[156];
+		u16     logoCRC16;
+		u16     headerCRC16;
+		u8      reserved[160];
 		
 	};
 	struct ROM_FNTDir
@@ -73,7 +89,9 @@ namespace Nitro
 	};	
 	struct ROM_TITLE
 	{
-		u8 unk_A[32];
+		u16 version; //Version  (0001h)
+		u16 crc16; //CRC16 across entries 020h..83Fh
+		u8 reserved[0x1C]; //Reserved (zero-filled)
 		u8 icon_pixel
 			[/*block_y*/4]
 			[/*block_x*/4]
