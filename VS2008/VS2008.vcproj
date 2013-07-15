@@ -262,6 +262,10 @@
 			Name="SqsqData"
 			>
 			<File
+				RelativePath="..\src\clrred_MedianCut.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Nitro.h"
 				>
 			</File>
