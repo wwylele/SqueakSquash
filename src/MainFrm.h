@@ -40,6 +40,9 @@ protected:
 	int BMP_PRVW_W,BMP_PRVW_H;
 
 	SqMapSet m_SqMapSet;
+
+	CBitmap m_BmpDet0;
+	//CBrush m_BrushDet0;
 public:
 	virtual ~CMainFrame();
 
@@ -62,6 +65,7 @@ public:
 	afx_msg void OnTbSave();
 	afx_msg void OnTbSaveas();
 	afx_msg void OnTbMake();
+	afx_msg void OnTbTestGame();
 	afx_msg BOOL OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult);
 

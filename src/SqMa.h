@@ -18,7 +18,11 @@ public:
 	};
 	struct DOOR
 	{
-		u8 dt[10];
+		u8 dt[4];
+		u16 x;
+		u16 y;
+		u8 dst_step;
+		u8 unk;
 	};
 	
 	struct Header

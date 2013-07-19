@@ -242,6 +242,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
+				RelativePath=".\bitmap1.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.ico"
 				>
 			</File>
@@ -263,6 +267,14 @@
 			>
 			<File
 				RelativePath="..\src\clrred_MedianCut.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Det.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Det.h"
 				>
 			</File>
 			<File

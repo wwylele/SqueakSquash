@@ -9,7 +9,9 @@
 #include "SqB.h"
 #include "SqPl1.h"
 #include "SqMa.h"
+#include "Det.h"
 
+#include <list>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,14 +27,91 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_SAVE,&CMainFrame::OnTbSave)
 	ON_COMMAND(ID_SAVEAS,&CMainFrame::OnTbSaveas)
 	ON_COMMAND(ID_MAKE,&CMainFrame::OnTbMake)
+	ON_COMMAND(ID_TESTGAME,&CMainFrame::OnTbTestGame)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
 	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnNMClickFileTreeFile)
 	ON_WM_DRAWITEM()
 END_MESSAGE_MAP()
 
+void CMainFrame::OnTbTestGame()
+{
+	PrintLog("OnTbTestGame==>\n");
+	if(!m_SqMapSet.IsLoaded())return;
+	SqMa sqma;
+	u32 mxpl;
+	u8* mxpb;
+	//bool used[256];
+	//for(int i=0;i<256;++i)used[i]=false;
+	CList<u32> list;
+	u32 i;
+	u16 j;
+	u8 l,s;
 
 
+	for(i=0;i<m_SqMapSet.GetStageCount();++i)
+	{
+		m_SqMapSet.GetStageInfo(i,&l,&s);
+		for(j=0;j<m_SqMapSet.GetStepCount(i);++j)
+		{
+			mxpb=m_SqMapSet.GetMxpBuffer(i,j,&mxpl);
+			if(mxpl!=16)
+			{
+#define DWORD_SR(a) ((u32)((a)>>16)|((a)<<16))
+				sqma.Load(mxpb);
+				for(u8 x=0;x<sqma.GetW();++x)for(u8 y=0;y<sqma.GetH();++y)
+				{
+					//if(!list.Find(DWORD_SR(sqma.Grid(x,y).det[0])))
+					//	list.AddHead(DWORD_SR(sqma.Grid(x,y).det[0]));
+					//ASSERT(GetDet0Name(sqma.Grid(x,y).det[0]));
+				}
+				
+				
+				
+				/*for(u16 x=0;x<sqma.GetDoorCount();++x)
+				{
+					u32 d1,d2;
+					if(sqma.Door(x).dt[0]!=x){
+						printf("[Lv%d-St%d]-%d\n",l,s,j);
+						printf("[%02d]%02X,%02X,%02X,%02X,%04X,%04X,%02X,%02X\n",x,
+						sqma.Door(x).dt[0],sqma.Door(x).dt[1],sqma.Door(x).dt[2],sqma.Door(x).dt[3],
+						sqma.Door(x).x,sqma.Door(x).y,sqma.Door(x).dst_step,sqma.Door(x).unk);
+					}
+				}*/
+			}
+		}
+	}
+
+
+outside:
+	/*CStringA ofn;
+	u8 l,s;
+	m_SqMapSet.GetStageInfo(i,&l,&s);
+	ofn.Format("a%ds%ds%d.det.txt",l,s,j);
+	PrintLog(ofn);
+	FILE *pf=fopen(ofn,"wt");
+	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)
+	{
+		fprintf(pf,"%08X|",sqma.Grid(x,y).det[1]);
+	}fprintf(pf,"\n");}
+	fclose(pf);*/
+
+	/*POSITION pos=list.GetHeadPosition();
+	std::list<u32> alist;
+	while(pos)
+	{
+		alist.push_front(list.GetNext(pos));
+	}
+	alist.sort();
+	std::list<u32>::iterator iter=alist.begin();
+	FILE *pf=fopen("det0.txt","wt");
+	for(;iter!=alist.end();iter++)
+	{
+		fprintf(pf,"%04X %04X\n",*iter>>16,*iter & 0xFFFF);
+	}
+	fclose(pf);*/
+	PrintLog("<==OnTbTestGame\n");
+}
 
 
 CMainFrame::CMainFrame()
@@ -78,6 +157,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
 
 	ReleaseDC(pDC);
+
+	m_BmpDet0.LoadBitmap(IDB_DET0);
+	//m_BrushDet0.CreatePatternBrush(&m_BmpDet0);
 
 	CWndWait::InitWndWait();
 	
@@ -298,11 +380,13 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 
 	u16 dw=sqma.GetW()<<4,dh=sqma.GetH()<<4;
 
-	CDC TempDC,*pDC=GetDC();
+	CDC TempDC,*pDC=GetDC(),det0DC;
 	CBitmap TempBmp;
 	TempDC.CreateCompatibleDC(pDC);
 	TempBmp.CreateCompatibleBitmap(pDC,dw,dh);
 	TempDC.SelectObject(&TempBmp);
+	det0DC.CreateCompatibleDC(pDC);
+	det0DC.SelectObject(&m_BmpDet0);
 	ReleaseDC(pDC);
 
 	//Section10
@@ -334,7 +418,16 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	//ofn.Format("a%ds%ds%d.det.txt",l,s,Step);
 	//FILE *pf=fopen(ofn,"wt");
 
-	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)
+
+	const DetDesc* ddsc;
+	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)if(sqma.Grid(x,y).det[0])
+	{
+		ddsc=GetDet0Desc(sqma.Grid(x,y).det[0]);
+		//TempDC.SetBrushOrg((ddsc->tex_x<<4),(ddsc->tex_y<<4));
+		//TempDC.FillRect((LPRECT)&CRect((x<<4),(y<<4),(x<<4)+16,(y<<4)+16),&m_BrushDet0);
+		TempDC.BitBlt((x<<4),(y<<4),16,16,&det0DC,(ddsc->tex_x<<4),(ddsc->tex_y<<4),SRCCOPY);
+	}
+	else
 	{
 		//fprintf(pf,"%08X|",sqma.Grid(x,y).det[1]);
 		bb.DrawTile(&TempDC,
@@ -382,6 +475,7 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	m_DCPrvw.StretchBlt(0,0,strtw,strth,&TempDC,0,0,dw,dh,SRCCOPY);
 	TempDC.DeleteDC();
 	TempBmp.DeleteObject();
+	det0DC.DeleteDC();
 	m_StaticPrvw.RedrawWindow();
 }
 void CMainFrame::PaintRomPrvw()
