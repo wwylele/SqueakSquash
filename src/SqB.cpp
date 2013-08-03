@@ -38,7 +38,22 @@ bool SqB::Load(const u8* psrc)
 	return true;
 }
 
-
+u32 SqB::MakeLen()
+{
+	ASSERT(IsLoaded());
+	return 0x10+0x200+TileCount*sizeof(Nitro::Tile)+TileCount;
+}
+void SqB::Make(u8* pdst)
+{
+	ASSERT(IsLoaded());
+	*(u32*)pdst=0x10;pdst+=4;
+	*(u32*)pdst=0x200;pdst+=4;
+	*(u32*)pdst=sizeof(Nitro::Tile)*TileCount;pdst+=4;
+	*(u32*)pdst=TileCount;pdst+=4;
+	memcpy(pdst,Pal,0x200);pdst+=0x200;
+	memcpy(pdst,pTile,sizeof(Nitro::Tile)*TileCount);pdst+=sizeof(Nitro::Tile)*TileCount;
+	memcpy(pdst,pPalLine,TileCount);
+}
 
 void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip,bool tran)
 {

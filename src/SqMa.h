@@ -7,6 +7,7 @@ private:
 	{
 		u16 gra[3];
 		u32 det[3];
+		u8 t;
 	};
 	enum{
 		MAGIC=0x614D,//"Ma"
@@ -23,6 +24,16 @@ public:
 		u16 y;
 		u8 dst_step;
 		u8 unk;
+	};
+	struct S12HEADER
+	{
+		u8 x[6];
+		u8 t[4];
+		u16 GraScriptCount;
+	};
+	struct GRA_SCRIPT
+	{
+		u8 x[12];
 	};
 	
 	struct Header
@@ -45,6 +56,8 @@ public:
 	bool Load(const u8* psrc);
 	inline bool IsLoaded(){return pGrid!=0;}
 	void Unload();
+	u32 MakeLen();
+	void Make(u8* pdst);
 
 	inline GridData & Grid(u8 x,u8 y)
 	{
@@ -76,13 +89,34 @@ public:
 		return pDoor[i];
 	}
 
+
+	//Section12
+	S12HEADER S12Header;
+	GRA_SCRIPT* pGraScript;
+
+	//Section9
+	u32 s9exl;
+	const u8* s9exp;
+
 private:
+	//Section 0
 	u8 w,h;
+
+	//Section 3~8
 	GridData *pGrid;
+
+	//Section 1~2
 	u16 BlockMappingCountA,BlockMappingCountB;
 	BLOCK_MAPPING *pBlockMappingA,*pBlockMappingB;
+
+	//Section 10
 	u8 *pSection10;
+
+	//Section 11
 	u16 DoorCount;
 	DOOR* pDoor;
+
+	
+
 	
 };

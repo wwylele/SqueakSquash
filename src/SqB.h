@@ -11,6 +11,8 @@ public:
 	bool Load(const u8* psrc);
 	inline bool IsLoaded(){return pTile!=0;}
 	void Unload();
+	u32 MakeLen();
+	void Make(u8* pdst);
 
 	Nitro::Color15 Pal[0x100];
 	inline Nitro::Tile& Tile(u32 i){ASSERT(IsLoaded());return pTile[i];}

@@ -687,7 +687,7 @@ void SqMapSet::PlDef(CList<CStringA> &list)
 
 
 }
-u32 SqMapSet::FindSecitem(u8 *GetSiSwitch,char* pname)
+u32 SqMapSet::FindSecitem(u8 *GetSiSwitch,const char* pname)
 {
 	ASSERT(m_Loaded);
 	for(u8 ss=0;ss<3;++ss)
@@ -752,7 +752,7 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 	delete[] m_SecitemList[SiSwitch];
 	m_SecitemList[SiSwitch]=NewSecitemList;
 
-	//Adapt the step info
+	//Adjust the step info
 	for(u32 i=0;i<m_StageCount;++i)for(u16 j=0;j<m_StageList[i].StepCount;++j)
 	{
 		if(SiSwitch==0)
@@ -769,7 +769,9 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 		}
 		else if(SiSwitch==2)
 		{
-			if(m_StageList[i].StepList[j].PlId>=index)m_StageList[i].StepList[j].PlId=0xFF;
+			if(m_StageList[i].StepList[j].PlId==index
+				|| m_StageList[i].StepList[j].PlId==0xFF)m_StageList[i].StepList[j].PlId=0xFF;
+			else if(m_StageList[i].StepList[j].PlId>index)--m_StageList[i].StepList[j].PlId;
 				
 		}
 	}
@@ -881,7 +883,7 @@ void SqMapSet::GetSecitemName(u8 SiSwitch,u32 index,char *pname)
 	ASSERT(index<m_SecitemCount[SiSwitch]);
 	memcpy(pname,m_SecitemList[SiSwitch][index].Name,16);
 }
-void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,char *pname)
+void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,const char *pname)
 {
 	ASSERT(m_Loaded);
 	ASSERT(SiSwitch<3);

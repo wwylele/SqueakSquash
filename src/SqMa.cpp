@@ -7,7 +7,8 @@ SqMa::SqMa(void):
 	pBlockMappingA(0),
 	pBlockMappingB(0),
 	pSection10(0),
-	pDoor(0)
+	pDoor(0),
+	pGraScript(0)
 {}
 
 SqMa::~SqMa(void){Unload();}
@@ -30,6 +31,7 @@ bool SqMa::Load(const u8* psrc)
 		pGrid[i].det[0]=*((u32*)(psrc+head.SectionOff[6])+i);
 		pGrid[i].det[1]=*((u32*)(psrc+head.SectionOff[7])+i);
 		pGrid[i].det[2]=*((u32*)(psrc+head.SectionOff[8])+i);
+		pGrid[i].t=*(psrc+head.SectionOff[9]+i);
 	}
 
 	BlockMappingCountA=*(u16*)(psrc+head.SectionOff[1]);
@@ -47,16 +49,27 @@ bool SqMa::Load(const u8* psrc)
 	pDoor=new DOOR[DoorCount];
 	memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(DOOR));
 
+	//t_pSection12=psrc+head.SectionOff[12];
+	memcpy(&S12Header,psrc+head.SectionOff[12],sizeof(S12Header));
+	pGraScript=new GRA_SCRIPT[S12Header.GraScriptCount];
+	memcpy(pGraScript,psrc+head.SectionOff[12]+sizeof(S12Header),
+		sizeof(GRA_SCRIPT)*S12Header.GraScriptCount);
+
+	//S9
+	s9exl=head.SectionOff[10]-head.SectionOff[9]-w*h;
+	s9exp=psrc+head.SectionOff[9]+w*h;
+
 	return true;
 	
 }
 void SqMa::Unload()
 {
-	if(pGrid)delete[] pGrid;
-	if(pBlockMappingA)delete[] pBlockMappingA;
-	if(pBlockMappingB)delete[] pBlockMappingB;
-	if(pSection10)delete[] pSection10;
-	if(pDoor)delete[] pDoor;
+	if(pGrid){delete[] pGrid;pGrid=0;}
+	if(pBlockMappingA){delete[] pBlockMappingA;pBlockMappingA=0;}
+	if(pBlockMappingB){delete[] pBlockMappingB;pBlockMappingB=0;}
+	if(pSection10){delete[] pSection10;pSection10=0;}
+	if(pDoor){delete[] pDoor;pDoor=0;}
+	if(pGraScript){delete[] pGraScript;pGraScript=0;}
 }
 
 

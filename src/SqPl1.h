@@ -9,6 +9,8 @@ public:
 	bool Load(const u8* psrc);
 	inline bool IsLoaded(){return loaded;}
 	void Unload();
+	u32 MakeLen();
+	void Make(u8* pdst);
 	struct PlFrame
 	{
 		u8 Time;

@@ -138,7 +138,7 @@ public:
 
 public:
 
-	u32 FindSecitem(u8 *GetSiSwitch,char* pname);//return 0xFFFFFFFF means not found
+	u32 FindSecitem(u8 *GetSiSwitch,const char* pname);//return 0xFFFFFFFF means not found
 
 	inline u32 GetSecitemCount(u8 SiSwitch)
 	{
@@ -149,7 +149,7 @@ public:
 	u8 *GetSecitemBuffer(u8 SiSwitch,u32 index,u32* pGetLen);
 	u8 *ResizeSecitemBuffer(u8 SiSwitch,u32 index,u32 Len);
 	void GetSecitemName(u8 SiSwitch,u32 index,char *pname);
-	void SetSecitemName(u8 SiSwitch,u32 index,char *pname);
+	void SetSecitemName(u8 SiSwitch,u32 index,const char *pname);
 	u8 *NewSecitem(u8 SiSwitch,u32 Len,char *pname);
 	void DeleteSecitem(u8 SiSwitch,u32 index);
 
