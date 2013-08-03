@@ -2,13 +2,7 @@
 
 #pragma once
 
-#ifdef _UNICODE
-#define FORMAT_A2T L"%S"
-#define FORMAT_W2T L"%s"
-#else
-#define FORMAT_A2T "%s"
-#define FORMAT_W2T "%S"
-#endif
+
 
 class CMainFrame : public CFrameWnd
 {
@@ -27,10 +21,27 @@ protected:
 #define ID_FILETREE 20001
 	HTREEITEM m_htiRom,m_htiMap,m_htiBg,m_htiGl,m_htiPl;
 	CArray<HTREEITEM> m_htiMapi;
+	enum {
+		FTS_0,FTS_ROM,FTS_STAGE,FTS_STEP,FTS_BG,FTS_GL,FTS_PL,
+		FTS_MAP,FTS_BGF,FTS_GLF,FTS_PLF
+	}m_TreeSelCls;
+	u32 m_TreeSelIdx,m_TreeSelIdx2;
 
 	CStatic m_StaticDesc;
 	CStatic m_StaticPrvw;
 #define ID_STATIC_PRVW 20002
+
+	CButton m_ButtonOption;
+#define ID_BUTTON_OPTION 20003
+#define ID_BOPTM_ROM		30001
+#define ID_BOPTM_ADDSTEP	30002
+#define ID_BOPTM_EDIT		30003
+#define ID_BOPTM_CHANGELIB	30004
+#define ID_BOPTM_TEXMAP		30005
+#define ID_BOPTM_DELETE		30006
+#define ID_BOPTM_MOVE		30007
+#define ID_BOPTM_COPY		30008
+#define ID_BOPTM_RENAME		30009
 
 	CString m_StrFileName;
 	CDC m_DCPrvw;
@@ -66,11 +77,15 @@ public:
 	afx_msg void OnTbSaveas();
 	afx_msg void OnTbMake();
 	afx_msg void OnTbTestGame();
+	afx_msg void OnButtonOption();
 	afx_msg BOOL OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult);
-
-
+	afx_msg void OnFileTreeSelChanged(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
+
+	afx_msg void OnBoptmRename();
+	afx_msg void OnBoptmChangeLib();
+	afx_msg void OnBoptmDelete();
+	afx_msg void OnBoptmCopy();
 };
 
 

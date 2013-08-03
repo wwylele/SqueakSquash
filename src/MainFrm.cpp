@@ -4,11 +4,14 @@
 #include "Main.h"
 #include "MainFrm.h"
 #include "DlgMakeRom.h"
+#include "DlgRename.h"
+#include "DlgChangeLib.h"
 #include "WndWait.h"
 
 #include "SqB.h"
 #include "SqPl1.h"
 #include "SqMa.h"
+#include "SqDe.h"
 #include "Det.h"
 
 #include <list>
@@ -28,10 +31,15 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_SAVEAS,&CMainFrame::OnTbSaveas)
 	ON_COMMAND(ID_MAKE,&CMainFrame::OnTbMake)
 	ON_COMMAND(ID_TESTGAME,&CMainFrame::OnTbTestGame)
+	ON_COMMAND(ID_BUTTON_OPTION,&CMainFrame::OnButtonOption)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
-	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnNMClickFileTreeFile)
+	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnFileTreeSelChanged)
 	ON_WM_DRAWITEM()
+	ON_COMMAND(ID_BOPTM_RENAME,&CMainFrame::OnBoptmRename)
+	ON_COMMAND(ID_BOPTM_CHANGELIB,&CMainFrame::OnBoptmChangeLib)
+	ON_COMMAND(ID_BOPTM_DELETE,&CMainFrame::OnBoptmDelete)
+	ON_COMMAND(ID_BOPTM_COPY,&CMainFrame::OnBoptmCopy)
 END_MESSAGE_MAP()
 
 void CMainFrame::OnTbTestGame()
@@ -48,7 +56,6 @@ void CMainFrame::OnTbTestGame()
 	u16 j;
 	u8 l,s;
 
-
 	for(i=0;i<m_SqMapSet.GetStageCount();++i)
 	{
 		m_SqMapSet.GetStageInfo(i,&l,&s);
@@ -59,12 +66,26 @@ void CMainFrame::OnTbTestGame()
 			{
 #define DWORD_SR(a) ((u32)((a)>>16)|((a)<<16))
 				sqma.Load(mxpb);
-				for(u8 x=0;x<sqma.GetW();++x)for(u8 y=0;y<sqma.GetH();++y)
+
+				//PrintLog("%d\n",sqma.s9exl);
+				/*if(sqma.Section10()[2]==0)
+				{
+					for(int k=2;k<10;++k)
+					if(sqma.Section10()[k])printf("[Lv%d-St%d]-%d\n",l,s,j);
+				}*/
+				//else if(sqma.Section10()[2]!=8)printf("[Lv%d-St%d]-%d\n",l,s,j);
+				if(sqma.Section10()[2]==8)printf("%d-%d-%02d:%02X %02X %02X %02X %02X %02X %02X %02X\n",l,s,j,
+					sqma.Section10()[2],sqma.Section10()[3],sqma.Section10()[4],sqma.Section10()[5],
+					sqma.Section10()[6],sqma.Section10()[7],sqma.Section10()[8],sqma.Section10()[9]);
+
+				
+
+				/*for(u8 x=0;x<sqma.GetW();++x)for(u8 y=0;y<sqma.GetH();++y)
 				{
 					//if(!list.Find(DWORD_SR(sqma.Grid(x,y).det[0])))
 					//	list.AddHead(DWORD_SR(sqma.Grid(x,y).det[0]));
 					//ASSERT(GetDet0Name(sqma.Grid(x,y).det[0]));
-				}
+				}*/
 				
 				
 				
@@ -146,6 +167,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_StaticDesc.Create(_T("..."),WS_CHILD|WS_VISIBLE,ZeroRect,this);
 	m_StaticPrvw.Create(_T(""),WS_CHILD|WS_VISIBLE|SS_OWNERDRAW,ZeroRect,this,ID_STATIC_PRVW);
+	m_ButtonOption.Create(_T("Option >>>"),WS_CHILD|WS_VISIBLE,ZeroRect,this,ID_BUTTON_OPTION);
 
 	BMP_PRVW_W=GetSystemMetrics(SM_CXFULLSCREEN)-250;
 	BMP_PRVW_H=GetSystemMetrics(SM_CYFULLSCREEN)-100;
@@ -161,6 +183,9 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_BmpDet0.LoadBitmap(IDB_DET0);
 	//m_BrushDet0.CreatePatternBrush(&m_BmpDet0);
 
+	m_TreeSelCls=FTS_0;
+	m_TreeSelIdx=0;
+
 	CWndWait::InitWndWait();
 	
 	return 0;
@@ -170,8 +195,9 @@ void CMainFrame::OnSize(UINT nType, int cx, int cy)
 	CFrameWnd::OnSize(nType, cx, cy);
 
 	m_FileTree.MoveWindow(0,30,200,cy-35);
-	m_StaticDesc.MoveWindow(202,30,600,40);
-	m_StaticPrvw.MoveWindow(202,70,cx-220,cy-80);
+	m_StaticDesc.MoveWindow(202,60,600,40);
+	m_StaticPrvw.MoveWindow(202,100,cx-220,cy-110);
+	m_ButtonOption.MoveWindow(202,30,80,30);
 }
 BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 {
@@ -364,6 +390,9 @@ void CMainFrame::FlushFileTree()
 		str.Format(FORMAT_A2T,strn);
 		m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,i,m_htiPl,TVI_LAST);
 	}
+
+	m_TreeSelCls=FTS_0;
+	m_TreeSelIdx=0;
 }
 
 void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
@@ -371,10 +400,15 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
 
 	SqMa sqma;
+	SqDe sqde;
 	SqB bb,fb;
 	u8 bbi,fbi;
+	u32 malen;
+	u8* maend;
 	m_SqMapSet.GetStepInfo(Stage,Step,0,&bbi,&fbi,0);
-	sqma.Load(m_SqMapSet.GetMxpBuffer(Stage,Step));
+	sqma.Load(m_SqMapSet.GetMxpBuffer(Stage,Step,&malen));
+	maend=m_SqMapSet.GetMxpBuffer(Stage,Step)+malen;
+	sqde.Load(m_SqMapSet.GetDoeBuffer(Stage,Step));
 	bb.Load(m_SqMapSet.GetGlBuffer(bbi,0));
 	fb.Load(m_SqMapSet.GetGlBuffer(fbi,0));
 
@@ -389,8 +423,23 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	det0DC.SelectObject(&m_BmpDet0);
 	ReleaseDC(pDC);
 
+	
+
+	//S9
+	/*PrintLog("S9");
+	for(u32 i=0;i<sqma.s9exl;++i)
+	{
+		if(i%16==0)PrintLog("\n");
+		PrintLog("%02X ",sqma.s9exp[1]);
+		
+	}
+	PrintLog("\n");
+	PrintLog("Len=%d\n",sqma.s9exl);
+
+	*/
+
 	//Section10
-	/*u8 *ps10=sqma.Section10();
+	u8 *ps10=sqma.Section10();
 	u16 s10len=*(u16*)ps10;
 	PrintLog("S10:\n");
 	for(u16 i=2;i<s10len;++i)
@@ -398,15 +447,38 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 		PrintLog("%02X ",ps10[i]);
 		if(!((i-1)&15))PrintLog("\n");
 	}
-	PrintLog("\n");*/
+	PrintLog("\n");
+
 	
 	//Section11(Door)
-	PrintLog("S11:\n");
+	/*PrintLog("S11:\n");
 	for(u16 i=0;i<sqma.GetDoorCount();++i)
 	{
 		for(u16 j=0;j<10;++j)
 		{
 			PrintLog("%02X ",sqma.Door(i).dt[j]);
+		}
+		PrintLog("\n");
+	}
+	PrintLog("\n");*/
+
+	/*//Section12
+	PrintLog("S12:\nHeader:");
+	PrintLog("%02X ",sqma.S12Header.x[0]);
+	PrintLog("%02X ",sqma.S12Header.x[1]);
+	PrintLog("%02X ",sqma.S12Header.x[2]);
+	PrintLog("%02X ",sqma.S12Header.x[3]);
+	PrintLog("%02X ",sqma.S12Header.x[4]);
+	PrintLog("%02X ",sqma.S12Header.x[5]);
+	PrintLog("%02X ",sqma.S12Header.t[0]);
+	PrintLog("%02X ",sqma.S12Header.t[1]);
+	PrintLog("%02X ",sqma.S12Header.t[2]);
+	PrintLog("%02X ",sqma.S12Header.t[3]);
+	PrintLog("\nData:\n");
+	for(u16 i=0;i<sqma.S12Header.GraScriptCount;++i)
+	{
+		for(int j=0;j<12;j++){
+			PrintLog("%02X ",sqma.pGraScript[i].x[j]);
 		}
 		PrintLog("\n");
 	}
@@ -416,8 +488,9 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 	//u8 l,s;
 	//m_SqMapSet.GetStageInfo(Stage,&l,&s);
 	//ofn.Format("a%ds%ds%d.det.txt",l,s,Step);
-	//FILE *pf=fopen(ofn,"wt");
+	//FILE *pf=fopen(ofn,"wt");*/
 
+	PrintLog("Size=%d * %d\n",sqma.GetW(),sqma.GetH());
 
 	const DetDesc* ddsc;
 	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)if(sqma.Grid(x,y).det[0])
@@ -454,9 +527,27 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 		fb.DrawTile(&TempDC,
 			sqma.BlockMappingA(sqma.Grid(x,y).gra[0]).mapping[3],
 			(x<<4)+8,(y<<4)+8,true,true);
+		if(sqma.Grid(x,y).t)
+		{
+			CString str;
+			str.Format(_T("%02X"),sqma.Grid(x,y).t);
+			TempDC.TextOut(x<<4,y<<4,str,2);
+		}
 	}/*fprintf(pf,"\n");*/}
 
 	//fclose(pf);
+
+	for(u16 i=0;i<sqde.GetFoeCount();++i)
+	{
+		TempDC.Rectangle(sqde.Foe(i).x-8,sqde.Foe(i).y-8,
+			sqde.Foe(i).x+8,sqde.Foe(i).y+8);
+	}
+	for(u16 i=0;i<sqde.GetSupCount();++i)
+	{
+		TempDC.Ellipse(sqde.Sup(i).x-8,sqde.Sup(i).y-8,
+			sqde.Sup(i).x+8,sqde.Sup(i).y+8);
+	}
+
 
 	int strtw,strth;
 	float q;
@@ -588,7 +679,7 @@ BOOL CMainFrame::OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult=0;
 	return TRUE;
 }
-void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
+void CMainFrame::OnFileTreeSelChanged(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	char strn[16];
 	if(m_SqMapSet.IsLoaded())
@@ -605,26 +696,36 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 				m_SqMapSet.m_RomInfo.Title_text[0]);
 			m_StaticDesc.SetWindowText(str);
 			PaintRomPrvw();
+			m_TreeSelCls=FTS_ROM;
+			m_TreeSelIdx=0;
 		}
 		else if(tic==m_htiMap)
 		{
 			str.Format(_T("Stage Count:%u"),m_SqMapSet.GetStageCount());
 			m_StaticDesc.SetWindowText(str);
+			m_TreeSelCls=FTS_MAP;
+			m_TreeSelIdx=0;
 		}
 		else if(tic==m_htiBg)
 		{
 			str.Format(_T("Background Count:%u"),m_SqMapSet.GetBgCount());
 			m_StaticDesc.SetWindowText(str);
+			m_TreeSelCls=FTS_BGF;
+			m_TreeSelIdx=0;
 		}
 		else if(tic==m_htiGl)
 		{
 			str.Format(_T("Texture Count:%u"),m_SqMapSet.GetGlCount());
 			m_StaticDesc.SetWindowText(str);
+			m_TreeSelCls=FTS_GLF;
+			m_TreeSelIdx=0;
 		}
 		else if(tic==m_htiPl)
 		{
 			str.Format(_T("Palatte Count:%u"),m_SqMapSet.GetPlCount());
 			m_StaticDesc.SetWindowText(str);
+			m_TreeSelCls=FTS_PLF;
+			m_TreeSelIdx=0;
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiMap)
 		{
@@ -634,6 +735,8 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 			m_SqMapSet.GetStageInfo(i,&l,&s);
 			str.Format(_T("Level%u:Stage%u\nStep Count:%u"),l,s,m_SqMapSet.GetStepCount(i));
 			m_StaticDesc.SetWindowText(str);
+			m_TreeSelCls=FTS_STAGE;
+			m_TreeSelIdx=i;
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiBg)
 		{
@@ -641,6 +744,8 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 			str.Format(_T("Background:")FORMAT_A2T,strn);
 			m_StaticDesc.SetWindowText(str);
 			PaintBgPrvw(m_FileTree.GetItemData(tic));
+			m_TreeSelCls=FTS_BG;
+			m_TreeSelIdx=m_FileTree.GetItemData(tic);
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiGl)
 		{
@@ -648,6 +753,8 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 			str.Format(_T("Texture:")FORMAT_A2T,strn);
 			m_StaticDesc.SetWindowText(str);
 			PaintGlPrvw(m_FileTree.GetItemData(tic));
+			m_TreeSelCls=FTS_GL;
+			m_TreeSelIdx=m_FileTree.GetItemData(tic);
 		}
 		else if(m_FileTree.GetParentItem(tic)==m_htiPl)
 		{
@@ -656,6 +763,8 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 				_T("\nType=%d"),strn,*m_SqMapSet.GetPlBuffer(m_FileTree.GetItemData(tic),0));
 			m_StaticDesc.SetWindowText(str);
 			PaintPlPrvw(m_FileTree.GetItemData(tic));
+			m_TreeSelCls=FTS_PL;
+			m_TreeSelIdx=m_FileTree.GetItemData(tic);
 		}
 		else
 		{
@@ -666,14 +775,17 @@ void CMainFrame::OnNMClickFileTreeFile(NMHDR *pNMHDR, LRESULT *pResult)
 				u8 l,s;
 				for(;i<(u32)m_htiMapi.GetCount();++i)if(m_htiMapi[i]==htiStage)break;
 				m_SqMapSet.GetStageInfo(i,&l,&s);
-				str.Format(_T("Level%u:Stage%u:Step%02u"),l,s,m_FileTree.GetItemData(tic));
+				str.Format(_T("Level%u:Stage%u:Step%02u,[%u*%u]"),l,s,m_FileTree.GetItemData(tic));
 				m_StaticDesc.SetWindowText(str);
 				PaintStepPrvw(i,(u16)m_FileTree.GetItemData(tic));
+				m_TreeSelCls=FTS_STEP;
+				m_TreeSelIdx=i;
+				m_TreeSelIdx2=m_FileTree.GetItemData(tic);
 			}
 		}
 	}
 
-	*pResult=0;
+	if(pResult)*pResult=0;
 }
 
 
@@ -693,4 +805,273 @@ void CMainFrame::OnTbMake()
 	CDlgMakeRom dlg;
 	dlg.m_pMapSet=&m_SqMapSet;
 	dlg.DoModal();
+}
+
+void CMainFrame::OnButtonOption()
+{
+	if(!m_SqMapSet.IsLoaded())return;
+	CMenu menu;
+	menu.CreatePopupMenu();
+	CString str;
+	u8 l,s;
+	switch(m_TreeSelCls)
+	{
+	case FTS_ROM:
+		menu.AppendMenu(MF_GRAYED,0,_T(">>>ROM"));
+		menu.AppendMenu(0,ID_BOPTM_ROM,_T("Edit Game Title"));
+		break;
+	case FTS_MAP:
+		menu.AppendMenu(MF_GRAYED,0,_T(">>>Map"));
+		break;
+	case FTS_BGF:
+		menu.AppendMenu(MF_GRAYED,0,_T(">>>Background Library"));
+		break;
+	case FTS_GLF:
+		menu.AppendMenu(MF_GRAYED,0,_T(">>>Texture Library"));
+		break;
+	case FTS_PLF:
+		menu.AppendMenu(MF_GRAYED,0,_T(">>>Palette Library"));
+		break;
+	case FTS_STAGE:
+		m_SqMapSet.GetStageInfo(m_TreeSelIdx,&l,&s);
+		str.Format(_T(">>>Stage %d-%d"),l,s);
+		menu.AppendMenu(MF_GRAYED,0,str);
+		menu.AppendMenu(0,ID_BOPTM_ADDSTEP,_T("Add Step"));
+		break;
+	case FTS_STEP:
+		m_SqMapSet.GetStageInfo(m_TreeSelIdx,&l,&s);
+		str.Format(_T(">>>Step %d-%d-%02d"),l,s,m_TreeSelIdx2);
+		menu.AppendMenu(MF_GRAYED,0,str);
+		menu.AppendMenu(0,ID_BOPTM_EDIT,_T("Edit map"));
+		menu.AppendMenu(0,ID_BOPTM_CHANGELIB,_T("Change library"));
+		menu.AppendMenu(0,ID_BOPTM_TEXMAP,_T("Edit texture mapping"));
+		menu.AppendMenu(0,ID_BOPTM_MOVE,_T("Move step"));
+		menu.AppendMenu(0,ID_BOPTM_COPY,_T("Copy step"));
+		menu.AppendMenu(0,ID_BOPTM_DELETE,_T("Delete step"));
+		break;
+	case FTS_BG:case FTS_GL:case FTS_PL:
+		str.Format(_T(">>>%s %d"),
+			m_TreeSelCls==FTS_BG?_T("Background"):
+			(m_TreeSelCls==FTS_GL?_T("Texture"):_T("Palette")),m_TreeSelIdx);
+		menu.AppendMenu(MF_GRAYED,0,str);
+		menu.AppendMenu(0,ID_BOPTM_EDIT,_T("Edit"));
+		menu.AppendMenu(0,ID_BOPTM_RENAME,_T("Rename"));
+		menu.AppendMenu(0,ID_BOPTM_COPY,_T("Copy"));
+		menu.AppendMenu(0,ID_BOPTM_DELETE,_T("Delete"));
+		break;
+	default:case FTS_0:
+		menu.AppendMenu(MF_GRAYED,0,_T("Not select any item in the file tree"));
+		break;
+	}
+
+	RECT brect;
+	m_ButtonOption.GetWindowRect(&brect);
+	menu.TrackPopupMenu(0,brect.right,brect.top,this);
+	menu.DestroyMenu();
+}
+
+void CMainFrame::OnBoptmRename()
+{
+	ASSERT(m_SqMapSet.IsLoaded());
+	CDlgRename dlg;
+
+	//Get the old name
+	char strn[16];
+	switch(m_TreeSelCls)
+	{
+	case FTS_BG:
+		m_SqMapSet.GetBgName(m_TreeSelIdx,strn);
+		break;
+	case FTS_GL:
+		m_SqMapSet.GetGlName(m_TreeSelIdx,strn);
+		break;
+	case FTS_PL:
+		m_SqMapSet.GetPlName(m_TreeSelIdx,strn);
+		break;
+	default:
+		ASSERT(FALSE);
+		return;
+	}
+	dlg.m_NameIO.Format(FORMAT_A2T,strn);
+
+	bool suc;
+	while(1)
+	{
+		if(dlg.DoModal()!=IDOK)return;
+		ZeroMemory(strn,16);
+		suc=true;
+		//CString to char[16]
+		for(int i=0;dlg.m_NameIO[i];++i)
+		{
+			//because the textbox has the length limit so this "if{}" is just an ensurence
+			if(i==15)
+			{
+				ASSERT(FALSE);
+				MessageBox(_T("Too many characters."));
+				suc=false;
+				break;
+			}
+			if(dlg.m_NameIO[i]<0x21 || dlg.m_NameIO[i]>0x7E)
+			{
+				MessageBox(_T("Invalid character."));
+				suc=false;
+				break;
+			}
+			strn[i]=(char)dlg.m_NameIO[i];
+		}
+		//ensure there is no name conflict
+		if(m_SqMapSet.FindSecitem(0,strn)!=0xFFFFFFFF)
+		{
+			MessageBox(_T("Name conflict."));
+			suc=false;
+		}
+		//if no problem then break the loop and copy the name to SqMapSet
+		if(suc)break;
+	}
+	
+	HTREEITEM htiEntry;
+	switch(m_TreeSelCls)
+	{
+	case FTS_BG:
+		m_SqMapSet.SetBgName(m_TreeSelIdx,strn);
+		htiEntry=m_htiBg;
+		break;
+	case FTS_GL:
+		m_SqMapSet.SetGlName(m_TreeSelIdx,strn);
+		htiEntry=m_htiGl;
+		break;
+	case FTS_PL:
+		m_SqMapSet.SetPlName(m_TreeSelIdx,strn);
+		htiEntry=m_htiPl;
+		break;
+	}
+	//copy the name to the file tree
+	htiEntry=m_FileTree.GetChildItem(htiEntry);
+	while(m_FileTree.GetItemData(htiEntry)!=m_TreeSelIdx)
+		htiEntry=m_FileTree.GetNextItem(htiEntry,TVGN_NEXT);
+	m_FileTree.SetItemText(htiEntry,dlg.m_NameIO);
+	OnFileTreeSelChanged(0,0);
+
+}
+void CMainFrame::OnBoptmChangeLib()
+{
+	ASSERT(m_SqMapSet.IsLoaded());
+	ASSERT(m_TreeSelCls==FTS_STEP);
+	CDlgChangeLib dlg;
+	dlg.pMapSet=&m_SqMapSet;
+	m_SqMapSet.GetStepInfo(m_TreeSelIdx,(u16)m_TreeSelIdx2,
+		&dlg.Bg,&dlg.BGl,&dlg.FGl,&dlg.Pl);
+	if(dlg.DoModal()==IDOK)
+	{
+		m_SqMapSet.SetStepInfo(m_TreeSelIdx,(u16)m_TreeSelIdx2,
+			dlg.Bg,dlg.BGl,dlg.FGl,dlg.Pl);
+		OnFileTreeSelChanged(0,0);
+	}
+}
+
+void CMainFrame::OnBoptmDelete()
+{
+	ASSERT(m_SqMapSet.IsLoaded());
+	CString str;
+
+	//delete step:
+	if(m_TreeSelCls==FTS_STEP)
+	{
+		if(m_SqMapSet.GetStepCount(m_TreeSelIdx)==1)
+		{
+			MessageBox(_T("There must be at least one step in a stage"),0,MB_ICONERROR);
+			return;
+		}
+		str.Format(_T("Are you sure to delete the step %d ?"),m_TreeSelIdx2);
+		if(MessageBox(str,_T("Warning"),MB_ICONWARNING|MB_YESNO|MB_DEFBUTTON2)!=IDYES)return;
+		//delete in SqMapSet
+		m_SqMapSet.DeleteStep(m_TreeSelIdx,(u16)m_TreeSelIdx2);
+		//delete in file tree
+		HTREEITEM htiEntry=m_FileTree.GetChildItem(m_htiMapi[m_TreeSelIdx]);
+		while(m_FileTree.GetItemData(htiEntry)!=m_SqMapSet.GetStepCount(m_TreeSelIdx))
+			htiEntry=m_FileTree.GetNextItem(htiEntry,TVGN_NEXT);
+		m_FileTree.DeleteItem(htiEntry);
+		OnFileTreeSelChanged(0,0);
+		return;
+	}
+
+	//delete secitem:
+	u8 SiSwitch;
+	HTREEITEM htiEntry,htiDel;
+	switch(m_TreeSelCls)
+	{
+	case FTS_BG:SiSwitch=0;htiEntry=m_htiBg;
+		break;
+	case FTS_GL:SiSwitch=1;htiEntry=m_htiGl;
+		break;
+	case FTS_PL:SiSwitch=2;htiEntry=m_htiPl;
+		break;
+	default:ASSERT(FALSE);
+		return;
+	}
+	if(m_SqMapSet.GetSecitemCount(SiSwitch)==1)
+	{
+		MessageBox(_T("There must be at least one file"),0,MB_ICONERROR);
+		return;
+	}
+	
+	char strn[16];
+	m_SqMapSet.GetSecitemName(SiSwitch,m_TreeSelIdx,strn);
+	str.Format(_T("Are you sure to delete \"")FORMAT_A2T _T("\"?"),strn);
+	if(MessageBox(str,_T("Warning"),MB_ICONWARNING|MB_YESNO|MB_DEFBUTTON2)!=IDYES)return;
+	//delete in SqMapSet
+	m_SqMapSet.DeleteSecitem(SiSwitch,m_TreeSelIdx);
+	//delete in file tree
+	htiEntry=m_FileTree.GetChildItem(htiEntry);
+	u32 itemdt;
+	do{
+		itemdt=m_FileTree.GetItemData(htiEntry);
+		if(itemdt>m_TreeSelIdx)
+			m_FileTree.SetItemData(htiEntry,itemdt-1);
+		else if(itemdt==m_TreeSelIdx)htiDel=htiEntry;
+		
+	}while(htiEntry=m_FileTree.GetNextItem(htiEntry,TVGN_NEXT));
+	m_FileTree.DeleteItem(htiDel);
+
+
+}
+void CMainFrame::OnBoptmCopy()
+{
+	ASSERT(m_SqMapSet.IsLoaded());
+	if(m_TreeSelCls==FTS_STEP)
+	{
+		MessageBox(_T("Unfinished code."));
+		//
+		return;
+	}
+	u8 SiSwitch;
+	HTREEITEM htiEntry;
+	switch(m_TreeSelCls)
+	{
+	case FTS_BG:SiSwitch=0;htiEntry=m_htiBg;
+		break;
+	case FTS_GL:SiSwitch=1;htiEntry=m_htiGl;
+		break;
+	case FTS_PL:SiSwitch=2;htiEntry=m_htiPl;
+		break;
+	default:ASSERT(FALSE);
+		return;
+	}
+
+	//generate a new name
+	char strn[16];int ni=1;
+	do{
+		sprintf(strn,"new%d",ni++);
+	}while(m_SqMapSet.FindSecitem(0,strn)!=0xFFFFFFFF);
+
+	//new secitem in SqMapSet and copy the data
+	u32 datalen;
+	u8* pdata=m_SqMapSet.GetSecitemBuffer(SiSwitch,m_TreeSelIdx,&datalen);
+	memcpy(m_SqMapSet.NewSecitem(SiSwitch,datalen,strn),pdata,datalen);
+
+	//new secitem in file tree
+	CString str;
+	str.Format(FORMAT_A2T,strn);
+	m_FileTree.SelectItem(m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,
+		m_SqMapSet.GetSecitemCount(SiSwitch)-1,htiEntry,TVI_LAST));
 }

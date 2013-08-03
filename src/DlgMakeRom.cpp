@@ -1,7 +1,7 @@
 
 
 #include "stdafx.h"
-#include "D:\Personal\My Documents\wwylele\GitHub\SqueakSquash\src\DlgMakeRom.h"
+#include "DlgMakeRom.h"
 
 
 

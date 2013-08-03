@@ -188,11 +188,27 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\src\DlgChangeLib.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgChangeLib.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgMakeRom.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\src\DlgMakeRom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgRename.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgRename.h"
 				>
 			</File>
 			<File
@@ -243,6 +259,10 @@
 			>
 			<File
 				RelativePath=".\bitmap1.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\det0.bmp"
 				>
 			</File>
 			<File
@@ -303,6 +323,14 @@
 			</File>
 			<File
 				RelativePath="..\src\SqB.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqDe.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqDe.h"
 				>
 			</File>
 			<File
