@@ -72,6 +72,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	afx_msg void OnAbout();
 	afx_msg void OnTbOpen();
 	afx_msg void OnTbSave();
 	afx_msg void OnTbSaveas();
@@ -80,12 +81,14 @@ public:
 	afx_msg void OnButtonOption();
 	afx_msg BOOL OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnFileTreeSelChanged(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnFileTreeDblclk(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	afx_msg void OnBoptmRename();
 	afx_msg void OnBoptmChangeLib();
 	afx_msg void OnBoptmDelete();
 	afx_msg void OnBoptmCopy();
+	afx_msg void OnBoptmEdit();
 };
 
 

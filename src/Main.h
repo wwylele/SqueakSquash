@@ -7,6 +7,7 @@
 #endif
 
 #include "../VS2008/resource.h"      
+#include "afxwin.h"
 
 void OpenConsole();
 #define PrintLog printf
@@ -36,3 +37,26 @@ public:
 #define FORMAT_A2T "%s"
 #define FORMAT_W2T "%S"
 #endif
+#pragma once
+
+
+
+
+class CDlgAbout : public CDialog
+{
+	DECLARE_DYNAMIC(CDlgAbout)
+
+public:
+	CDlgAbout(CWnd* pParent = NULL);
+	virtual ~CDlgAbout();
+
+	enum { IDD = IDD_ABOUT };
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);
+
+	DECLARE_MESSAGE_MAP()
+public:
+	virtual BOOL OnInitDialog();
+	CEdit m_EditAbout;
+};

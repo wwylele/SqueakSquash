@@ -59,6 +59,7 @@ BEGIN
     BUTTON      ID_SAVEAS
     BUTTON      ID_MAKE
     BUTTON      ID_TESTGAME
+    BUTTON      ID_ABOUT
 END
 
 
@@ -70,6 +71,7 @@ END
 IDR_MAINFRAME           BITMAP                  "Maintoolbar.bmp"
 IDB_MAKEROM             BITMAP                  "MAKEROM.bmp"
 IDB_DET0                BITMAP                  "det0.bmp"
+IDB_DET1                BITMAP                  "det1.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -77,8 +79,8 @@ IDB_DET0                BITMAP                  "det0.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 0,1,1,2
- PRODUCTVERSION 0,1,1,2
+ FILEVERSION 0,2,0,3
+ PRODUCTVERSION 0,2,0,3
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -94,12 +96,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "0, 1, 1, 2"
+            VALUE "FileVersion", "0, 2, 0, 3"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "0, 1, 1, 2"
+            VALUE "ProductVersion", "0, 2, 0, 3"
         END
     END
     BLOCK "VarFileInfo"
@@ -138,11 +140,17 @@ BEGIN
     PUSHBUTTON      "Make ROM!",IDC_BUTTON_MAKEROM,0,114,168,18
 END
 
-IDD_MAP DIALOGEX 0, 0, 316, 183
+IDD_MAP DIALOGEX 0, 0, 442, 267
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
-CAPTION "Dialog"
+CAPTION "Map Editor"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
+    SCROLLBAR       IDC_MAP_VSCROLL,426,0,12,156,SBS_VERT
+    SCROLLBAR       IDC_MAP_HSCROLL,0,156,426,12
+    CONTROL         "",IDC_STATIC_MAP,"Static",SS_OWNERDRAW,0,0,426,156
+    CONTROL         "Plane2",IDC_CHECK_MAP_PLANE2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,174,96,12
+    CONTROL         "Plane0",IDC_CHECK_MAP_PLANE0,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,186,96,12
+    CONTROL         "Det",IDC_CHECK_MAP_DET,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,0,198,96,12
 END
 
 IDD_RENAME DIALOGEX 0, 0, 150, 27
@@ -172,6 +180,15 @@ BEGIN
     COMBOBOX        IDC_COMBO_CHANGELIB_PL,48,36,84,18,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
+IDD_ABOUT DIALOGEX 0, 0, 215, 61
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,0,0,21,20
+    EDITTEXT        IDC_EDIT_ABOUT,24,0,191,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -192,9 +209,9 @@ BEGIN
     IDD_MAP, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 309
+        RIGHTMARGIN, 435
         TOPMARGIN, 7
-        BOTTOMMARGIN, 176
+        BOTTOMMARGIN, 260
     END
 
     IDD_RENAME, DIALOG
@@ -212,6 +229,14 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 61
     END
+
+    IDD_ABOUT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 208
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 54
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -228,6 +253,7 @@ BEGIN
     ID_SAVEAS               "Save as"
     ID_SAVEFINAL            "Make ROM"
     ID_TESTGAME             "Test game"
+    ID_ABOUT                "About Squeak Squash"
 END
 
 #endif    // 中文(中华人民共和国) resources

@@ -141,4 +141,46 @@ BOOL CSqsqApp::InitInstance()
 
 
 
+IMPLEMENT_DYNAMIC(CDlgAbout, CDialog)
 
+CDlgAbout::CDlgAbout(CWnd* pParent /*=NULL*/)
+	: CDialog(CDlgAbout::IDD, pParent)
+{
+
+}
+
+CDlgAbout::~CDlgAbout()
+{
+}
+
+void CDlgAbout::DoDataExchange(CDataExchange* pDX)
+{
+	CDialog::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_EDIT_ABOUT, m_EditAbout);
+}
+
+
+BEGIN_MESSAGE_MAP(CDlgAbout, CDialog)
+END_MESSAGE_MAP()
+
+
+
+
+BOOL CDlgAbout::OnInitDialog()
+{
+	CDialog::OnInitDialog();
+
+	CString strVer;
+	GetProductVersion(&strVer,0);
+	CString str;
+	str.Format(_T("Squeak Squash\r\n")
+		_T("Version:%s\r\n")
+		_T("Time:")_T(__DATE__)_T(" ")_T(__TIME__)_T("\r\n")
+		_T("Author:wwylele\r\n")
+
+		_T("------======------")
+
+		,strVer);
+	m_EditAbout.SetWindowText(str);
+	return TRUE;
+}

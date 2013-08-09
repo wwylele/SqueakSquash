@@ -6,6 +6,7 @@
 #include "DlgMakeRom.h"
 #include "DlgRename.h"
 #include "DlgChangeLib.h"
+#include "DlgMapEdit.h"
 #include "WndWait.h"
 
 #include "SqB.h"
@@ -31,19 +32,27 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWnd)
 	ON_COMMAND(ID_SAVEAS,&CMainFrame::OnTbSaveas)
 	ON_COMMAND(ID_MAKE,&CMainFrame::OnTbMake)
 	ON_COMMAND(ID_TESTGAME,&CMainFrame::OnTbTestGame)
+	ON_COMMAND(ID_ABOUT,&CMainFrame::OnAbout)
 	ON_COMMAND(ID_BUTTON_OPTION,&CMainFrame::OnButtonOption)
 	ON_WM_SIZE()
 	ON_NOTIFY_EX(TTN_NEEDTEXT, 0, &CMainFrame::OnTtnNeedText)
 	ON_NOTIFY(TVN_SELCHANGED, ID_FILETREE, &CMainFrame::OnFileTreeSelChanged)
+	ON_NOTIFY(NM_DBLCLK, ID_FILETREE,&CMainFrame::OnFileTreeDblclk)
 	ON_WM_DRAWITEM()
 	ON_COMMAND(ID_BOPTM_RENAME,&CMainFrame::OnBoptmRename)
 	ON_COMMAND(ID_BOPTM_CHANGELIB,&CMainFrame::OnBoptmChangeLib)
 	ON_COMMAND(ID_BOPTM_DELETE,&CMainFrame::OnBoptmDelete)
 	ON_COMMAND(ID_BOPTM_COPY,&CMainFrame::OnBoptmCopy)
+	ON_COMMAND(ID_BOPTM_EDIT,&CMainFrame::OnBoptmEdit)
 END_MESSAGE_MAP()
-
+void CMainFrame::OnAbout()
+{
+	CDlgAbout dlg;
+	dlg.DoModal();
+}
 void CMainFrame::OnTbTestGame()
 {
+#ifdef _DEBUG
 	PrintLog("OnTbTestGame==>\n");
 	if(!m_SqMapSet.IsLoaded())return;
 	SqMa sqma;
@@ -74,18 +83,16 @@ void CMainFrame::OnTbTestGame()
 					if(sqma.Section10()[k])printf("[Lv%d-St%d]-%d\n",l,s,j);
 				}*/
 				//else if(sqma.Section10()[2]!=8)printf("[Lv%d-St%d]-%d\n",l,s,j);
-				if(sqma.Section10()[2]==8)printf("%d-%d-%02d:%02X %02X %02X %02X %02X %02X %02X %02X\n",l,s,j,
+				/*if(sqma.Section10()[2]==8)printf("%d-%d-%02d:%02X %02X %02X %02X %02X %02X %02X %02X\n",l,s,j,
 					sqma.Section10()[2],sqma.Section10()[3],sqma.Section10()[4],sqma.Section10()[5],
 					sqma.Section10()[6],sqma.Section10()[7],sqma.Section10()[8],sqma.Section10()[9]);
-
+				*/
 				
 
-				/*for(u8 x=0;x<sqma.GetW();++x)for(u8 y=0;y<sqma.GetH();++y)
+				for(u8 x=0;x<sqma.GetW();++x)for(u8 y=0;y<sqma.GetH();++y)
 				{
-					//if(!list.Find(DWORD_SR(sqma.Grid(x,y).det[0])))
-					//	list.AddHead(DWORD_SR(sqma.Grid(x,y).det[0]));
-					//ASSERT(GetDet0Name(sqma.Grid(x,y).det[0]));
-				}*/
+					if(sqma.Grid(x,y).det[1]==0x80000000)ASSERT(FALSE);
+				}
 				
 				
 				
@@ -132,6 +139,9 @@ outside:
 	}
 	fclose(pf);*/
 	PrintLog("<==OnTbTestGame\n");
+#else
+	MessageBox(_T("Unfinished code"));
+#endif
 }
 
 
@@ -178,10 +188,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_DCPrvw.SelectObject(&m_BmpPrvw);
 	m_DCPrvw.FillRect((LPRECT)&CRect(0,0,BMP_PRVW_W,BMP_PRVW_H),&CBrush((COLORREF)0));
 
+	InitDet0Bmp(pDC);
+	InitDet1Bmp(pDC);
 	ReleaseDC(pDC);
 
-	m_BmpDet0.LoadBitmap(IDB_DET0);
-	//m_BrushDet0.CreatePatternBrush(&m_BmpDet0);
+	//m_BmpDet0.LoadBitmap(IDB_DET0);
+
 
 	m_TreeSelCls=FTS_0;
 	m_TreeSelIdx=0;
@@ -492,15 +504,8 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 
 	PrintLog("Size=%d * %d\n",sqma.GetW(),sqma.GetH());
 
-	const DetDesc* ddsc;
-	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)if(sqma.Grid(x,y).det[0])
-	{
-		ddsc=GetDet0Desc(sqma.Grid(x,y).det[0]);
-		//TempDC.SetBrushOrg((ddsc->tex_x<<4),(ddsc->tex_y<<4));
-		//TempDC.FillRect((LPRECT)&CRect((x<<4),(y<<4),(x<<4)+16,(y<<4)+16),&m_BrushDet0);
-		TempDC.BitBlt((x<<4),(y<<4),16,16,&det0DC,(ddsc->tex_x<<4),(ddsc->tex_y<<4),SRCCOPY);
-	}
-	else
+
+	for(u8 y=0;y<sqma.GetH();++y){for(u8 x=0;x<sqma.GetW();++x)
 	{
 		//fprintf(pf,"%08X|",sqma.Grid(x,y).det[1]);
 		bb.DrawTile(&TempDC,
@@ -527,12 +532,12 @@ void CMainFrame::PaintStepPrvw(u32 Stage,u16 Step)
 		fb.DrawTile(&TempDC,
 			sqma.BlockMappingA(sqma.Grid(x,y).gra[0]).mapping[3],
 			(x<<4)+8,(y<<4)+8,true,true);
-		if(sqma.Grid(x,y).t)
+		/*if(sqma.Grid(x,y).t)
 		{
 			CString str;
 			str.Format(_T("%02X"),sqma.Grid(x,y).t);
 			TempDC.TextOut(x<<4,y<<4,str,2);
-		}
+		}*/
 	}/*fprintf(pf,"\n");*/}
 
 	//fclose(pf);
@@ -1074,4 +1079,27 @@ void CMainFrame::OnBoptmCopy()
 	str.Format(FORMAT_A2T,strn);
 	m_FileTree.SelectItem(m_FileTree.InsertItem(TVIF_TEXT|TVIF_PARAM,str,0,0,0,0,
 		m_SqMapSet.GetSecitemCount(SiSwitch)-1,htiEntry,TVI_LAST));
+}
+void CMainFrame::OnBoptmEdit()
+{
+	if(m_TreeSelCls==FTS_STEP)
+	{
+		CDlgMapEdit dlg;
+		u8 fbi,bbi;
+		dlg.m_Ma.Load(m_SqMapSet.GetMxpBuffer(m_TreeSelIdx,(u16)m_TreeSelIdx2));
+		m_SqMapSet.GetStepInfo(m_TreeSelIdx,(u16)m_TreeSelIdx2,0,&bbi,&fbi,0);
+		dlg.m_Fb.Load(m_SqMapSet.GetGlBuffer(fbi,0));
+		dlg.m_Bb.Load(m_SqMapSet.GetGlBuffer(bbi,0));
+		dlg.DoModal();
+	}
+}
+
+void CMainFrame::OnFileTreeDblclk(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	if(m_TreeSelCls==FTS_STEP)
+	{
+		OnBoptmEdit();
+	}
+
+	*pResult=0;
 }
