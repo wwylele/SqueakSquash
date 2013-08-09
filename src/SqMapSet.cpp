@@ -913,6 +913,26 @@ u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
 	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
 	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
 }
+u16 SqMapSet::NewStep(u32 StageIdx)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	StageData::StepData* newList=new StageData::StepData[m_StageList[StageIdx].StepCount+1];
+	memcpy(newList,m_StageList[StageIdx].StepList,
+		m_StageList[StageIdx].StepCount*sizeof(StageData::StepData));
+	delete[] m_StageList[StageIdx].StepList;
+	m_StageList[StageIdx].StepList=newList;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].BgId=0;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].BGlId=0;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].FGlId=0;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].PlId=0xFF;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].MxpLen=16;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].pMxp=new u8[16];
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].DoeLen=16;
+	m_StageList[StageIdx].StepList[m_StageList[StageIdx].StepCount].pDoe=new u8[16];
+	++m_StageList[StageIdx].StepCount;
+	return m_StageList[StageIdx].StepCount-1;
+}
 u32 SqMapSet::GetSubFileCount()
 {
 	ASSERT(m_Loaded);

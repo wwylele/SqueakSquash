@@ -195,6 +195,7 @@ public:
 	u8 *ResizeMxpBuffer(u32 StageIdx,u16 StepIndex,u32 Len);
 	u8 *ResizeDoeBuffer(u32 StageIdx,u16 StepIndex,u32 Len);
 	void DeleteStep(u32 StageIdx,u16 StepIndex);
+	u16/*StepIndex*/ NewStep(u32 StageIdx);
 
 	//Bg/BGl/FGl/Pl =0    means not to get the value
 	void GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl);
