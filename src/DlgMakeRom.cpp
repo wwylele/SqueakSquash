@@ -38,7 +38,7 @@ END_MESSAGE_MAP()
 void CDlgMakeRom::OnMrRom()
 {
 	TCHAR strPath[1000]={0};
-	//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
+	GetPrivateProfileString(_T("FILE"),_T("RomPath"),0,strPath,999,ProfilePath);
 	
 	CFileDialog filedlg(TRUE,0,0,0,
 		_T("Nitro ROM(*.nds;*.bin)|*.nds;*.bin|")
@@ -47,20 +47,24 @@ void CDlgMakeRom::OnMrRom()
 	filedlg.GetOFN().lpstrInitialDir=strPath;
 	filedlg.GetOFN().lpstrTitle=_T("Set ROM Path");
 	if(filedlg.DoModal()==IDCANCEL)return;
-	m_EditRom.SetWindowText(filedlg.GetPathName());
+	CString strFileName=filedlg.GetPathName();
+	WritePrivateProfileString(_T("FILE"),_T("RomPath"),strFileName,ProfilePath);
+	m_EditRom.SetWindowText(strFileName);
 	
 }
 
 void CDlgMakeRom::OnMrNewrom()
 {
 	TCHAR strPath[1000]={0};
-	//GetPrivateProfileString(_T("FILE"),_T("Path"),0,strPath,999,ProfilePath);
+	GetPrivateProfileString(_T("FILE"),_T("NewRomPath"),0,strPath,999,ProfilePath);
 	CFileDialog filedlg(FALSE,_T("nds"),_T("NewKirby.nds"),OFN_OVERWRITEPROMPT,
 		_T("Nitro ROM(*.nds)|*.nds|")_T("|"),this);
 	filedlg.GetOFN().lpstrInitialDir=strPath;
 	filedlg.GetOFN().lpstrTitle=_T("Set new ROM path...");
 	if(filedlg.DoModal()==IDCANCEL)return;
-	m_EditNewRom.SetWindowText(filedlg.GetPathName());
+	CString strFileName=filedlg.GetPathName();
+	WritePrivateProfileString(_T("FILE"),_T("NewRomPath"),strFileName,ProfilePath);
+	m_EditNewRom.SetWindowText(strFileName);
 }
 
 void CDlgMakeRom::OnMakeRom()

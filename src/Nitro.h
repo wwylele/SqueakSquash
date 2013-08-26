@@ -9,6 +9,13 @@ namespace Nitro{
 		u16 b:5;
 		u16 x:1;
 	};
+	struct CharData
+	{
+		u16 tile:10;
+		u16 flipx:1;
+		u16 flipy:1;
+		u16 plt:4;
+	};
 	inline COLORREF Color15to24(Color15 value)
 	{
 		return RGB(value.r*255/31,

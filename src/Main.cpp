@@ -10,6 +10,8 @@
 #define new DEBUG_NEW
 #endif
 
+const CString ProfilePath=_T(".\\SqueakSquash.ini");
+
 HANDLE hConsole=0;
 void OpenConsole()
 {

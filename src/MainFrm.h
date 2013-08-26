@@ -2,6 +2,11 @@
 
 #pragma once
 
+#define EXFEX_MXP "sqmxp" //"mxp"
+#define EXFEX_DOE "sqdoe" //"doe"
+#define EXFEX_BIN "sqbin" //"bin"
+#define EXFEX_PAL "sqpal" //"pal"
+#define EXFEX_NSBTX "nsbtx" //"nsbtx"(Nitro common)
 
 
 class CMainFrame : public CFrameWnd
@@ -32,7 +37,7 @@ protected:
 #define ID_STATIC_PRVW 20002
 
 	CButton m_ButtonOption;
-#define ID_BUTTON_OPTION 20003
+#define ID_BUTTON_OPERATION 20003
 #define ID_BOPTM_ROM		30001
 #define ID_BOPTM_ADDSTEP	30002
 #define ID_BOPTM_EDIT		30003
@@ -42,6 +47,8 @@ protected:
 #define ID_BOPTM_MOVE		30007
 #define ID_BOPTM_COPY		30008
 #define ID_BOPTM_RENAME		30009
+#define ID_BOPTM_EXPORT		30010
+#define ID_BOPTM_IMPORT		30011
 
 	CString m_StrFileName;
 	CDC m_DCPrvw;
@@ -78,7 +85,7 @@ public:
 	afx_msg void OnTbSaveas();
 	afx_msg void OnTbMake();
 	afx_msg void OnTbTestGame();
-	afx_msg void OnButtonOption();
+	afx_msg void OnButtonOperation();
 	afx_msg BOOL OnTtnNeedText(UINT id, NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnFileTreeSelChanged(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnFileTreeDblclk(NMHDR *pNMHDR, LRESULT *pResult);
@@ -89,6 +96,8 @@ public:
 	afx_msg void OnBoptmDelete();
 	afx_msg void OnBoptmCopy();
 	afx_msg void OnBoptmEdit();
+	afx_msg void OnBoptmExport();
+	afx_msg void OnBoptmImport();
 };
 
 

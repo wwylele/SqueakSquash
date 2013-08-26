@@ -19,7 +19,7 @@ public:
 	inline u8& PalLine(u32 i){ASSERT(IsLoaded());return pPalLine[i];}
 	inline u32 GetTileCount(){ASSERT(IsLoaded());return TileCount;}
 
-	void DrawTile(CDC* pDC,u16 chardt,int x,int y,
+	void DrawTile(CDC* pDC,Nitro::CharData chardt,int x,int y,
 		bool flip=false,bool transparent=false);
 private:
 	

@@ -24,12 +24,19 @@
 #define IDC_COMBO_CHANGELIB_PL          1013
 #define IDC_MAP_VSCROLL                 1013
 #define IDC_MAP_HSCROLL                 1014
-#define IDC_STATIC_MAP                  1015
 #define IDC_CHECK_MAP_PLANE2            1016
 #define IDC_CHECK_MAP_PLANE0            1017
 #define IDC_CHECK_MAP_DET               1018
 #define IDC_EDIT_ABOUT                  1019
-#define ID_STATIC                       1020
+#define IDC_MAP_STOCK_SCROLL            1019
+#define IDC_STATIC_MAP                  1020
+#define IDC_STATIC_STOCK                1021
+#define IDC_MAP_STOCK_HSCROLL           1022
+#define IDC_STATIC_MAP_CUR_COORD        1023
+#define IDC_STATIC_MAP_CUR_GRID         1024
+#define IDC_EDIT_MAP_CUR_GRID0          1025
+#define IDC_EDIT_MAP_CUR_GRID1          1026
+#define IDC_EDIT_MAP_CUR_GRID2          1027
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -44,7 +51,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1021
+#define _APS_NEXT_CONTROL_VALUE         1026
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

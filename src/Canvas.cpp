@@ -40,3 +40,7 @@ void CCanvas::Present(HDC hdc,
 	StretchDIBits(hdc,xDest,yDest,DestWidth,DestHeight,xSrc,h-SrcHeight-ySrc,SrcWidth,SrcHeight,
 		pCanvas,&binfo,DIB_RGB_COLORS,SRCCOPY);
 }
+void CCanvas::Clear(COLORREF c)
+{
+	for(int x=0;x<w;++x)for(int y=0;y<h;++y)SetPixel(x,y,c);
+}

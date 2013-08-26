@@ -8,7 +8,7 @@ private:
 	//
 	//SQMS File Data Structure
 	//
-	struct SqmsFileHeader
+	FILE_RELATED_STRUCT struct SqmsFileHeader
 	{
 		u8 Magic[8];//="SQSQMAPS"
 		u32 Version;
@@ -19,14 +19,14 @@ private:
 		u32 StageCount;
 		//SqmsStageHeader StageHeader[StageCount];
 	};
-	struct SqmsStageHeader
+	FILE_RELATED_STRUCT struct SqmsStageHeader
 	{
 		u8 LevelIdx;
 		u8 StageIdx;
 		u16 StepCount;
 		u32 StepTableOffset;//ptr to SqmsStepHeader[StepCount]
 	};
-	struct SqmsStepHeader
+	FILE_RELATED_STRUCT struct SqmsStepHeader
 	{
 		u32 MxpLen;
 		u32 MxpOffset;//ptr to .mxp Data
@@ -38,19 +38,19 @@ private:
 		u8 PlId;
 	};
 	
-	struct SqmsSectionHeader
+	FILE_RELATED_STRUCT struct SqmsSectionHeader
 	{
 		u8 Magic[4];//="SQBG","SQGL","SQPL"
 		u32 Count;
 		//SqmsSecitemHeader SecitemHeader[Count];
 	};
-	struct SqmsSecitemHeader
+	FILE_RELATED_STRUCT struct SqmsSecitemHeader
 	{
 		u8 Name[16];
 		u32 DataLen;
 		u32 DataOffset;//ptr to .nsbtx,.bin,.pal Data
 	};
-	struct SqmsRomInfo
+	FILE_RELATED_STRUCT struct SqmsRomInfo
 	{
 		u8 Rom_name[12];
 		u8 Rom_id[4];
@@ -152,6 +152,7 @@ public:
 	void SetSecitemName(u8 SiSwitch,u32 index,const char *pname);
 	u8 *NewSecitem(u8 SiSwitch,u32 Len,char *pname);
 	void DeleteSecitem(u8 SiSwitch,u32 index);
+	bool IsSecitemImportant(u8 SiSwitch,u32 index);
 
 	#define GetBgCount() GetSecitemCount(0)
 	#define GetGlCount() GetSecitemCount(1)

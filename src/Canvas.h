@@ -25,6 +25,7 @@ public:
 	void Present(HDC hdc,
 		int xDest,int yDest,int DestWidth,int DestHeight,
 		int xSrc,int ySrc,int SrcWidth=0,int SrcHeight=0);
+	void Clear(COLORREF c);
 
 protected:
 	BYTE *pCanvas;

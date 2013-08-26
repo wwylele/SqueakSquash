@@ -13,6 +13,9 @@ void OpenConsole();
 #define PrintLog printf
 void GetProductVersion(CString *pstr,UINT *pu);
 
+
+extern const CString ProfilePath;
+
 class CSqsqApp : public CWinApp
 {
 public:

@@ -55,19 +55,20 @@ void SqB::Make(u8* pdst)
 	memcpy(pdst,pPalLine,TileCount);
 }
 
-void SqB::DrawTile(CDC* pDC,u16 chardt,int x,int y,bool flip,bool tran)
+void SqB::DrawTile(CDC* pDC,Nitro::CharData chardt,int x,int y,bool flip,bool tran)
 {
 	ASSERT(IsLoaded());
 	
-	bool flipx=chardt&1024 ? true:false;
+	bool flipx=chardt.flipx ? true:false;
 	flipx=flipx&&flip;
-	bool flipy=chardt&2048 ? true:false;
+	bool flipy=chardt.flipy ? true:false;
 	flipy=flipy&&flip;
-	if(flip)chardt&=0x3FF;
+	u16 ci;
+	if(flip)ci=chardt.tile;else ci=*(u16*)&chardt;
 	u8 pali;
 	for(int bx=0;bx<8;++bx)for(int by=0;by<8;++by)
 	{
-		pali=pTile[chardt].Get(flipx?7-bx:bx,flipy?7-by:by);
-		if(pali||(!tran))pDC->SetPixel(x+bx,y+by,Nitro::Color15to24(Pal[pali|(pPalLine[chardt]<<4)]));
+		pali=pTile[ci].Get(flipx?7-bx:bx,flipy?7-by:by);
+		if(pali||(!tran))pDC->SetPixel(x+bx,y+by,Nitro::Color15to24(Pal[pali|(pPalLine[ci]<<4)]));
 	}
 }
