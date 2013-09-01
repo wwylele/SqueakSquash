@@ -114,3 +114,26 @@ u32 Nitro::GetSubFileOffset(CFile& file,u16 id,u32* getlen)
 	return fat.top;
 
 }
+
+//Copy from DeSmuME
+u16 Nitro::Crc16(void *buf,u32 len)
+{
+	u16 crc=0xFFFF;
+	u16 currVal=0;
+	const u16 val[] = { 0x0000,0xCC01,0xD801,0x1400,0xF001,0x3C00,0x2800,0xE401,0xA001,0x6C00,0x7800,0xB401,0x5000,0x9C01,0x8801,0x4400};
+	len>>=1;
+	for(u32 i=0;i<len;++i)
+	{
+		currVal=((u16*)buf)[i];
+		for(int j=0;j<4;++j)
+		{
+			u16 tabVal=val[crc&0xF];
+			crc>>=4;
+			crc^=tabVal;
+			u16 tempVal=currVal>>(j<<2);
+			tabVal=val[tempVal&0xF];
+			crc^=tabVal;
+		}
+	}
+	return crc;
+}

@@ -358,6 +358,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		PrintLog("Wrong ROM Magic\n");
 		return false;
 	}
+	if(Nitro::Crc16(&rom_header,0x15E)!=rom_header.headerCRC16)
+	{
+		PrintLog("Wrong CRC\n");
+		return false;
+	}
 	if(Nitro::GetSubFileId(file,"map/"ROM_LOCK_FILE)!=0xFFFF)
 	{
 		PrintLog("Detected ROM_LOCK_FILE\n");
@@ -374,6 +379,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	memcpy(&m_RomInfo,&rom_header,22);
 	file.Seek(rom_header.title_offset,CFile::begin);
 	file.Read(&rom_title,sizeof(rom_title));
+	if(rom_title.crc16!=Nitro::Crc16(((u8*)&rom_title)+0x20,0x820))ASSERT(FALSE);
 	memcpy(&m_RomInfo.Title_icon_pixel,&rom_title.icon_pixel,512+32+1536);
 
 	//Search and read .mxi file in the ROM
@@ -1103,7 +1109,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	file.Read(&fntdir,sizeof(fntdir));
 	fpos_fnt=rom_header.fnt_offset+fntdir.entry_start;
 	fpos_fat=rom_header.fat_offset+fntdir.entry_file_id*sizeof(Nitro::ROM_FAT);
-	//Search for the data end
+	/*//Search for the data end
 	PrintLog("Search for FIM entry\n");
 	u32 flen=(u32)file.GetLength();
 	u8* psrc,*psrce;
@@ -1115,7 +1121,8 @@ bool SqMapSet::MakeRom(CFile &file)
 		UnmapViewOfFile(psrc);
 		CloseHandle(hFileMapping);
 	}
-	fpos_fim=(psrce-psrc+0x18)&0xFFFFFFF0;
+	fpos_fim=(psrce-psrc+0x18)&0xFFFFFFF0;*/
+	fpos_fim=(rom_header.ROMSize+32)&0xFFFFFFF0;
 	//Write all file in
 	PrintLog("Write all file in\n");
 	Nitro::ROM_FAT fat;
@@ -1145,17 +1152,22 @@ bool SqMapSet::MakeRom(CFile &file)
 	file.Write(&fh,1);
 
 	//ROM Header;
-	//Unfinished because of the CRC calculation
-	/*
-	const char* rom_rename="KIRBYWWYLELE";
-	memcpy(rom_header.name,rom_rename,12);
 	memcpy(&rom_header.id,&m_RomInfo.Rom_id,10);
 	++rom_header.device_caps;
+	file.Seek(fpos_fim,CFile::begin);rom_header.ROMSize=(u32)file.GetPosition();
+	rom_header.headerCRC16=Nitro::Crc16(&rom_header,0x15E);
 	file.Seek(0,CFile::begin);
 	file.Write(&rom_header,sizeof(rom_header));
+
+	//ROM Title
+	Nitro::ROM_TITLE rom_title;
 	file.Seek(rom_header.title_offset,CFile::begin);
-	file.Write(&m_RomInfo.Title_icon_pixel,512+32+1536);
-	*/
+	file.Read(&rom_title,sizeof(rom_title));
+	memcpy(rom_title.icon_pixel,&m_RomInfo.Title_icon_pixel,512+32+1536);
+	rom_title.crc16=Nitro::Crc16((u8*)&rom_title+0x20,0x820);
+	file.Seek(rom_header.title_offset,CFile::begin);
+	file.Write(&rom_title,sizeof(rom_title));
+	
 
 	//Clear the mxi,mxp file
 	PrintLog("Clear\n");

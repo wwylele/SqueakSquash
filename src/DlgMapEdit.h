@@ -5,7 +5,8 @@
 #include "SqB.h"
 #include "Canvas.h"
 
-
+#define FORMAT_BGM _T("%d:%s")
+#define FORMAT_BOSS _T("%d:%s")
 class CDlgMapEdit : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgMapEdit)
@@ -80,4 +81,8 @@ public:
 		u32 oldcode;
 	};
 	CList<OPT_STACK_NOTE> m_StackUndo,m_StackRedo;
+	CComboBox m_ComboBgm;
+	afx_msg void OnCbnSelchangeComboBgm();
+	CComboBox m_ComboBoss;
+	afx_msg void OnCbnSelchangeComboBoss();
 };

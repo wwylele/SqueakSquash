@@ -9,7 +9,7 @@ protected:
 	CWndWait();          
 	virtual ~CWndWait();
 	static CWndWait WndWait;
-	static bool wwshowed;
+	static HANDLE hEvent;
 	static DWORD WINAPI WndWaitThread(LPVOID lpThreadParameter);
 public:
 	static void InitWndWait();

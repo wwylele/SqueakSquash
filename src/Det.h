@@ -36,3 +36,4 @@ extern const DetDesc DetDesc0[];
 extern BMP1b16x16 Det0Bmp[];
 extern const u32 Det1List[];
 extern BMP3216x16 Det1Bmp[];
+void GetDet1Desc(u32 code,CString &str);

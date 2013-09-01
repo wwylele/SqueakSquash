@@ -32,6 +32,8 @@ void CDlgMapEdit::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_MAP_CUR_GRID0, m_EditCurGrid0);
 	DDX_Control(pDX, IDC_EDIT_MAP_CUR_GRID1, m_EditCurGrid1);
 	DDX_Control(pDX, IDC_EDIT_MAP_CUR_GRID2, m_EditCurGrid2);
+	DDX_Control(pDX, IDC_COMBO_BGM, m_ComboBgm);
+	DDX_Control(pDX, IDC_COMBO_BOSS, m_ComboBoss);
 }
 
 
@@ -44,6 +46,8 @@ BEGIN_MESSAGE_MAP(CDlgMapEdit, CDialog)
 	ON_BN_CLICKED(IDC_CHECK_MAP_DET, &CDlgMapEdit::OnBnClickedCheckMapDet)
 
 	ON_WM_SETCURSOR()
+	ON_CBN_SELCHANGE(IDC_COMBO_BGM, &CDlgMapEdit::OnCbnSelchangeComboBgm)
+	ON_CBN_SELCHANGE(IDC_COMBO_BOSS, &CDlgMapEdit::OnCbnSelchangeComboBoss)
 END_MESSAGE_MAP()
 
 
@@ -413,6 +417,20 @@ BOOL CDlgMapEdit::OnInitDialog()
 	m_CheckPlane2.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("Plane2"),0,ProfilePath)?TRUE:FALSE);
 	m_CheckDet.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("Det"),0,ProfilePath)?TRUE:FALSE);
 
+	CString str;
+	for(int i=0;i<256;++i)
+	{
+		str.Format(FORMAT_BGM,i,_T("?"));
+		m_ComboBgm.AddString(str);
+		if(m_Ma.MapAttribute.Bgm==(u8)i)m_ComboBgm.SelectString(-1,str);
+	}
+	for(u8 i=0;i<10;++i)
+	{
+		str.Format(FORMAT_BOSS,i,_T("?"));
+		m_ComboBoss.AddString(str);
+		if(m_Ma.MapAttribute.Boss==i)m_ComboBoss.SelectString(-1,str);
+	}
+
 	SetScroll();
 	SetStockScroll();
 
@@ -647,7 +665,7 @@ void CDlgMapEdit::OnStockMouseMove(u8 x,u8 y)
 			{
 				cur_stock_x=x;
 				cur_stock_y=y;
-				str.Format(_T("%08X"),det1code);
+				GetDet1Desc(det1code,str);
 			}
 			else
 			{
@@ -785,4 +803,24 @@ BOOL CDlgMapEdit::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 	}
 
 	return CDialog::OnSetCursor(pWnd, nHitTest, message);
+}
+
+void CDlgMapEdit::OnCbnSelchangeComboBgm()
+{
+	CString str;
+	m_ComboBgm.GetWindowText(str);
+	int bgm;
+	TCHAR dummybuf[100];
+	_stscanf(str,FORMAT_BGM,&bgm,dummybuf);
+	m_Ma.MapAttribute.Bgm=(u8)bgm;
+}
+
+void CDlgMapEdit::OnCbnSelchangeComboBoss()
+{
+	CString str;
+	m_ComboBoss.GetWindowText(str);
+	int bgm;
+	TCHAR dummybuf[100];
+	_stscanf(str,FORMAT_BOSS,&bgm,dummybuf);
+	m_Ma.MapAttribute.Boss=(u8)bgm;
 }

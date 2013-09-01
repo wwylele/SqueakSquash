@@ -27,4 +27,9 @@ public:
 	afx_msg void OnMakeRom();
 	CEdit m_EditMapSet;
 	virtual BOOL OnInitDialog();
+	CEdit m_EditNdsEmu;
+	CStatic m_StaticNdsEmu;
+	afx_msg void OnBnClickedButtonNdsemu();
+	CButton m_ButtonBeginEmu;
+	afx_msg void OnBnClickedButtonBeginemu();
 };

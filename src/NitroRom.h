@@ -106,4 +106,5 @@ namespace Nitro
 
 	u32 GetSubFileOffset(CFile& file,u16 Id,u32* getlen=0);
 
+	u16 Crc16(void *buf,u32 length);
 }

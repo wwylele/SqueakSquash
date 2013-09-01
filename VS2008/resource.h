@@ -36,7 +36,14 @@
 #define IDC_STATIC_MAP_CUR_GRID         1024
 #define IDC_EDIT_MAP_CUR_GRID0          1025
 #define IDC_EDIT_MAP_CUR_GRID1          1026
+#define IDC_STATIC_NDSEMU               1026
 #define IDC_EDIT_MAP_CUR_GRID2          1027
+#define IDC_EDIT_NDSEMU                 1027
+#define IDC_BUTTON_NDSEMU               1028
+#define IDC_BUTTON_BEGINEMU             1029
+#define IDC_COMBO_BGM                   1031
+#define IDC_COMBO_BGM2                  1032
+#define IDC_COMBO_BOSS                  1032
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -51,7 +58,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        114
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1026
+#define _APS_NEXT_CONTROL_VALUE         1032
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
