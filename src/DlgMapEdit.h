@@ -6,7 +6,7 @@
 #include "Canvas.h"
 
 #define FORMAT_BGM _T("%d:%s")
-#define FORMAT_BOSS _T("%d:%s")
+#define FORMAT_BOSS _T("%d")
 class CDlgMapEdit : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgMapEdit)

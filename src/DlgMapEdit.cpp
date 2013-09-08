@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "DlgMapEdit.h"
 #include "Det.h"
+#include "Bgm.h"
 
 
 IMPLEMENT_DYNAMIC(CDlgMapEdit, CDialog)
@@ -420,13 +421,13 @@ BOOL CDlgMapEdit::OnInitDialog()
 	CString str;
 	for(int i=0;i<256;++i)
 	{
-		str.Format(FORMAT_BGM,i,_T("?"));
+		str.Format(FORMAT_BGM,i,GetBgmName((u8)i));
 		m_ComboBgm.AddString(str);
 		if(m_Ma.MapAttribute.Bgm==(u8)i)m_ComboBgm.SelectString(-1,str);
 	}
 	for(u8 i=0;i<10;++i)
 	{
-		str.Format(FORMAT_BOSS,i,_T("?"));
+		str.Format(FORMAT_BOSS,i);
 		m_ComboBoss.AddString(str);
 		if(m_Ma.MapAttribute.Boss==i)m_ComboBoss.SelectString(-1,str);
 	}

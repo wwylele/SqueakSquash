@@ -79,8 +79,8 @@ IDB_DET1                BITMAP                  "det1.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,4
- PRODUCTVERSION 1,0,0,4
+ FILEVERSION 1,1,0,5
+ PRODUCTVERSION 1,1,0,5
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -96,12 +96,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "1, 0, 0, 4"
+            VALUE "FileVersion", "1, 1, 0, 5"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "1, 0, 0, 4"
+            VALUE "ProductVersion", "1, 1, 0, 5"
         END
     END
     BLOCK "VarFileInfo"
