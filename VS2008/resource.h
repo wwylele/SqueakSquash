@@ -11,6 +11,16 @@
 #define IDD_CHANGELIB                   111
 #define IDB_DET1                        112
 #define IDD_ABOUT                       113
+#define IDR_NSBTX_TEMP_HORI_0A          115
+#define IDR_NSBTX_TEMP_HORI_1A          116
+#define IDR_NSBTX_TEMP_HORI_08          117
+#define IDR_NSBTX_TEMP_HORI_20A         118
+#define IDR_NSBTX_TEMP_HORI_00          120
+#define IDR_NSBTX_TEMP_SQUA_1D          121
+#define IDR_NSBTX_TEMP_SQUA_19          122
+#define IDR_NSBTX_TEMP_SQUA_24          123
+#define IDR_NSBTX_TEMP_VERT             124
+#define IDD_IMPORTBG                    125
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -42,8 +52,16 @@
 #define IDC_BUTTON_NDSEMU               1028
 #define IDC_BUTTON_BEGINEMU             1029
 #define IDC_COMBO_BGM                   1031
-#define IDC_COMBO_BGM2                  1032
 #define IDC_COMBO_BOSS                  1032
+#define IDC_RADIO_MAP_PT_GRID           1036
+#define IDC_RADIO_MAP_PT_DOOR           1037
+#define IDC_COMBO_IMPORTBG              1037
+#define IDC_RADIO_MAP_PT_OBJ            1038
+#define IDC_PROGRESS_IMPORTBG           1038
+#define IDC_RADIO_MAP_PT_BOSS           1039
+#define IDC_RADIO_MAP_PT_SOBJ           1040
+#define IDC_CHECK_MAP_ANI               1041
+#define IDC_STATIC_IMPORTBG             1042
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -56,9 +74,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        114
+#define _APS_NEXT_RESOURCE_VALUE        126
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_CONTROL_VALUE         1043
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

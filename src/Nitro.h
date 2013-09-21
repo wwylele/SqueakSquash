@@ -22,6 +22,14 @@ namespace Nitro{
 			value.g*255/31,
 			value.b*255/31);
 	}
+	inline Color15 Color24to15(COLORREF value)
+	{
+		Color15 c;
+		c.r=GetRValue(value)*31/255;
+		c.g=GetGValue(value)*31/255;
+		c.b=GetBValue(value)*31/255;
+		return c;
+	}
 	struct Tile
 	{
 		u8 dt[32];

@@ -7,6 +7,8 @@
 
 #define FORMAT_BGM _T("%d:%s")
 #define FORMAT_BOSS _T("%d")
+
+#define ID_TIMER_REDRAW_MAP 35000
 class CDlgMapEdit : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgMapEdit)
@@ -85,4 +87,7 @@ public:
 	afx_msg void OnCbnSelchangeComboBgm();
 	CComboBox m_ComboBoss;
 	afx_msg void OnCbnSelchangeComboBoss();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnBnClickedCheckMapAni();
+	CButton m_CheckMapAni;
 };

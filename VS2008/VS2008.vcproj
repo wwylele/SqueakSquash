@@ -205,6 +205,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgImportBg.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgImportBg.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgMakeRom.cpp"
 				>
 			</File>
@@ -318,6 +326,50 @@
 				RelativePath=".\VS2008.rc"
 				>
 			</File>
+			<Filter
+				Name="nsbtx_temp"
+				>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_08"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_0A"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_1A"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_20A"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_25"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_NORI_00"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_SQUA_19"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_SQUA_1D"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_SQUA_24"
+					>
+				</File>
+				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_VERT"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="SqsqData"
@@ -360,6 +412,14 @@
 			</File>
 			<File
 				RelativePath="..\src\NitroRom.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Nsbtx.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Nsbtx.h"
 				>
 			</File>
 			<File

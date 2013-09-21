@@ -29,6 +29,14 @@ public:
 		ASSERT(FrameIdx<PlLineList[Line].FrameCount);
 		return PlLineList[Line].FrameList[FrameIdx];
 	}
+	inline Nitro::Color15* GetFrameAni(u8 Line)
+	{
+		ASSERT(loaded);
+		ASSERT(Line<16);
+		return PlLineList[Line].FrameList[PlLineCurrentList[Line].CurrentFrame].Pl;
+	}
+	void TickedClear();
+	bool TickedIn();
 	
 private:
 	bool loaded;
@@ -36,6 +44,12 @@ private:
 	{
 		u8 FrameCount;
 		PlFrame* FrameList;//PlFrame FrameList[FrameCount]
-	} PlLineList[16];//for each pl line.FrameCount=0 means no pl
+	} PlLineList[16];//for each pl line. FrameCount=0 means no pl
+
+	struct PlLineCurrent
+	{
+		u8 CurrentTime;
+		u8 CurrentFrame;
+	}PlLineCurrentList[16];
 
 };

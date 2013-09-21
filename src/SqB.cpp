@@ -35,6 +35,7 @@ bool SqB::Load(const u8* psrc)
 	pPalLine=new u8[TileCount];
 	memcpy(pTile,psrc+0x210,sizeof(Nitro::Tile)*TileCount);
 	memcpy(pPalLine,psrc+0x210+sizeof(Nitro::Tile)*TileCount,TileCount);
+	TicketClear();
 	return true;
 }
 

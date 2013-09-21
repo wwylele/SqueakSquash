@@ -6,9 +6,11 @@ SqMa::SqMa(void):
 	pGrid(0),
 	pBlockMappingA(0),
 	pBlockMappingB(0),
-	pSection10(0),
+	pEvp(0),
+	pEvc(0),
 	pDoor(0),
 	pGraScript(0),
+	pGraScriptCurrent(0),
 	s9exp(0)
 {}
 
@@ -54,9 +56,32 @@ bool SqMa::Load(const u8* psrc)
 	
 
 	//Section 10
-	u16 Section10Len=*(u16*)(psrc+head.SectionOff[10]);
-	pSection10=new u8[Section10Len];
-	memcpy(pSection10,psrc+head.SectionOff[10],Section10Len);
+	//u16 Section10Len=*(u16*)(psrc+head.SectionOff[10]);
+	//pSection10=new u8[Section10Len];
+	//memcpy(pSection10,psrc+head.SectionOff[10],Section10Len);
+
+	//Section 10'
+	S10HEADER S10Header;
+	const u8* ps10=psrc+head.SectionOff[10]+2;
+	memcpy(&S10Header,ps10,sizeof(S10Header));
+	EvpCount=S10Header.EvpCount;
+	EvcCount=S10Header.EvcCount;
+	if(EvpCount)
+	{
+		pEvp=new EvpData[EvpCount];
+		memcpy(pEvp,ps10+S10Header.EvpListOff,sizeof(EvpData)*EvpCount);
+		pEvc=new EvcData[EvcCount];
+		for(u8 i=0;i<EvcCount;++i)
+		{
+			const u8 *pEvcE;
+			pEvcE=ps10+*(u16*)(ps10+S10Header.EvcListOff+i*2);
+			memcpy(&pEvc[i].Header,pEvcE,sizeof(EvcHeader));
+			pEvc[i].pData=new u8[pEvc[i].Header.count*pEvc[i].Header.data_len];
+			memcpy(pEvc[i].pData,pEvcE+sizeof(EvcHeader),
+				pEvc[i].Header.count*pEvc[i].Header.data_len);
+
+		}
+	}
 
 	//Section 11
 	DoorCount=*(u16*)(psrc+head.SectionOff[11]);
@@ -71,9 +96,20 @@ bool SqMa::Load(const u8* psrc)
 	memcpy(pGraScript,psrc+head.SectionOff[12]+sizeof(S12Header),
 		sizeof(GRA_SCRIPT)*GraScriptCount);
 	S12HScript=S12Header.HScript;
+	pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
+	TicketClear();
 
 	return true;
 	
+}
+u16 SqMa::S10MakeLen()
+{
+	u16 S10Len=10+EvpCount*sizeof(EvpData)+EvcCount*2;
+	for(u8 i=0;i<EvcCount;++i)
+	{
+		S10Len+=sizeof(EvcHeader)+pEvc[i].Header.count*pEvc[i].Header.data_len;
+	}
+	return S10Len;
 }
 u32 SqMa::MakeLen()
 {
@@ -83,7 +119,7 @@ u32 SqMa::MakeLen()
 		+2+sizeof(BLOCK_MAPPING)*BlockMappingCountB//s2
 		+w*h*(2+2+2+4+4+4+1)//s3~s9
 		+s9exl//s9ex
-		+*(u16*)pSection10//s10
+		+S10MakeLen()//s10
 		+2+sizeof(DOOR)*DoorCount//s11
 		+sizeof(S12HEADER)+sizeof(GRA_SCRIPT)*GraScriptCount;//s12
 }
@@ -134,7 +170,29 @@ void SqMa::Make(u8* pdst)
 
 	//Section 10
 	head.SectionOff[10]=p-pdst;
-	memcpy(p,pSection10,*(u16*)pSection10);p+=*(u16*)pSection10;
+	//memcpy(p,pSection10,*(u16*)pSection10);p+=*(u16*)pSection10;
+	*(u16*)p=S10MakeLen();p+=2;
+	u8* ps10=p;
+	S10HEADER S10Header;
+	S10Header.EvpCount=EvpCount;
+	S10Header.EvcCount=EvcCount;
+	if(EvpCount)
+	{
+		S10Header.EvpListOff=8;
+		S10Header.EvcListOff=8+sizeof(EvpData)*EvpCount;
+	}else S10Header.EvpListOff=S10Header.EvcListOff=0;
+	S10Header.x04=0;
+	memcpy(p,&S10Header,sizeof(S10HEADER));p+=sizeof(S10HEADER);
+	memcpy(p,pEvp,sizeof(EvpData)*EvpCount);p+=sizeof(EvpData)*EvpCount;
+	u8* ps10e=p;
+	p+=EvcCount*2;
+	for(u8 i=0;i<EvcCount;++i)
+	{
+		*(u16*)ps10e=(u16)(p-ps10);ps10e+=2;
+		memcpy(p,&pEvc[i].Header,sizeof(EvcHeader));p+=sizeof(EvcHeader);
+		memcpy(p,pEvc[i].pData,pEvc[i].Header.count*pEvc[i].Header.data_len);
+		p+=pEvc[i].Header.count*pEvc[i].Header.data_len;
+	}
 
 	//Section 11
 	head.SectionOff[11]=p-pdst;
@@ -157,10 +215,43 @@ void SqMa::Unload()
 	if(pGrid){delete[] pGrid;pGrid=0;}
 	if(pBlockMappingA){delete[] pBlockMappingA;pBlockMappingA=0;}
 	if(pBlockMappingB){delete[] pBlockMappingB;pBlockMappingB=0;}
-	if(pSection10){delete[] pSection10;pSection10=0;}
+	//if(pSection10){delete[] pSection10;pSection10=0;}
+	if(pEvp){delete[] pEvp;pEvp=0;}
+	if(pEvc){
+		for(u8 i=0;i<EvcCount;++i)delete[] pEvc[i].pData;
+		delete[] pEvc;
+		pEvc=0;
+	}
 	if(pDoor){delete[] pDoor;pDoor=0;}
 	if(pGraScript){delete[] pGraScript;pGraScript=0;}
+	if(pGraScriptCurrent){delete[]pGraScriptCurrent;pGraScriptCurrent=0;}
 	if(s9exp){delete[] s9exp;s9exp=0;}
 }
 
 
+void SqMa::TicketClear()
+{
+	for(u16 i=0;i<GraScriptCount;i++)
+	{
+		pGraScriptCurrent[i].CurrentFrame=0;
+		pGraScriptCurrent[i].CurrentTime=0;
+	}
+}
+bool SqMa::TicketIn()
+{
+	bool r=false;
+	for(u16 i=0;i<GraScriptCount;i++)
+	{
+		++pGraScriptCurrent[i].CurrentTime;
+		if(pGraScriptCurrent[i].CurrentTime==
+			pGraScript[i].TimeDelta[pGraScriptCurrent[i].CurrentFrame])
+		{
+			pGraScriptCurrent[i].CurrentTime=0;
+			++pGraScriptCurrent[i].CurrentFrame;
+			if(pGraScriptCurrent[i].CurrentFrame==pGraScript[i].FrameCount)
+				pGraScriptCurrent[i].CurrentFrame=0;
+			r=true;
+		}
+	}
+	return r;
+}

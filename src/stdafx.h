@@ -34,7 +34,7 @@
 #include <afxcmn.h>                    
 #endif // _AFX_NO_AFXCMN_SUPPORT
 
-
+#include <atlimage.h>
 
 
 

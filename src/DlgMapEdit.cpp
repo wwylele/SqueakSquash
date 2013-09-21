@@ -35,6 +35,7 @@ void CDlgMapEdit::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_MAP_CUR_GRID2, m_EditCurGrid2);
 	DDX_Control(pDX, IDC_COMBO_BGM, m_ComboBgm);
 	DDX_Control(pDX, IDC_COMBO_BOSS, m_ComboBoss);
+	DDX_Control(pDX, IDC_CHECK_MAP_ANI, m_CheckMapAni);
 }
 
 
@@ -49,6 +50,8 @@ BEGIN_MESSAGE_MAP(CDlgMapEdit, CDialog)
 	ON_WM_SETCURSOR()
 	ON_CBN_SELCHANGE(IDC_COMBO_BGM, &CDlgMapEdit::OnCbnSelchangeComboBgm)
 	ON_CBN_SELCHANGE(IDC_COMBO_BOSS, &CDlgMapEdit::OnCbnSelchangeComboBoss)
+	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_CHECK_MAP_ANI, &CDlgMapEdit::OnBnClickedCheckMapAni)
 END_MESSAGE_MAP()
 
 
@@ -329,22 +332,22 @@ void CDlgMapEdit::PaintMap(u8 onlyx,u8 onlyy)
 		det2bmp=GetDet1Bmp(m_Ma.Grid(x,y).det[2]);
 		for(u8 b=0;b<4;++b)
 		{
-			chardata[1]=m_Ma.BlockMappingB(m_Ma.Grid(x,y).gra[1]).mapping[b];
-			chardata[2]=m_Ma.BlockMappingB(m_Ma.Grid(x,y).gra[2]).mapping[b];
-			chardata[0]=m_Ma.BlockMappingA(m_Ma.Grid(x,y).gra[0]).mapping[b];
+			chardata[1]=m_Ma.BlockMappingB(m_Ma.Grid(x,y).gra[1],true).mapping[b];
+			chardata[2]=m_Ma.BlockMappingB(m_Ma.Grid(x,y).gra[2],true).mapping[b];
+			chardata[0]=m_Ma.BlockMappingA(m_Ma.Grid(x,y).gra[0],true).mapping[b];
 
 			for(u8 bx=0;bx<8;++bx)for(u8 by=0;by<8;++by)
 			{
 				dx=bx|((b&1)<<3)|(x<<4);
 				dy=by|((b&2)<<2)|(y<<4);
-				plti[0]=m_Fb.Tile(chardata[0].tile).Get(chardata[0].flipx?7-bx:bx,chardata[0].flipy?7-by:by);
-				plti[1]=m_Bb.Tile(chardata[1].tile).Get(chardata[1].flipx?7-bx:bx,chardata[1].flipy?7-by:by);
-				plti[2]=m_Bb.Tile(chardata[2].tile).Get(chardata[2].flipx?7-bx:bx,chardata[2].flipy?7-by:by);
+				plti[0]=m_Fb.Tile(chardata[0].tile     ).Get(chardata[0].flipx?7-bx:bx,chardata[0].flipy?7-by:by);
+				plti[1]=m_Bb.Tile(chardata[1].tile,true).Get(chardata[1].flipx?7-bx:bx,chardata[1].flipy?7-by:by);
+				plti[2]=m_Bb.Tile(chardata[2].tile,true).Get(chardata[2].flipx?7-bx:bx,chardata[2].flipy?7-by:by);
 				clr[0]=Nitro::Color15to24(m_Fb.Pal[plti[0]|(m_Fb.PalLine(chardata[0].tile)<<4)]);
 				if(plti[1])
-					clr[1]=Nitro::Color15to24(m_Bb.Pal[plti[1]|(m_Bb.PalLine(chardata[1].tile)<<4)]);
+					clr[1]=Nitro::Color15to24(m_Bb.Pal_Ani(m_Bb.PalLine(chardata[1].tile,true),plti[1]));
 				else clr[1]=RGB(255,255,255);
-				clr[2]=Nitro::Color15to24(m_Bb.Pal[plti[2]|(m_Bb.PalLine(chardata[2].tile)<<4)]);
+				clr[2]=Nitro::Color15to24(m_Bb.Pal_Ani(m_Bb.PalLine(chardata[2].tile,true),plti[2]));
 				if(CheckPlane0)
 				{
 					if(CheckPlane2)
@@ -417,6 +420,7 @@ BOOL CDlgMapEdit::OnInitDialog()
 	m_CheckPlane0.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("Plane0"),0,ProfilePath)?TRUE:FALSE);
 	m_CheckPlane2.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("Plane2"),0,ProfilePath)?TRUE:FALSE);
 	m_CheckDet.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("Det"),0,ProfilePath)?TRUE:FALSE);
+	m_CheckMapAni.SetCheck(GetPrivateProfileInt(_T("MapEditor"),_T("MapAni"),0,ProfilePath)?TRUE:FALSE);
 
 	CString str;
 	for(int i=0;i<256;++i)
@@ -440,6 +444,10 @@ BOOL CDlgMapEdit::OnInitDialog()
 
 	OnStockLButtonDown(0,0);
 
+
+	memcpy(&m_Bb.TileTimeDelta,&m_Ma.S12HScript.TileTimeDelta,4);
+	OnBnClickedCheckMapAni();
+	
 	return TRUE;
 }
 void CDlgMapEdit::SetScroll()
@@ -679,7 +687,7 @@ void CDlgMapEdit::OnStockMouseMove(u8 x,u8 y)
 	{
 		if(m_CheckPlane0.GetCheck())
 		{
-			if(x>=32 || y>m_Fb.GetTileCount()/32)
+			if(x>=32 || y>m_Ma.GetBlockMappingACount()>>5)
 			{
 				cur_stock_x=cur_stock_y=0xFF;
 				str=_T("");
@@ -693,7 +701,7 @@ void CDlgMapEdit::OnStockMouseMove(u8 x,u8 y)
 		}
 		else
 		{
-			if(x>=64 || y>m_Bb.GetTileCount()/64)
+			if(x>=64 || y>m_Ma.GetBlockMappingBCount()>>6)
 			{
 				cur_stock_x=cur_stock_y=0xFF;
 				str=_T("");
@@ -740,7 +748,7 @@ void CDlgMapEdit::OnStockLButtonDown(u8 x,u8 y)
 	{
 		if(m_CheckPlane0.GetCheck())
 		{
-			if(x>=32|| y>m_Fb.GetTileCount()/32) return;
+			if(x>=32|| y>m_Ma.GetBlockMappingACount()>>5) return;
 			else
 			{
 				cursel_stock_x=x;
@@ -750,7 +758,7 @@ void CDlgMapEdit::OnStockLButtonDown(u8 x,u8 y)
 		}
 		else
 		{
-			if(x>=64|| y>m_Bb.GetTileCount()/64) return;
+			if(x>=64|| y>m_Ma.GetBlockMappingBCount()>>6) return;
 			else
 			{
 				cursel_stock_x=x;
@@ -824,4 +832,40 @@ void CDlgMapEdit::OnCbnSelchangeComboBoss()
 	TCHAR dummybuf[100];
 	_stscanf(str,FORMAT_BOSS,&bgm,dummybuf);
 	m_Ma.MapAttribute.Boss=(u8)bgm;
+}
+
+void CDlgMapEdit::OnTimer(UINT_PTR nIDEvent)
+{
+	bool needredraw=false;
+	if(nIDEvent==ID_TIMER_REDRAW_MAP)
+	{
+		needredraw=m_Ma.TicketIn()||needredraw;
+		needredraw=m_Bb.TicketIn()||needredraw;
+		if(needredraw)
+		{
+			PaintMap();
+			GetDlgItem(IDC_STATIC_MAP)->RedrawWindow();
+		}
+	}
+
+	CDialog::OnTimer(nIDEvent);
+}
+
+void CDlgMapEdit::OnBnClickedCheckMapAni()
+{
+	WritePrivateProfileString(_T("MapEditor"),_T("MapAni"),m_CheckMapAni.GetCheck()?
+		_T("1"):_T("0"),ProfilePath);
+	if(m_CheckMapAni.GetCheck())
+	{
+		SetTimer(ID_TIMER_REDRAW_MAP,20,0);
+	}
+	else
+	{
+		KillTimer(ID_TIMER_REDRAW_MAP);
+		m_Ma.TicketClear();
+		m_Bb.TicketClear();
+		if(m_Bb.pSqPl1)m_Bb.pSqPl1->TickedClear();
+		PaintMap();
+		GetDlgItem(IDC_STATIC_MAP)->RedrawWindow();
+	}
 }

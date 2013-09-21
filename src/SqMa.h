@@ -1,5 +1,6 @@
 #pragma once
 #include "Nitro.h"
+
 class SqMa
 {
 private:
@@ -67,6 +68,47 @@ private:
 		u32 SectionOff[13];
 		u32 x40;//=0
 	};
+
+	//struct Section10
+	//{
+		//u16 SectionLen;
+		
+		struct S10HEADER
+		{
+			u16 EvpListOff;//=8
+			u16 EvcListOff;
+			u16 x04;//=0
+			u8 EvpCount;
+			u8 EvcCount;
+		}/*Header*/;
+		
+		struct EvpData
+		{
+			u8 class_id;
+			u8 id;
+			u16 x;
+			u16 y;
+			u8 x07;
+			u8 x08;
+		}/*EvpList[EvpCount]*/;
+
+		//u16 EvcListEntry[EvcCount];
+
+		struct EvcHeader
+		{
+			u8 class_id;
+			u8 count;
+			u16 data_len;
+			//u8[count][data_len] data;
+		}/*EvcList[EvcCount]*/;
+	//};
+
+	struct EvcData
+	{
+		EvcHeader Header;
+		u8 *pData;
+	};
+
 public:
 	SqMa(void);
 	~SqMa(void);
@@ -77,6 +119,8 @@ public:
 	u32 MakeLen();
 	void Make(u8* pdst);
 
+private:u16 S10MakeLen();
+public:
 	//Section -1
 	tMapAttribute MapAttribute;
 
@@ -94,23 +138,43 @@ public:
 	inline u8 GetH(){ASSERT(IsLoaded());return h;}
 
 	//Section1~2
-	inline BLOCK_MAPPING& BlockMappingA(u16 i)
+	inline BLOCK_MAPPING& BlockMappingA(u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(i<BlockMappingCountA);
+		if(ani)
+		{
+			for(u16 j=0;j<GraScriptCount;++j)
+			{
+				if(pGraScript[j].BlockMappingIndex==i &&
+					pGraScript[j].BlockMappingPlane==0)
+					return pBlockMappingA[i+pGraScriptCurrent[j].CurrentFrame+1];
+			}
+		}
 		return pBlockMappingA[i];
 	}
-	inline BLOCK_MAPPING& BlockMappingB(u16 i)
+	inline BLOCK_MAPPING& BlockMappingB(u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(i<BlockMappingCountB);
+		if(ani)
+		{
+			for(u16 j=0;j<GraScriptCount;++j)
+			{
+				if(pGraScript[j].BlockMappingIndex==i &&
+					pGraScript[j].BlockMappingPlane==1)
+					return pBlockMappingB[i+pGraScriptCurrent[j].CurrentFrame+1];
+			}
+		}
 		return pBlockMappingB[i];
 	}
 	inline u16 GetBlockMappingACount(){ASSERT(IsLoaded());return BlockMappingCountA;};
 	inline u16 GetBlockMappingBCount(){ASSERT(IsLoaded());return BlockMappingCountB;};
 
 	//Section 10
-	inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
+	//inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
+	//inline u8 GetSObjCount(){ASSERT(IsLoaded());return pSection10[8];}
+	//inline u8* GetSObj(u8 i){ASSERT(IsLoaded());return pSection10+10+i*8;}
 
 	//Section 11
 	inline u16 GetDoorCount(){ASSERT(IsLoaded());return DoorCount;}
@@ -130,6 +194,10 @@ public:
 		ASSERT(i<GraScriptCount);
 		return pGraScript[i];
 	}
+	void TicketClear();
+	bool TicketIn();
+
+	
 
 	//Section9
 	u32 s9exl;
@@ -148,7 +216,12 @@ private:
 
 
 	//Section 10
-	u8 *pSection10;
+	//u8 *pSection10;
+	u8 EvpCount;
+	EvpData* pEvp;
+	u8 EvcCount;
+	EvcData* pEvc;
+
 
 	//Section 11
 	u16 DoorCount;
@@ -157,6 +230,12 @@ private:
 	//Section 12
 	u16 GraScriptCount;
 	GRA_SCRIPT* pGraScript;
-
+	
+	//Section 12 ani
+	struct GRA_SCRIPT_CURRENT
+	{
+		u8 CurrentFrame;
+		u8 CurrentTime;
+	} *pGraScriptCurrent;
 	
 };

@@ -48,5 +48,33 @@ bool SqPl1::Load(const u8* psrc)
 		for(u8 i=0;i<framecount;++i){memcpy(PlLineList[line].FrameList[i].Pl,psrc,32);psrc+=32;}
 	}
 	loaded=true;
+	TickedClear();
 	return true;
+}
+
+void SqPl1::TickedClear()
+{
+	for(u8 i=0;i<16;++i)
+	{
+		PlLineCurrentList[i].CurrentTime=0;
+		PlLineCurrentList[i].CurrentFrame=0;
+	}
+}
+bool SqPl1::TickedIn()
+{
+	bool r=false;
+	for(u8 i=0;i<16;++i)if(PlLineList[i].FrameCount)
+	{
+		++PlLineCurrentList[i].CurrentTime;
+		if(PlLineCurrentList[i].CurrentTime==
+			PlLineList[i].FrameList[PlLineCurrentList[i].CurrentFrame].Time)
+		{
+			PlLineCurrentList[i].CurrentTime=0;
+			++PlLineCurrentList[i].CurrentFrame;
+			if(PlLineCurrentList[i].CurrentFrame==PlLineList[i].FrameCount)
+				PlLineCurrentList[i].CurrentFrame=0;
+			r=true;
+		}
+	}
+	return r;
 }

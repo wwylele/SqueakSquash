@@ -49,6 +49,7 @@ protected:
 #define ID_BOPTM_RENAME		30009
 #define ID_BOPTM_EXPORT		30010
 #define ID_BOPTM_IMPORT		30011
+#define ID_BOPTM_NEW		30012
 
 	CString m_StrFileName;
 	CDC m_DCPrvw;
@@ -98,6 +99,7 @@ public:
 	afx_msg void OnBoptmEdit();
 	afx_msg void OnBoptmExport();
 	afx_msg void OnBoptmImport();
+	afx_msg void OnBoptmNew();
 };
 
 
