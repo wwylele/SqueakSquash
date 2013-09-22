@@ -415,14 +415,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\Nsbtx.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Nsbtx.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\SqB.cpp"
 				>
 			</File>
