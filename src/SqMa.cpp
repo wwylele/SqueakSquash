@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SqMa.h"
-
+#include "Evc.h"
 
 SqMa::SqMa(void):
 	pGrid(0),
@@ -8,6 +8,7 @@ SqMa::SqMa(void):
 	pBlockMappingB(0),
 	pEvp(0),
 	pEvc(0),
+	//pEvpPack(0),
 	pDoor(0),
 	pGraScript(0),
 	pGraScriptCurrent(0),
@@ -66,6 +67,7 @@ bool SqMa::Load(const u8* psrc)
 	memcpy(&S10Header,ps10,sizeof(S10Header));
 	EvpCount=S10Header.EvpCount;
 	EvcCount=S10Header.EvcCount;
+	
 	if(EvpCount)
 	{
 		pEvp=new EvpData[EvpCount];
@@ -76,11 +78,40 @@ bool SqMa::Load(const u8* psrc)
 			const u8 *pEvcE;
 			pEvcE=ps10+*(u16*)(ps10+S10Header.EvcListOff+i*2);
 			memcpy(&pEvc[i].Header,pEvcE,sizeof(EvcHeader));
+			
 			pEvc[i].pData=new u8[pEvc[i].Header.count*pEvc[i].Header.data_len];
 			memcpy(pEvc[i].pData,pEvcE+sizeof(EvcHeader),
 				pEvc[i].Header.count*pEvc[i].Header.data_len);
 
 		}
+
+		/*//Section10 New
+		pEvpPack=new EvpPack[EvpCount];
+		for(u8 i=0;i<EvpCount;++i)
+		{
+			u8 evpid;
+			pEvpPack[i].class_id=((EvpData*)(ps10+S10Header.EvpListOff))[i].class_id;
+			pEvpPack[i].x=((EvpData*)(ps10+S10Header.EvpListOff))[i].x;
+			pEvpPack[i].y=((EvpData*)(ps10+S10Header.EvpListOff))[i].y;
+			pEvpPack[i].param=((EvpData*)(ps10+S10Header.EvpListOff))[i].param;
+			evpid=((EvpData*)(ps10+S10Header.EvpListOff))[i].id;
+			pEvpPack[i].pExtData=new u8[GetEvcDataLen(pEvpPack[i].class_id)];
+			//Search for the extdata
+			for(u8 j=0;;++j)
+			{
+				ASSERT(j<EvcCount);
+				const u8 *pEvcE;
+				pEvcE=ps10+*(u16*)(ps10+S10Header.EvcListOff+j*2);
+				if(*pEvcE==pEvpPack[i].class_id)
+				{
+					ASSERT(*(pEvcE+1)>evpid);
+					memcpy(pEvpPack[i].pExtData,
+						pEvcE+4+ evpid*GetEvcDataLen(pEvpPack[i].class_id),
+						GetEvcDataLen(pEvpPack[i].class_id));
+					break;
+				}
+			}
+		}*/
 	}
 
 	//Section 11
@@ -173,6 +204,8 @@ void SqMa::Make(u8* pdst)
 	//memcpy(p,pSection10,*(u16*)pSection10);p+=*(u16*)pSection10;
 	*(u16*)p=S10MakeLen();p+=2;
 	u8* ps10=p;
+
+	//Section10 Old
 	S10HEADER S10Header;
 	S10Header.EvpCount=EvpCount;
 	S10Header.EvcCount=EvcCount;
@@ -193,6 +226,52 @@ void SqMa::Make(u8* pdst)
 		memcpy(p,pEvc[i].pData,pEvc[i].Header.count*pEvc[i].Header.data_len);
 		p+=pEvc[i].Header.count*pEvc[i].Header.data_len;
 	}
+
+	/*//Section10 New
+	S10HEADER S10Header;
+	S10Header.EvpCount=EvpCount;
+	u8 EvcExist[MAX_EVC_COUNT]={0},EvcA[MAX_EVC_COUNT]={0};
+	for(u8 i=0;i<EvpCount;++i)++EvcExist[pEvpPack[i].class_id];
+	S10Header.EvcCount=0;
+	for(u8 i=0;i<MAX_EVC_COUNT;++i)if(EvcExist[i])++S10Header.EvcCount;
+	if(EvpCount)
+	{
+		S10Header.EvpListOff=8;
+		S10Header.EvcListOff=8+sizeof(EvpData)*EvpCount;
+	}else S10Header.EvpListOff=S10Header.EvcListOff=0;
+	S10Header.x04=0;
+	memcpy(p,&S10Header,sizeof(S10HEADER));p+=sizeof(S10HEADER);
+	EvpData tEvp;
+	for(u8 i=0;i<EvpCount;++i)
+	{
+		tEvp.class_id=pEvpPack[i].class_id;
+		tEvp.x=pEvpPack[i].x;
+		tEvp.y=pEvpPack[i].y;
+		tEvp.param=pEvpPack[i].param;
+		tEvp.id=EvcA[tEvp.class_id]++;
+		memcpy(p,&tEvp,sizeof(EvpData));p+=sizeof(EvpData);
+	}
+	u8* ps10e=p;
+	p+=S10Header.EvcCount*2;
+	u8 cur_evc=0;
+	EvcHeader tEvc;
+	for(u8 i=0;i<S10Header.EvcCount;++i)
+	{
+		while(EvcExist[cur_evc]==0)++cur_evc;
+		*(u16*)ps10e=(u16)(p-ps10);ps10e+=2;
+
+		tEvc.class_id=cur_evc;
+		tEvc.data_len=GetEvcDataLen(cur_evc);
+		tEvc.count=EvcExist[cur_evc];
+		memcpy(p,&pEvc[i].Header,sizeof(EvcHeader));p+=sizeof(EvcHeader);
+		
+		for(u8 j=0;j<EvpCount;++j)if(pEvpPack[j].class_id==cur_evc)
+		{
+			memcpy(p,pEvpPack[j].pExtData,GetEvcDataLen(cur_evc));
+			p+=GetEvcDataLen(cur_evc);
+		}
+	}*/
+
 
 	//Section 11
 	head.SectionOff[11]=p-pdst;
@@ -222,6 +301,11 @@ void SqMa::Unload()
 		delete[] pEvc;
 		pEvc=0;
 	}
+	/*if(pEvpPack){
+		for(u8 i=0;i<EvpCount;++i)delete[] pEvpPack[i].pExtData;
+		delete[] pEvpPack;
+		pEvpPack=0;
+	}*/
 	if(pDoor){delete[] pDoor;pDoor=0;}
 	if(pGraScript){delete[] pGraScript;pGraScript=0;}
 	if(pGraScriptCurrent){delete[]pGraScriptCurrent;pGraScriptCurrent=0;}

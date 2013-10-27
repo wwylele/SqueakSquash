@@ -395,6 +395,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\Evc.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Evc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Foe.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Foe.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Nitro.h"
 				>
 			</File>

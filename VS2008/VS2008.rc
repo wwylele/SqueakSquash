@@ -79,8 +79,8 @@ IDB_DET1                BITMAP                  "det1.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,0,6
- PRODUCTVERSION 1,2,0,6
+ FILEVERSION 1,3,0,7
+ PRODUCTVERSION 1,3,0,7
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -96,12 +96,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "1, 2, 0, 6"
+            VALUE "FileVersion", "1, 3, 0, 7"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "1, 2, 0, 6"
+            VALUE "ProductVersion", "1, 3, 0, 7"
         END
     END
     BLOCK "VarFileInfo"
@@ -172,11 +172,10 @@ BEGIN
     LTEXT           "BOSS:",IDC_STATIC,408,288,24,12
     COMBOBOX        IDC_COMBO_BOSS,432,288,90,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
     CONTROL         "地图主数据",IDC_RADIO_MAP_PT_GRID,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE,6,186,60,18
-    CONTROL         "传送装置",IDC_RADIO_MAP_PT_DOOR,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE | WS_DISABLED,66,186,60,18
-    CONTROL         "小怪/道具",IDC_RADIO_MAP_PT_OBJ,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE | WS_DISABLED,126,186,60,18
-    CONTROL         "BOSS引导表",IDC_RADIO_MAP_PT_BOSS,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE | WS_DISABLED,186,186,60,18
-    CONTROL         "地图组件",IDC_RADIO_MAP_PT_SOBJ,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE | WS_DISABLED,246,186,60,18
+    CONTROL         "小怪/补给品/传送装置/地图组件",IDC_RADIO_MAP_PT_OBJ,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE,72,186,126,18
+    CONTROL         "BOSS引导表",IDC_RADIO_MAP_PT_BOSS,"Button",BS_AUTORADIOBUTTON | BS_PUSHLIKE | WS_DISABLED,204,186,60,18
     CONTROL         "显示动画\n(可能会很卡)",IDC_CHECK_MAP_ANI,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,456,168,72,24
+    CONTROL         "",IDC_LIST_MAP_OBJ,"SysListView32",LVS_REPORT | LVS_SINGLESEL | LVS_ALIGNLEFT | NOT WS_VISIBLE | WS_BORDER | WS_TABSTOP,0,204,396,120
 END
 
 IDD_RENAME DIALOGEX 0, 0, 150, 27
@@ -290,18 +289,18 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// bin
+// BIN
 //
 
-IDR_NSBTX_TEMP_HORI_0A  bin                     "NSBTX_TEMP\\nsbtx_temp_HORI_0A"
-IDR_NSBTX_TEMP_HORI_1A  bin                     "NSBTX_TEMP\\nsbtx_temp_HORI_1A"
-IDR_NSBTX_TEMP_HORI_08  bin                     "NSBTX_TEMP\\nsbtx_temp_HORI_08"
-IDR_NSBTX_TEMP_HORI_20A bin                     "NSBTX_TEMP\\nsbtx_temp_HORI_20A"
-IDR_NSBTX_TEMP_HORI_00  bin                     "NSBTX_TEMP\\nsbtx_temp_NORI_00"
-IDR_NSBTX_TEMP_SQUA_1D  bin                     "NSBTX_TEMP\\nsbtx_temp_SQUA_1D"
-IDR_NSBTX_TEMP_SQUA_19  bin                     "NSBTX_TEMP\\nsbtx_temp_SQUA_19"
-IDR_NSBTX_TEMP_SQUA_24  bin                     "NSBTX_TEMP\\nsbtx_temp_SQUA_24"
-IDR_NSBTX_TEMP_VERT     bin                     "NSBTX_TEMP\\nsbtx_temp_VERT"
+IDR_NSBTX_TEMP_HORI_0A  BIN                     "NSBTX_TEMP\\nsbtx_temp_HORI_0A"
+IDR_NSBTX_TEMP_HORI_1A  BIN                     "NSBTX_TEMP\\nsbtx_temp_HORI_1A"
+IDR_NSBTX_TEMP_HORI_08  BIN                     "NSBTX_TEMP\\nsbtx_temp_HORI_08"
+IDR_NSBTX_TEMP_HORI_20A BIN                     "NSBTX_TEMP\\nsbtx_temp_HORI_20A"
+IDR_NSBTX_TEMP_HORI_00  BIN                     "NSBTX_TEMP\\nsbtx_temp_NORI_00"
+IDR_NSBTX_TEMP_SQUA_1D  BIN                     "NSBTX_TEMP\\nsbtx_temp_SQUA_1D"
+IDR_NSBTX_TEMP_SQUA_19  BIN                     "NSBTX_TEMP\\nsbtx_temp_SQUA_19"
+IDR_NSBTX_TEMP_SQUA_24  BIN                     "NSBTX_TEMP\\nsbtx_temp_SQUA_24"
+IDR_NSBTX_TEMP_VERT     BIN                     "NSBTX_TEMP\\nsbtx_temp_VERT"
 
 /////////////////////////////////////////////////////////////////////////////
 //

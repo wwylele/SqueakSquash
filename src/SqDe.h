@@ -10,8 +10,8 @@ private:
 	{
 		u16 Magic;
 		u16 HeaderSize;
-		u16 DataOffset;
-		u16 FDE;
+		u16 FoeDataOffset;
+		u16 SupDataOffset;
 		u16 Zero;
 		u16 Const1;
 	};

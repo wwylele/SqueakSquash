@@ -1,3 +1,4 @@
+#pragma once
 struct DetDesc
 {
 	u32 code;

@@ -21,11 +21,13 @@ public:
 	};
 	struct DOOR
 	{
-		u8 dt[4];
+
+		u16 index;
+		u16 class_id;
 		u16 x;
 		u16 y;
 		u8 dst_step;
-		u8 unk;
+		u8 dst_door;
 	};
 
 	struct S12H_SCRIPT
@@ -88,8 +90,7 @@ private:
 			u8 id;
 			u16 x;
 			u16 y;
-			u8 x07;
-			u8 x08;
+			u16 param;
 		}/*EvpList[EvpCount]*/;
 
 		//u16 EvcListEntry[EvcCount];
@@ -109,6 +110,8 @@ private:
 		u8 *pData;
 	};
 
+
+	
 public:
 	SqMa(void);
 	~SqMa(void);
@@ -175,6 +178,15 @@ public:
 	//inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
 	//inline u8 GetSObjCount(){ASSERT(IsLoaded());return pSection10[8];}
 	//inline u8* GetSObj(u8 i){ASSERT(IsLoaded());return pSection10+10+i*8;}
+	inline u8 GetEvcCount(){ASSERT(IsLoaded());return EvcCount;}
+	inline u8 GetEvcClassId(u8 i){
+		ASSERT(IsLoaded());ASSERT(i<EvcCount);
+		return pEvc[i].Header.class_id;
+	}
+	inline u16 _GetEvcDataLen(u8 i){
+		ASSERT(IsLoaded());ASSERT(i<EvcCount);
+		return pEvc[i].Header.data_len;
+	}
 
 	//Section 11
 	inline u16 GetDoorCount(){ASSERT(IsLoaded());return DoorCount;}
@@ -216,11 +228,14 @@ private:
 
 
 	//Section 10
-	//u8 *pSection10;
 	u8 EvpCount;
 	EvpData* pEvp;
 	u8 EvcCount;
 	EvcData* pEvc;
+	friend class SqEvpPack;
+
+	//Section10 New
+	//EvpPack* pEvpPack;
 
 
 	//Section 11

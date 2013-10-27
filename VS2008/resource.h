@@ -62,6 +62,8 @@
 #define IDC_RADIO_MAP_PT_SOBJ           1040
 #define IDC_CHECK_MAP_ANI               1041
 #define IDC_STATIC_IMPORTBG             1042
+#define IDC_LIST1                       1043
+#define IDC_LIST_MAP_OBJ                1043
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -76,7 +78,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        126
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1043
+#define _APS_NEXT_CONTROL_VALUE         1044
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

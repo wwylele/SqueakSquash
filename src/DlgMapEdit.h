@@ -2,8 +2,11 @@
 #include "Main.h"
 #include "afxwin.h"
 #include "SqMa.h"
+#include "SqDe.h"
+#include "Evc.h"
 #include "SqB.h"
 #include "Canvas.h"
+#include "afxcmn.h"
 
 #define FORMAT_BGM _T("%d:%s")
 #define FORMAT_BOSS _T("%d")
@@ -21,6 +24,7 @@ public:
 	enum { IDD = IDD_MAP };
 
 	SqMa m_Ma;
+	SqDe m_De;
 	SqB m_Fb,m_Bb;
 	
 
@@ -30,6 +34,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
+	SqEvpPack m_Ep;
 	CCanvas m_CanMap;
 	CCanvas m_CanStock;
 	CCanvas m_CanCurGrid;
@@ -38,6 +43,12 @@ protected:
 	u8 cur_stock_x,cur_stock_y;
 	u32 cursel_stock;
 	u8 cursel_stock_x,cursel_stock_y;
+
+	enum{
+		MPT_GRID,
+		MPT_OBJ,
+		MPT_BOSS
+	}mode;
 
 	bool grid_drawing;
 public:
@@ -48,6 +59,8 @@ public:
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	virtual BOOL OnInitDialog();
+	inline COLORREF ColorToLi(COLORREF color);
+
 	void PaintMap(u8 onlyx=0xFF,u8 onlyy=0xFF);
 	void PaintStock();
 	void SetScroll();
@@ -90,4 +103,8 @@ public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnBnClickedCheckMapAni();
 	CButton m_CheckMapAni;
+	afx_msg void OnBnClickedRadioMapPtGrid();
+	afx_msg void OnBnClickedRadioMapPtObj();
+	CListCtrl m_ListObj;
+	void FlushObjList();
 };
