@@ -65,7 +65,7 @@ protected:
 public:
 	virtual ~CMainFrame();
 
-	void FlushFileTree();
+	void UpdateFileTree();
 	void PaintRomPrvw();
 	void PaintStepPrvw(u32 Stage,u16 Step);
 	void PaintBgPrvw(u32 index);
@@ -101,6 +101,7 @@ public:
 	afx_msg void OnBoptmExport();
 	afx_msg void OnBoptmImport();
 	afx_msg void OnBoptmNew();
+	afx_msg void OnBoptmRom();
 
 	void PopupBoptm(int x,int y);
 };

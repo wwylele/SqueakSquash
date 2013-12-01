@@ -6,7 +6,7 @@ private:
 	enum{
 		MAGIC=0x6544,//"De"
 	};
-	struct Header
+	SQROM_STRUCT Header
 	{
 		u16 Magic;
 		u16 HeaderSize;
@@ -16,7 +16,7 @@ private:
 		u16 Const1;
 	};
 public:
-	struct SqItem
+	SQROM_STRUCT SqItem
 	{
 		u16 index;
 		u16 class_id;

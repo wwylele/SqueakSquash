@@ -2,7 +2,7 @@ namespace Nitro
 {
 	//The structures below are adapted from the document in NitroSDK
 	//
-	struct ROM_HEADER
+	SQROM_STRUCT ROM_HEADER
 	{
 
 		u8 name[12];
@@ -76,18 +76,18 @@ namespace Nitro
 		u8      reserved[160];
 		
 	};
-	struct ROM_FNTDir
+	SQROM_STRUCT ROM_FNTDir
 	{
 		u32	entry_start;	// Reference location of entry name
 		u16	entry_file_id;	// File ID of top entry 
 		u16	parent_id;	// ID of parent directory
 	};
-	struct ROM_FAT 
+	SQROM_STRUCT ROM_FAT 
 	{
 		u32	top;	// Top ROM address of file 
 		u32	bottom;	// Bottom ROM address of file
 	};	
-	struct ROM_TITLE
+	SQROM_STRUCT ROM_TITLE
 	{
 		u16 version; //Version  (0001h)
 		u16 crc16; //CRC16 across entries 020h..83Fh

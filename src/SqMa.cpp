@@ -1,18 +1,20 @@
 #include "stdafx.h"
 #include "SqMa.h"
 #include "Evc.h"
+#include "Boss.h"
 
 SqMa::SqMa(void):
 	pGrid(0),
 	pBlockMappingA(0),
 	pBlockMappingB(0),
-	pEvp(0),
-	pEvc(0),
+	pGuide(0),
+	pGuideMatrix(0),
+	pComponent(0),
+	pComponentGroup(0),
 	//pEvpPack(0),
 	pDoor(0),
 	pGraScript(0),
-	pGraScriptCurrent(0),
-	s9exp(0)
+	pGraScriptCurrent(0)
 {}
 
 SqMa::~SqMa(void){Unload();}
@@ -24,6 +26,8 @@ bool SqMa::Load(const u8* psrc)
 	ASSERT(head.Magic==MAGIC && head.HeaderSize==0x44 && head.SectionOff[0]);
 	Unload();
 	MapAttribute=head.Attribute;
+
+
 
 	//Section 0
 	w=*(psrc+head.SectionOff[0]);
@@ -47,13 +51,27 @@ bool SqMa::Load(const u8* psrc)
 		pGrid[i].det[0]=*((u32*)(psrc+head.SectionOff[6])+i);
 		pGrid[i].det[1]=*((u32*)(psrc+head.SectionOff[7])+i);
 		pGrid[i].det[2]=*((u32*)(psrc+head.SectionOff[8])+i);
-		pGrid[i].t=*(psrc+head.SectionOff[9]+i);
+		pGrid[i].guide_id=*(psrc+head.SectionOff[9]+i);
 	}
 
-	//Section9 ex
-	s9exl=head.SectionOff[10]-head.SectionOff[9]-w*h;
-	s9exp=new u8[s9exl];
-	memcpy(s9exp,psrc+head.SectionOff[9]+w*h,s9exl);
+	u8 pad=w*h%2;
+
+
+	//Section9 ex new
+	const u8* ps9ex=psrc+head.SectionOff[9]+w*h+pad;
+	if(ps9ex==psrc+head.SectionOff[10] || *ps9ex==0)
+	{
+		GuideCount=0;
+	}
+	else
+	{
+		GuideCount=*(u16*)(ps9ex);ps9ex+=2;
+		pGuide=new GUIDE_DATA[GuideCount];
+		memcpy(pGuide,ps9ex,sizeof(GUIDE_DATA)*GuideCount);
+		ps9ex+=sizeof(GUIDE_DATA)*GuideCount;
+		pGuideMatrix=new u8[GuideCount*GuideCount];
+		memcpy(pGuideMatrix,ps9ex,GuideCount*GuideCount);
+	}
 	
 
 	//Section 10
@@ -65,43 +83,43 @@ bool SqMa::Load(const u8* psrc)
 	S10HEADER S10Header;
 	const u8* ps10=psrc+head.SectionOff[10]+2;
 	memcpy(&S10Header,ps10,sizeof(S10Header));
-	EvpCount=S10Header.EvpCount;
-	EvcCount=S10Header.EvcCount;
+	ComponentCount=S10Header.ComponentCount;
+	ComponentGroupCount=S10Header.ComponentGroupCount;
 	
-	if(EvpCount)
+	if(ComponentCount)
 	{
-		pEvp=new EvpData[EvpCount];
-		memcpy(pEvp,ps10+S10Header.EvpListOff,sizeof(EvpData)*EvpCount);
-		pEvc=new EvcData[EvcCount];
-		for(u8 i=0;i<EvcCount;++i)
+		pComponent=new ComponentData[ComponentCount];
+		memcpy(pComponent,ps10+S10Header.ComponentListOff,sizeof(ComponentData)*ComponentCount);
+		pComponentGroup=new ComponentGroupData[ComponentGroupCount];
+		for(u8 i=0;i<ComponentGroupCount;++i)
 		{
 			const u8 *pEvcE;
-			pEvcE=ps10+*(u16*)(ps10+S10Header.EvcListOff+i*2);
-			memcpy(&pEvc[i].Header,pEvcE,sizeof(EvcHeader));
+			pEvcE=ps10+*(u16*)(ps10+S10Header.ComponentGroupListOff+i*2);
+			memcpy(&pComponentGroup[i].Header,pEvcE,sizeof(ComponentGroupHeader));
 			
-			pEvc[i].pData=new u8[pEvc[i].Header.count*pEvc[i].Header.data_len];
-			memcpy(pEvc[i].pData,pEvcE+sizeof(EvcHeader),
-				pEvc[i].Header.count*pEvc[i].Header.data_len);
+			pComponentGroup[i].pData=new u8[pComponentGroup[i].Header.count*pComponentGroup[i].Header.data_len];
+			memcpy(pComponentGroup[i].pData,pEvcE+sizeof(ComponentGroupHeader),
+				pComponentGroup[i].Header.count*pComponentGroup[i].Header.data_len);
 
 		}
 
 		/*//Section10 New
-		pEvpPack=new EvpPack[EvpCount];
-		for(u8 i=0;i<EvpCount;++i)
+		pEvpPack=new EvpPack[ComponentCount];
+		for(u8 i=0;i<ComponentCount;++i)
 		{
 			u8 evpid;
-			pEvpPack[i].class_id=((EvpData*)(ps10+S10Header.EvpListOff))[i].class_id;
-			pEvpPack[i].x=((EvpData*)(ps10+S10Header.EvpListOff))[i].x;
-			pEvpPack[i].y=((EvpData*)(ps10+S10Header.EvpListOff))[i].y;
-			pEvpPack[i].param=((EvpData*)(ps10+S10Header.EvpListOff))[i].param;
-			evpid=((EvpData*)(ps10+S10Header.EvpListOff))[i].id;
+			pEvpPack[i].class_id=((ComponentData*)(ps10+S10Header.ComponentListOff))[i].class_id;
+			pEvpPack[i].x=((ComponentData*)(ps10+S10Header.ComponentListOff))[i].x;
+			pEvpPack[i].y=((ComponentData*)(ps10+S10Header.ComponentListOff))[i].y;
+			pEvpPack[i].param=((ComponentData*)(ps10+S10Header.ComponentListOff))[i].param;
+			evpid=((ComponentData*)(ps10+S10Header.ComponentListOff))[i].id;
 			pEvpPack[i].pExtData=new u8[GetEvcDataLen(pEvpPack[i].class_id)];
 			//Search for the extdata
 			for(u8 j=0;;++j)
 			{
-				ASSERT(j<EvcCount);
+				ASSERT(j<ComponentGroupCount);
 				const u8 *pEvcE;
-				pEvcE=ps10+*(u16*)(ps10+S10Header.EvcListOff+j*2);
+				pEvcE=ps10+*(u16*)(ps10+S10Header.ComponentGroupListOff+j*2);
 				if(*pEvcE==pEvpPack[i].class_id)
 				{
 					ASSERT(*(pEvcE+1)>evpid);
@@ -116,18 +134,24 @@ bool SqMa::Load(const u8* psrc)
 
 	//Section 11
 	DoorCount=*(u16*)(psrc+head.SectionOff[11]);
-	pDoor=new DOOR[DoorCount];
-	memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(DOOR));
+	if(DoorCount)
+	{
+		pDoor=new DOOR[DoorCount];
+		memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(DOOR));
+	}
 
 	//Section 12
 	S12HEADER S12Header;
 	memcpy(&S12Header,psrc+head.SectionOff[12],sizeof(S12Header));
 	GraScriptCount=S12Header.GraScriptCount;
-	pGraScript=new GRA_SCRIPT[GraScriptCount];
-	memcpy(pGraScript,psrc+head.SectionOff[12]+sizeof(S12Header),
-		sizeof(GRA_SCRIPT)*GraScriptCount);
+	if(GraScriptCount)
+	{
+		pGraScript=new GRA_SCRIPT[GraScriptCount];
+		memcpy(pGraScript,psrc+head.SectionOff[12]+sizeof(S12Header),
+			sizeof(GRA_SCRIPT)*GraScriptCount);
+		pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
+	}
 	S12HScript=S12Header.HScript;
-	pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
 	TicketClear();
 
 	return true;
@@ -135,10 +159,10 @@ bool SqMa::Load(const u8* psrc)
 }
 u16 SqMa::S10MakeLen()
 {
-	u16 S10Len=10+EvpCount*sizeof(EvpData)+EvcCount*2;
-	for(u8 i=0;i<EvcCount;++i)
+	u16 S10Len=10+ComponentCount*sizeof(ComponentData)+ComponentGroupCount*2;
+	for(u8 i=0;i<ComponentGroupCount;++i)
 	{
-		S10Len+=sizeof(EvcHeader)+pEvc[i].Header.count*pEvc[i].Header.data_len;
+		S10Len+=sizeof(ComponentGroupHeader)+pComponentGroup[i].Header.count*pComponentGroup[i].Header.data_len;
 	}
 	return S10Len;
 }
@@ -149,7 +173,11 @@ u32 SqMa::MakeLen()
 		+2+sizeof(BLOCK_MAPPING)*BlockMappingCountA//s1
 		+2+sizeof(BLOCK_MAPPING)*BlockMappingCountB//s2
 		+w*h*(2+2+2+4+4+4+1)//s3~s9
-		+s9exl//s9ex
+		+w*h%2//s9pad
+		+(GuideCount?(2
+			+GuideCount*sizeof(GUIDE_DATA)
+			+GuideCount*GuideCount+GuideCount%2)
+			:0)//s9ex
 		+S10MakeLen()//s10
 		+2+sizeof(DOOR)*DoorCount//s11
 		+sizeof(S12HEADER)+sizeof(GRA_SCRIPT)*GraScriptCount;//s12
@@ -196,8 +224,20 @@ void SqMa::Make(u8* pdst)
 
 	//Section 9
 	head.SectionOff[9]=p-pdst;
-	for(u16 i=0;i<w*h;++i)*p++=pGrid[i].t;
-	memcpy(p,s9exp,s9exl);p+=s9exl;
+	for(u16 i=0;i<w*h;++i)*p++=pGrid[i].guide_id;
+	if(w*h%2)*(p++)=0;
+
+	//section9 old
+	//memcpy(p,s9exp,s9exl);p+=s9exl;
+
+	//section 9 new
+	if(GuideCount)
+	{
+		*(u16*)p=GuideCount;p+=2;
+		memcpy(p,pGuide,GuideCount*sizeof(GUIDE_DATA));p+=GuideCount*sizeof(GUIDE_DATA);
+		memcpy(p,pGuideMatrix,GuideCount*GuideCount);p+=GuideCount*GuideCount;
+		if(GuideCount%2)*(p++)=0;
+	}
 
 	//Section 10
 	head.SectionOff[10]=p-pdst;
@@ -205,57 +245,57 @@ void SqMa::Make(u8* pdst)
 	*(u16*)p=S10MakeLen();p+=2;
 	u8* ps10=p;
 
-	//Section10 Old
+	//Section10
 	S10HEADER S10Header;
-	S10Header.EvpCount=EvpCount;
-	S10Header.EvcCount=EvcCount;
-	if(EvpCount)
+	S10Header.ComponentCount=ComponentCount;
+	S10Header.ComponentGroupCount=ComponentGroupCount;
+	if(ComponentCount)
 	{
-		S10Header.EvpListOff=8;
-		S10Header.EvcListOff=8+sizeof(EvpData)*EvpCount;
-	}else S10Header.EvpListOff=S10Header.EvcListOff=0;
+		S10Header.ComponentListOff=8;
+		S10Header.ComponentGroupListOff=8+sizeof(ComponentData)*ComponentCount;
+	}else S10Header.ComponentListOff=S10Header.ComponentGroupListOff=0;
 	S10Header.x04=0;
 	memcpy(p,&S10Header,sizeof(S10HEADER));p+=sizeof(S10HEADER);
-	memcpy(p,pEvp,sizeof(EvpData)*EvpCount);p+=sizeof(EvpData)*EvpCount;
+	memcpy(p,pComponent,sizeof(ComponentData)*ComponentCount);p+=sizeof(ComponentData)*ComponentCount;
 	u8* ps10e=p;
-	p+=EvcCount*2;
-	for(u8 i=0;i<EvcCount;++i)
+	p+=ComponentGroupCount*2;
+	for(u8 i=0;i<ComponentGroupCount;++i)
 	{
 		*(u16*)ps10e=(u16)(p-ps10);ps10e+=2;
-		memcpy(p,&pEvc[i].Header,sizeof(EvcHeader));p+=sizeof(EvcHeader);
-		memcpy(p,pEvc[i].pData,pEvc[i].Header.count*pEvc[i].Header.data_len);
-		p+=pEvc[i].Header.count*pEvc[i].Header.data_len;
+		memcpy(p,&pComponentGroup[i].Header,sizeof(ComponentGroupHeader));p+=sizeof(ComponentGroupHeader);
+		memcpy(p,pComponentGroup[i].pData,pComponentGroup[i].Header.count*pComponentGroup[i].Header.data_len);
+		p+=pComponentGroup[i].Header.count*pComponentGroup[i].Header.data_len;
 	}
 
 	/*//Section10 New
 	S10HEADER S10Header;
-	S10Header.EvpCount=EvpCount;
+	S10Header.ComponentCount=ComponentCount;
 	u8 EvcExist[MAX_EVC_COUNT]={0},EvcA[MAX_EVC_COUNT]={0};
-	for(u8 i=0;i<EvpCount;++i)++EvcExist[pEvpPack[i].class_id];
-	S10Header.EvcCount=0;
-	for(u8 i=0;i<MAX_EVC_COUNT;++i)if(EvcExist[i])++S10Header.EvcCount;
-	if(EvpCount)
+	for(u8 i=0;i<ComponentCount;++i)++EvcExist[pEvpPack[i].class_id];
+	S10Header.ComponentGroupCount=0;
+	for(u8 i=0;i<MAX_EVC_COUNT;++i)if(EvcExist[i])++S10Header.ComponentGroupCount;
+	if(ComponentCount)
 	{
-		S10Header.EvpListOff=8;
-		S10Header.EvcListOff=8+sizeof(EvpData)*EvpCount;
-	}else S10Header.EvpListOff=S10Header.EvcListOff=0;
+		S10Header.ComponentListOff=8;
+		S10Header.ComponentGroupListOff=8+sizeof(ComponentData)*ComponentCount;
+	}else S10Header.ComponentListOff=S10Header.ComponentGroupListOff=0;
 	S10Header.x04=0;
 	memcpy(p,&S10Header,sizeof(S10HEADER));p+=sizeof(S10HEADER);
-	EvpData tEvp;
-	for(u8 i=0;i<EvpCount;++i)
+	ComponentData tEvp;
+	for(u8 i=0;i<ComponentCount;++i)
 	{
 		tEvp.class_id=pEvpPack[i].class_id;
 		tEvp.x=pEvpPack[i].x;
 		tEvp.y=pEvpPack[i].y;
 		tEvp.param=pEvpPack[i].param;
 		tEvp.id=EvcA[tEvp.class_id]++;
-		memcpy(p,&tEvp,sizeof(EvpData));p+=sizeof(EvpData);
+		memcpy(p,&tEvp,sizeof(ComponentData));p+=sizeof(ComponentData);
 	}
 	u8* ps10e=p;
-	p+=S10Header.EvcCount*2;
+	p+=S10Header.ComponentGroupCount*2;
 	u8 cur_evc=0;
-	EvcHeader tEvc;
-	for(u8 i=0;i<S10Header.EvcCount;++i)
+	ComponentGroupHeader tEvc;
+	for(u8 i=0;i<S10Header.ComponentGroupCount;++i)
 	{
 		while(EvcExist[cur_evc]==0)++cur_evc;
 		*(u16*)ps10e=(u16)(p-ps10);ps10e+=2;
@@ -263,9 +303,9 @@ void SqMa::Make(u8* pdst)
 		tEvc.class_id=cur_evc;
 		tEvc.data_len=GetEvcDataLen(cur_evc);
 		tEvc.count=EvcExist[cur_evc];
-		memcpy(p,&pEvc[i].Header,sizeof(EvcHeader));p+=sizeof(EvcHeader);
+		memcpy(p,&pComponentGroup[i].Header,sizeof(ComponentGroupHeader));p+=sizeof(ComponentGroupHeader);
 		
-		for(u8 j=0;j<EvpCount;++j)if(pEvpPack[j].class_id==cur_evc)
+		for(u8 j=0;j<ComponentCount;++j)if(pEvpPack[j].class_id==cur_evc)
 		{
 			memcpy(p,pEvpPack[j].pExtData,GetEvcDataLen(cur_evc));
 			p+=GetEvcDataLen(cur_evc);
@@ -294,28 +334,29 @@ void SqMa::Unload()
 	if(pGrid){delete[] pGrid;pGrid=0;}
 	if(pBlockMappingA){delete[] pBlockMappingA;pBlockMappingA=0;}
 	if(pBlockMappingB){delete[] pBlockMappingB;pBlockMappingB=0;}
+	if(pGuide){delete[] pGuide;pGuide=0;}
+	if(pGuideMatrix){delete[] pGuideMatrix;pGuideMatrix=0;}
 	//if(pSection10){delete[] pSection10;pSection10=0;}
-	if(pEvp){delete[] pEvp;pEvp=0;}
-	if(pEvc){
-		for(u8 i=0;i<EvcCount;++i)delete[] pEvc[i].pData;
-		delete[] pEvc;
-		pEvc=0;
+	if(pComponent){delete[] pComponent;pComponent=0;}
+	if(pComponentGroup){
+		for(u8 i=0;i<ComponentGroupCount;++i)delete[] pComponentGroup[i].pData;
+		delete[] pComponentGroup;
+		pComponentGroup=0;
 	}
 	/*if(pEvpPack){
-		for(u8 i=0;i<EvpCount;++i)delete[] pEvpPack[i].pExtData;
+		for(u8 i=0;i<ComponentCount;++i)delete[] pEvpPack[i].pExtData;
 		delete[] pEvpPack;
 		pEvpPack=0;
 	}*/
 	if(pDoor){delete[] pDoor;pDoor=0;}
 	if(pGraScript){delete[] pGraScript;pGraScript=0;}
 	if(pGraScriptCurrent){delete[]pGraScriptCurrent;pGraScriptCurrent=0;}
-	if(s9exp){delete[] s9exp;s9exp=0;}
 }
 
 
 void SqMa::TicketClear()
 {
-	for(u16 i=0;i<GraScriptCount;i++)
+	for(u16 i=0;i<GraScriptCount;++i)
 	{
 		pGraScriptCurrent[i].CurrentFrame=0;
 		pGraScriptCurrent[i].CurrentTime=0;
@@ -324,7 +365,7 @@ void SqMa::TicketClear()
 bool SqMa::TicketIn()
 {
 	bool r=false;
-	for(u16 i=0;i<GraScriptCount;i++)
+	for(u16 i=0;i<GraScriptCount;++i)
 	{
 		++pGraScriptCurrent[i].CurrentTime;
 		if(pGraScriptCurrent[i].CurrentTime==

@@ -21,7 +21,7 @@ class CSqsqApp : public CWinApp
 public:
 	CSqsqApp();
 
-
+	void SetFileAssociate();
 
 public:
 	virtual BOOL InitInstance();

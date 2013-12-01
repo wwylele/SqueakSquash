@@ -34,7 +34,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	SqEvpPack m_Ep;
+	SqComponentPack m_Ep;
 	CCanvas m_CanMap;
 	CCanvas m_CanStock;
 	CCanvas m_CanCurGrid;
@@ -59,7 +59,7 @@ public:
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	virtual BOOL OnInitDialog();
-	inline COLORREF ColorToLi(COLORREF color);
+	inline COLORREF ColorToLi(COLORREF color,u8 bosszone);
 
 	void PaintMap(u8 onlyx=0xFF,u8 onlyy=0xFF);
 	void PaintStock();
@@ -87,6 +87,7 @@ public:
 	CEdit m_EditCurGrid0;
 	CEdit m_EditCurGrid1;
 	CEdit m_EditCurGrid2;
+	CEdit m_EditCurGridBoss;
 
 	struct OPT_STACK_NOTE
 	{
@@ -106,5 +107,8 @@ public:
 	afx_msg void OnBnClickedRadioMapPtGrid();
 	afx_msg void OnBnClickedRadioMapPtObj();
 	CListCtrl m_ListObj;
-	void FlushObjList();
+	void UpdateObjList();
+	void UpdateGuideList();
+	afx_msg void OnBnClickedRadioMapPtBoss();
+	
 };

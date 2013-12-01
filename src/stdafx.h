@@ -50,7 +50,7 @@ typedef signed long s32;
 
 #define TMP_FILE _T("sqsq.tmp")
 
-#define FILE_RELATED_STRUCT
+#define SQROM_STRUCT struct
 
 
 #ifdef _UNICODE

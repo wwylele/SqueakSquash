@@ -10,7 +10,7 @@
 IMPLEMENT_DYNCREATE(CWndWait, CFrameWnd)
 
 CWndWait CWndWait::WndWait;
-HANDLE CWndWait::hEvent=0;
+HANDLE CWndWait::hEvent=0,CWndWait::hEventStop=0,CWndWait::hEventStopRet=0;
 
 CWndWait::CWndWait()
 {
@@ -18,6 +18,12 @@ CWndWait::CWndWait()
 
 CWndWait::~CWndWait()
 {
+	SetEvent(hEventStop);
+	SetEvent(hEvent);
+	WaitForSingleObject(hEventStopRet,INFINITE);
+	CloseHandle(hEvent);
+	CloseHandle(hEventStop);
+	CloseHandle(hEventStopRet);
 }
 DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 {
@@ -28,6 +34,10 @@ DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 	while(1)
 	{
 		WaitForSingleObject(hEvent,INFINITE);
+		if(WaitForSingleObject(hEventStop,1)!=WAIT_TIMEOUT)
+		{	
+			break;
+		}
 		pDC->TextOut(0,0,_T("WAIT..."),7);
 		pDC->FillRect((LPRECT)&CRect(16,18,30,32),p==0?&ba:&bb);
 		pDC->FillRect((LPRECT)&CRect(32,18,46,32),p==1?&ba:&bb);
@@ -38,6 +48,8 @@ DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 	}
 
 	WndWait.ReleaseDC(pDC);
+	SetEvent(hEventStopRet);
+	return 0;
 }
 #define WAITWND_W 64
 #define WAITWND_H 64
@@ -50,7 +62,9 @@ void CWndWait::InitWndWait()
 		(GetSystemMetrics(SM_CYSCREEN)-WAITWND_H)/2,
 		(GetSystemMetrics(SM_CXSCREEN)-WAITWND_W)/2+WAITWND_W,
 		(GetSystemMetrics(SM_CYSCREEN)-WAITWND_H)/2+WAITWND_H));
-	hEvent=CreateEvent(0,TRUE,TRUE,0);
+	hEvent=CreateEvent(0,TRUE,FALSE,0);
+	hEventStop=CreateEvent(0,TRUE,FALSE,0);
+	hEventStopRet=CreateEvent(0,TRUE,FALSE,0);
 	CreateThread(0,0,WndWaitThread,0,0,0);
 }
 void CWndWait::ShowWndWait()

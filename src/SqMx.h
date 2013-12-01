@@ -30,7 +30,7 @@ public:
 private:
 	u16 StepCount;
 	StepInfo *pStep;
-	struct Header
+	SQROM_STRUCT Header
 	{
 		u16 Magic;
 		u16 HeaderSize;//=12

@@ -8,7 +8,7 @@ private:
 	//
 	//SQMS File Data Structure
 	//
-	FILE_RELATED_STRUCT struct SqmsFileHeader
+	struct SqmsFileHeader
 	{
 		u8 Magic[8];//="SQSQMAPS"
 		u32 Version;
@@ -19,14 +19,14 @@ private:
 		u32 StageCount;
 		//SqmsStageHeader StageHeader[StageCount];
 	};
-	FILE_RELATED_STRUCT struct SqmsStageHeader
+	struct SqmsStageHeader
 	{
 		u8 LevelIdx;
 		u8 StageIdx;
 		u16 StepCount;
 		u32 StepTableOffset;//ptr to SqmsStepHeader[StepCount]
 	};
-	FILE_RELATED_STRUCT struct SqmsStepHeader
+	struct SqmsStepHeader
 	{
 		u32 MxpLen;
 		u32 MxpOffset;//ptr to .mxp Data
@@ -38,19 +38,22 @@ private:
 		u8 PlId;
 	};
 	
-	FILE_RELATED_STRUCT struct SqmsSectionHeader
+	struct SqmsSectionHeader
 	{
 		u8 Magic[4];//="SQBG","SQGL","SQPL"
 		u32 Count;
 		//SqmsSecitemHeader SecitemHeader[Count];
 	};
-	FILE_RELATED_STRUCT struct SqmsSecitemHeader
+	struct SqmsSecitemHeader
 	{
 		u8 Name[16];
 		u32 DataLen;
 		u32 DataOffset;//ptr to .nsbtx,.bin,.pal Data
 	};
-	FILE_RELATED_STRUCT struct SqmsRomInfo
+	
+
+public:
+	struct SqmsRomInfo
 	{
 		u8 Rom_name[12];
 		u8 Rom_id[4];
@@ -70,6 +73,7 @@ private:
 	};
 
 private:
+
 	//
 	//SQMS Data
 	//

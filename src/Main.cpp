@@ -93,8 +93,95 @@ CSqsqApp::CSqsqApp()
 
 }
 
+bool regCreateFileType(const char *ext, const char *type)
+{
+  DWORD disp = 0;
+  HKEY key;
+  LONG res = RegCreateKeyExA(HKEY_CLASSES_ROOT,
+                            ext,
+                            0,
+                            "",
+                            REG_OPTION_NON_VOLATILE,
+                            KEY_ALL_ACCESS,
+                            NULL,
+                            &key,
+                            &disp);
+  if(res == ERROR_SUCCESS) {
+    res = RegSetValueExA(key,
+                        "",
+                        0,
+                        REG_SZ,
+                        (const UCHAR *)type,
+                        strlen(type)+1);
+    RegCloseKey(key);
+    return true;
+  }
+  return false;
+}
 
+bool regAssociateType(const char *type, const char *desc, const char *application)
+{
+  DWORD disp = 0;
+  HKEY key;
+  LONG res = RegCreateKeyExA(HKEY_CLASSES_ROOT,
+                            type,
+                            0,
+                            "",
+                            REG_OPTION_NON_VOLATILE,
+                            KEY_ALL_ACCESS,
+                            NULL,
+                            &key,
+                            &disp);
+  if(res == ERROR_SUCCESS) {
+    res = RegSetValueExA(key,
+                        "",
+                        0,
+                        REG_SZ,
+                        (const UCHAR *)desc,
+                        strlen(desc)+1);
+    HKEY key2;
+    res = RegCreateKeyExA(key,
+                         "Shell\\Open\\Command",
+                         0,
+                         "",
+                         REG_OPTION_NON_VOLATILE,
+                         KEY_ALL_ACCESS,
+                         NULL,
+                         &key2,
+                         &disp);
+    if(res == ERROR_SUCCESS) {
+      res = RegSetValueExA(key2,
+                          "",
+                          0,
+                          REG_SZ,
+                          (const UCHAR *)application,
+                          strlen(application)+1);
+      RegCloseKey(key2);
+      RegCloseKey(key);
+      return true;
+    }
+    
+    RegCloseKey(key);
+  }
+  return false;
+}
+void CSqsqApp::SetFileAssociate()
+{
 
+	TCHAR applicationPath[4096];  
+	GetModuleFileName(NULL,applicationPath,4095);
+	CStringA commandPath;
+#ifdef _UNICODE
+	commandPath.Format("\"%S\" \"%%1\"", (TCHAR*)applicationPath);
+#else
+	commandPath.Format("\"%s\" \"%%1\"", (TCHAR*)applicationPath);
+#endif
+	regAssociateType("SqueakSquash.MapSet",
+                     "SqueakSquash MapSet File",
+                     commandPath);
+	regCreateFileType(".sqms","SqueakSquash.MapSet");
+  
+}
 
 CSqsqApp theApp;
 
@@ -109,6 +196,8 @@ BOOL CSqsqApp::InitInstance()
 	
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
+
+	SetFileAssociate();
 
 	CWinApp::InitInstance();
 
@@ -184,5 +273,6 @@ BOOL CDlgAbout::OnInitDialog()
 
 		,strVer);
 	m_EditAbout.SetWindowText(str);
+	m_EditAbout.SetSel(0,0,0);
 	return TRUE;
 }
