@@ -212,6 +212,9 @@ BOOL CSqsqApp::InitInstance()
 	OpenConsole();
 	PrintLog("SqueakSquash:\n");
 
+	void VersionFromInternet();
+	VersionFromInternet();
+
 	CMainFrame* pFrame = new CMainFrame;
 	if (!pFrame)
 		return FALSE;

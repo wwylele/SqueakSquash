@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\CheckForUpdates.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgChangeLib.cpp"
 				>
 			</File>

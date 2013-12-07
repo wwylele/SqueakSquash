@@ -9,7 +9,7 @@ private:
 		MAGIC=0x614D,//"Ma"
 	};
 public:
-	SQROM_STRUCT GridData
+	SQROM_STRUCT CellData
 	{
 		u16 gra[3];
 		u32 det[3];
@@ -22,7 +22,7 @@ public:
 		u16 y;
 		u16 U;
 	};
-	SQROM_STRUCT BLOCK_MAPPING
+	SQROM_STRUCT TEX_MAPPING
 	{
 		Nitro::CharData mapping[4];
 	};
@@ -44,9 +44,9 @@ public:
 	};
 	SQROM_STRUCT GRA_SCRIPT
 	{
-		u16 BlockMappingIndex;
+		u16 TexMappingIndex;
 		u8 FrameCount;
-		u8 BlockMappingPlane;
+		u8 TexMappingPlane;
 		u8 TimeDelta[8];
 
 	};
@@ -84,36 +84,36 @@ private:
 		
 		SQROM_STRUCT S10HEADER
 		{
-			u16 ComponentListOff;//=8
-			u16 ComponentGroupListOff;
+			u16 MctrlListOff;//=8
+			u16 MctrlGroupListOff;
 			u16 x04;//=0
-			u8 ComponentCount;
-			u8 ComponentGroupCount;
+			u8 MctrlCount;
+			u8 MctrlGroupCount;
 		}/*Header*/;
 		
-		SQROM_STRUCT ComponentData
+		SQROM_STRUCT MctrlData
 		{
 			u8 class_id;
 			u8 id;
 			u16 x;
 			u16 y;
 			u16 param;
-		}/*ComponentList[ComponentCount]*/;
+		}/*MctrlList[MctrlCount]*/;
 
-		//u16 ComponentGroupEntry[ComponentGroupCount];
+		//u16 MctrlGroupEntry[MctrlGroupCount];
 
-		SQROM_STRUCT ComponentGroupHeader
+		SQROM_STRUCT MctrlGroupHeader
 		{
 			u8 class_id;
 			u8 count;
 			u16 data_len;
 			//u8[count][data_len] data;
-		}/*ComponentGroup[ComponentGroupCount]*/;
+		}/*MctrlGroup[MctrlGroupCount]*/;
 	//};
 
-	struct ComponentGroupData
+	struct MctrlGroupData
 	{
-		ComponentGroupHeader Header;
+		MctrlGroupHeader Header;
 		u8 *pData;
 	};
 
@@ -124,7 +124,7 @@ public:
 	~SqMa(void);
 	
 	bool Load(const u8* psrc);
-	inline bool IsLoaded(){return pGrid!=0;}
+	inline bool IsLoaded(){return pCell!=0;}
 	void Unload();
 	u32 MakeLen();
 	void Make(u8* pdst);
@@ -135,12 +135,12 @@ public:
 	tMapAttribute MapAttribute;
 
 	//Section 3~8~9
-	inline GridData & Cell(u8 x,u8 y)
+	inline CellData& Cell(u8 x,u8 y)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(x<w);
 		ASSERT(y<h);
-		return pGrid[x+y*w];
+		return pCell[x+y*w];
 	}
 
 	//Section 0
@@ -148,38 +148,38 @@ public:
 	inline u8 GetH(){ASSERT(IsLoaded());return h;}
 
 	//Section1~2
-	inline BLOCK_MAPPING& BlockMappingA(u16 i,bool ani=false)
+	inline TEX_MAPPING& TexMappingA(u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
-		ASSERT(i<BlockMappingCountA);
+		ASSERT(i<TexMappingCountA);
 		if(ani)
 		{
 			for(u16 j=0;j<GraScriptCount;++j)
 			{
-				if(pGraScript[j].BlockMappingIndex==i &&
-					pGraScript[j].BlockMappingPlane==0)
-					return pBlockMappingA[i+pGraScriptCurrent[j].CurrentFrame+1];
+				if(pGraScript[j].TexMappingIndex==i &&
+					pGraScript[j].TexMappingPlane==0)
+					return pTexMappingA[i+pGraScriptCurrent[j].CurrentFrame+1];
 			}
 		}
-		return pBlockMappingA[i];
+		return pTexMappingA[i];
 	}
-	inline BLOCK_MAPPING& BlockMappingB(u16 i,bool ani=false)
+	inline TEX_MAPPING& TexMappingB(u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
-		ASSERT(i<BlockMappingCountB);
+		ASSERT(i<TexMappingCountB);
 		if(ani)
 		{
 			for(u16 j=0;j<GraScriptCount;++j)
 			{
-				if(pGraScript[j].BlockMappingIndex==i &&
-					pGraScript[j].BlockMappingPlane==1)
-					return pBlockMappingB[i+pGraScriptCurrent[j].CurrentFrame+1];
+				if(pGraScript[j].TexMappingIndex==i &&
+					pGraScript[j].TexMappingPlane==1)
+					return pTexMappingB[i+pGraScriptCurrent[j].CurrentFrame+1];
 			}
 		}
-		return pBlockMappingB[i];
+		return pTexMappingB[i];
 	}
-	inline u16 GetBlockMappingACount(){ASSERT(IsLoaded());return BlockMappingCountA;};
-	inline u16 GetBlockMappingBCount(){ASSERT(IsLoaded());return BlockMappingCountB;};
+	inline u16 GetTexMappingACount(){ASSERT(IsLoaded());return TexMappingCountA;};
+	inline u16 GetTexMappingBCount(){ASSERT(IsLoaded());return TexMappingCountB;};
 
 	//Section 9 ex
 	inline u16 GetGuideCount(){ASSERT(IsLoaded());return GuideCount;}
@@ -196,10 +196,10 @@ public:
 	//inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
 	//inline u8 GetSObjCount(){ASSERT(IsLoaded());return pSection10[8];}
 	//inline u8* GetSObj(u8 i){ASSERT(IsLoaded());return pSection10+10+i*8;}
-	inline u8 GetComponentGroupCount(){ASSERT(IsLoaded());return ComponentGroupCount;}
-	inline u8 GetComponentGroupId(u8 i){
-		ASSERT(IsLoaded());ASSERT(i<ComponentGroupCount);
-		return pComponentGroup[i].Header.class_id;
+	inline u8 GetMctrlGroupCount(){ASSERT(IsLoaded());return MctrlGroupCount;}
+	inline u8 GetMctrlGroupId(u8 i){
+		ASSERT(IsLoaded());ASSERT(i<MctrlGroupCount);
+		return pMctrlGroup[i].Header.class_id;
 	}
 	
 
@@ -231,11 +231,11 @@ private:
 	u8 w,h;
 
 	//Section 1~2
-	u16 BlockMappingCountA,BlockMappingCountB;
-	BLOCK_MAPPING *pBlockMappingA,*pBlockMappingB;
+	u16 TexMappingCountA,TexMappingCountB;
+	TEX_MAPPING *pTexMappingA,*pTexMappingB;
 
 	//Section 3~8~9
-	GridData *pGrid;
+	CellData *pCell;
 
 	//Section 9 
 	u16 GuideCount;
@@ -244,11 +244,11 @@ private:
 
 
 	//Section 10
-	u8 ComponentCount;
-	ComponentData* pComponent;
-	u8 ComponentGroupCount;
-	ComponentGroupData* pComponentGroup;
-	friend class SqComponentPack;
+	u8 MctrlCount;
+	MctrlData* pMctrl;
+	u8 MctrlGroupCount;
+	MctrlGroupData* pMctrlGroup;
+	friend class SqMctrlPack;
 
 	//Section10 New
 	//EvpPack* pEvpPack;

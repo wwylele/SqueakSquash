@@ -11,10 +11,10 @@ extern const EVC_DESC EvcDesc[];
 u16 GetEvcDataLen(u8 class_id);
 
 
-class SqComponentPack
+class SqMctrlPack
 {
 public:
-	struct ComponentNote
+	struct MctrlNote
 	{
 		u8 class_id;
 		u16 x;
@@ -22,20 +22,20 @@ public:
 		u16 param;
 		u8* pExtData;
 	};
-	SqComponentPack();
-	~SqComponentPack();
+	SqMctrlPack();
+	~SqMctrlPack();
 	void FromMa(SqMa& sqma);
 	void Unload();
 	void ToMa(SqMa& sqma);
-	inline u8 GetComponentCount(){return ComponentCount;}
-	inline ComponentNote& operator [](u8 i)
+	inline u8 GetMctrlCount(){return MctrlCount;}
+	inline MctrlNote& operator [](u8 i)
 	{
-		ASSERT(i<ComponentCount);
-		return pComponent[i];
+		ASSERT(i<MctrlCount);
+		return pMctrl[i];
 	}
 private:
-	ComponentNote *pComponent;
-	u8 ComponentCount;
+	MctrlNote *pMctrl;
+	u8 MctrlCount;
 
 };
 
@@ -93,6 +93,10 @@ struct EVC_EXT_21{
 struct EVC_EXT_22{
 	u8 RelEvpCount;
 	u8 RelEvpIndex[5];
-	u16 RelEvpParam[5];
+	u16 TimeDelta[5];
+};
+struct EVC_EXT_23{
+	u32 Const;//=0x001E0000
+	u8 RelEvpIndex[8];
 };
 struct EVC_EXT_25{u16 Unk/*=0,1*/;};

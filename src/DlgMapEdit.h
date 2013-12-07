@@ -34,7 +34,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	SqComponentPack m_Ep;
+	SqMctrlPack m_Ep;
 	CCanvas m_CanMap;
 	CCanvas m_CanStock;
 	CCanvas m_CanCurGrid;
