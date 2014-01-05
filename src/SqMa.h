@@ -124,6 +124,7 @@ public:
 	~SqMa(void);
 	
 	bool Load(const u8* psrc);
+	void LoadDefault();
 	inline bool IsLoaded(){return pCell!=0;}
 	void Unload();
 	u32 MakeLen();

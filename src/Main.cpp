@@ -1,6 +1,7 @@
 
 #include "stdafx.h"
 #include "Main.h"
+#include "CheckForUpdates.h"
 #include "MainFrm.h"
 
 #pragma comment(lib,"Version.lib")
@@ -70,9 +71,9 @@ void GetProductVersion(CString *pstr,UINT *pu)
 					pFileInfo->dwProductVersionMS & 0xFFFF,   
 					pFileInfo->dwProductVersionLS >> 16,  
 					pFileInfo->dwProductVersionLS & 0xFFFF);      
-				if(pu)*pu=(pFileInfo->dwProductVersionMS >> 16)*1000+
-					(pFileInfo->dwProductVersionMS & 0xFFFF)*100+
-					(pFileInfo->dwProductVersionLS >> 16)*10+
+				if(pu)*pu=((pFileInfo->dwProductVersionMS >> 16)<<24)|
+					((pFileInfo->dwProductVersionMS & 0xFFFF)<<16)|
+					((pFileInfo->dwProductVersionLS >> 16)<<8)|
 					(pFileInfo->dwProductVersionLS & 0xFFFF);
 			}  
 		// Delete the data buffer  
@@ -186,7 +187,11 @@ void CSqsqApp::SetFileAssociate()
 CSqsqApp theApp;
 
 
-
+DWORD WINAPI CheckForUpdates_Thread(LPVOID lpThreadParameter)
+{
+	CheckForUpdates();
+	return 0;
+}
 
 BOOL CSqsqApp::InitInstance()
 {
@@ -212,8 +217,7 @@ BOOL CSqsqApp::InitInstance()
 	OpenConsole();
 	PrintLog("SqueakSquash:\n");
 
-	void VersionFromInternet();
-	VersionFromInternet();
+	::CreateThread(0,0,CheckForUpdates_Thread,0,0,0);
 
 	CMainFrame* pFrame = new CMainFrame;
 	if (!pFrame)
@@ -255,6 +259,7 @@ void CDlgAbout::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(CDlgAbout, CDialog)
+	ON_BN_CLICKED(IDC_BUTTON_CHECK_FOR_UPDATES, &CDlgAbout::OnBnClickedButtonCheckForUpdates)
 END_MESSAGE_MAP()
 
 
@@ -278,4 +283,9 @@ BOOL CDlgAbout::OnInitDialog()
 	m_EditAbout.SetWindowText(str);
 	m_EditAbout.SetSel(0,0,0);
 	return TRUE;
+}
+
+void CDlgAbout::OnBnClickedButtonCheckForUpdates()
+{
+	if(!CheckForUpdates())MessageBox(_T("未发现软件更新"),_T("更新"));
 }

@@ -2,7 +2,7 @@
 #include "SqDe.h"
 
 
-SqDe::SqDe():pFoe(0),pSup(0)
+SqDe::SqDe():pFoe(0),pSup(0),m_Loaded(false)
 {
 }
 SqDe::~SqDe()
@@ -21,6 +21,13 @@ void SqDe::Unload()
 		delete[] pSup;
 		pSup=0;
 	}
+	m_Loaded=false;
+}
+void SqDe::LoadDefault()
+{
+	Unload();
+	FoeCount=SupCount=0;
+	m_Loaded=true;
 }
 bool SqDe::Load(const u8* psrc)
 {
@@ -35,5 +42,30 @@ bool SqDe::Load(const u8* psrc)
 	pSup=new SqItem[SupCount];
 	memcpy(pSup,psrc,sizeof(SqItem)*SupCount);
 
+	m_Loaded=true;
 	return true;
+}
+
+u32 SqDe::MakeLen()
+{
+	ASSERT(m_Loaded);
+	return sizeof(Header)+2+FoeCount*sizeof(SqItem)+2+SupCount*sizeof(SqItem);
+}
+void SqDe::Make(u8* pdst)
+{
+	ASSERT(m_Loaded);
+	Header &head=*(Header*)pdst;
+	head.Magic=MAGIC;
+	head.HeaderSize=0x0C;
+	head.FoeDataOffset=0x0C;
+	head.SupDataOffset=0x0E+FoeCount*sizeof(SqItem);
+	head.Zero=0;
+	head.Const1=1;
+	pdst+=sizeof(head);
+
+	*(u16*)pdst=FoeCount;pdst+=2;
+	memcpy(pdst,pFoe,sizeof(SqItem)*FoeCount);pdst+=sizeof(SqItem)*FoeCount;
+	*(u16*)pdst=SupCount;pdst+=2;
+	memcpy(pdst,pSup,sizeof(SqItem)*SupCount);
+
 }

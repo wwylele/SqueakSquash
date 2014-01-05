@@ -18,7 +18,42 @@ SqMa::SqMa(void):
 {}
 
 SqMa::~SqMa(void){Unload();}
+void SqMa::LoadDefault()
+{
+	Unload();
+	tMapAttribute DefaultMapAttribute={0,0,0x0101,0,0,0,0};
+	MapAttribute=DefaultMapAttribute;
 
+	//Section 0
+	w=50;
+	h=50;
+
+	//Section 1~2
+	TexMappingCountA=256;
+	TexMappingCountB=256;
+	pTexMappingA=new TEX_MAPPING[TexMappingCountA];
+	pTexMappingB=new TEX_MAPPING[TexMappingCountB];
+	ZeroMemory(pTexMappingA,sizeof(TEX_MAPPING)*TexMappingCountA);
+	ZeroMemory(pTexMappingB,sizeof(TEX_MAPPING)*TexMappingCountB);
+
+	//Section 3~9
+	pCell=new CellData[w*h];
+	ZeroMemory(pCell,sizeof(CellData)*w*h);
+	GuideCount=0;
+	
+	//Section 10
+	MctrlCount=0;
+	MctrlGroupCount=0;
+
+	//Section 11
+	DoorCount=0;
+
+	//Section 12
+	GraScriptCount=0;
+	S12H_SCRIPT DefaultS12HScript={{0,0,0,0xFF,0xFF,0xFF},{5,5,5,5}};
+	S12HScript=DefaultS12HScript;
+	TicketClear();
+}
 bool SqMa::Load(const u8* psrc)
 {
 
@@ -26,8 +61,6 @@ bool SqMa::Load(const u8* psrc)
 	ASSERT(head.Magic==MAGIC && head.HeaderSize==0x44 && head.SectionOff[0]);
 	Unload();
 	MapAttribute=head.Attribute;
-
-
 
 	//Section 0
 	w=*(psrc+head.SectionOff[0]);

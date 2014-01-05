@@ -79,8 +79,8 @@ IDB_DET1                BITMAP                  "det1.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,4,0,8
- PRODUCTVERSION 1,4,0,8
+ FILEVERSION 1,5,0,9
+ PRODUCTVERSION 1,5,0,9
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -96,12 +96,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "1, 4, 0, 8"
+            VALUE "FileVersion", "1, 5, 0, 9"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2013"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "1, 4, 0, 8"
+            VALUE "ProductVersion", "1, 5, 0, 9"
         END
     END
     BLOCK "VarFileInfo"
@@ -207,13 +207,14 @@ BEGIN
     COMBOBOX        IDC_COMBO_CHANGELIB_PL,48,36,84,18,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
 END
 
-IDD_ABOUT DIALOGEX 0, 0, 215, 61
+IDD_ABOUT DIALOGEX 0, 0, 215, 75
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "关于 Squeak Squash"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,0,0,20,20
     EDITTEXT        IDC_EDIT_ABOUT,24,0,191,61,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY | WS_VSCROLL
+    PUSHBUTTON      "检查更新",IDC_BUTTON_CHECK_FOR_UPDATES,24,60,42,12
 END
 
 IDD_IMPORTBG DIALOGEX 0, 0, 114, 219
@@ -239,6 +240,17 @@ BEGIN
     EDITTEXT        IDC_EDIT_ROM_TITLE,84,168,126,36,ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL | ES_WANTRETURN
     LTEXT           "               ROM标题→\n（会在ds启动后显示）",IDC_STATIC,0,186,84,24
     LTEXT           "↑ROM图标",IDC_STATIC,6,168,72,12
+END
+
+IDD_UPDATE DIALOGEX 0, 0, 138, 78
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "更新"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    LTEXT           "检测到软件更新!",IDC_STATIC,0,0,138,12
+    EDITTEXT        IDC_EDIT1,0,18,138,42,ES_MULTILINE | ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "从百度贴吧下载",IDC_BUTTON_DL_TIEBA,0,60,72,18
+    PUSHBUTTON      "从GitHub下载",IDC_BUTTON_DL_GITHUB,72,60,66,18
 END
 
 
@@ -287,7 +299,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 208
         TOPMARGIN, 7
-        BOTTOMMARGIN, 54
+        BOTTOMMARGIN, 68
     END
 
     IDD_IMPORTBG, DIALOG
@@ -304,6 +316,14 @@ BEGIN
         RIGHTMARGIN, 207
         TOPMARGIN, 7
         BOTTOMMARGIN, 212
+    END
+
+    IDD_UPDATE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 131
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 71
     END
 END
 #endif    // APSTUDIO_INVOKED

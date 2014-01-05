@@ -62,4 +62,5 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	CEdit m_EditAbout;
+	afx_msg void OnBnClickedButtonCheckForUpdates();
 };

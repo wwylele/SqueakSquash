@@ -2,6 +2,8 @@
 #include "Main.h"
 #include "SqMapSet.h"
 #include "SqMx.h"
+#include "SqMa.h"
+#include "SqDe.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -435,9 +437,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 				}
 				else//Not find the mxp file,so create one.
 				{
-					sdtmp.StepList[step].MxpLen=16;
-					sdtmp.StepList[step].pMxp=new u8[16];
-					ZeroMemory(sdtmp.StepList[step].pMxp,0);
+					SqMa sqma;
+					sqma.LoadDefault();
+					sdtmp.StepList[step].MxpLen=sqma.MakeLen();
+					sdtmp.StepList[step].pMxp=new u8[sdtmp.StepList[step].MxpLen];
+					sqma.Make(sdtmp.StepList[step].pMxp);
 					PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)mxi.Step(step).Ma);
 				}
 
@@ -451,9 +455,11 @@ bool SqMapSet::LoadFromRom(CFile &file)
 					sdtmp.StepList[step].pDoe=buff;
 				}
 				else{//Not find the doe file,so create one.
-					sdtmp.StepList[step].DoeLen=16;
-					sdtmp.StepList[step].pDoe=new u8[16];
-					ZeroMemory(sdtmp.StepList[step].pDoe,0);
+					SqDe sqde;
+					sqde.LoadDefault();
+					sdtmp.StepList[step].DoeLen=sqde.MakeLen();
+					sdtmp.StepList[step].pDoe=new u8[sdtmp.StepList[step].DoeLen];
+					sqde.Make(sdtmp.StepList[step].pDoe);
 					PrintLog("\n>Fail to Load RomSubFile\"%s\"\n",(const char*)mxi.Step(step).De);
 				}
 

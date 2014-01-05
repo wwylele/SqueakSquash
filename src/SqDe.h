@@ -28,8 +28,11 @@ public:
 		u16 pd;
 	};
 	bool Load(const u8* psrc);
-	inline bool IsLoaded(){return pFoe!=0;}
+	void LoadDefault();
+	inline bool IsLoaded(){return m_Loaded;}
 	void Unload();
+	u32 MakeLen();
+	void Make(u8* pdst);
 	SqDe(void);
 	~SqDe(void);
 	inline SqItem& Foe(u16 i){
@@ -43,6 +46,7 @@ public:
 	inline u16 GetFoeCount(){ASSERT(IsLoaded());return FoeCount;}
 	inline u16 GetSupCount(){ASSERT(IsLoaded());return SupCount;}
 private:
+	bool m_Loaded;
 	u16 FoeCount;
 	SqItem *pFoe;
 	u16 SupCount;
