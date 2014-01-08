@@ -142,8 +142,8 @@ bool SqMapSet::Load(CFile &file)
 	{
 		file.Seek(fpos,CFile::begin);
 		file.Read(&stheader,sizeof(stheader));
-		m_StageList[i].LevelIdx=stheader.LevelIdx;
-		m_StageList[i].StageIdx=stheader.StageIdx;
+		m_StageList[i].EntryLevel=stheader.EntryLevel;
+		m_StageList[i].EntryStage=stheader.EntryStage;
 		m_StageList[i].StepCount=stheader.StepCount;
 		m_StageList[i].StepList=new StageData::StepData[m_StageList[i].StepCount];
 		fpos2=stheader.StepTableOffset;
@@ -235,8 +235,8 @@ bool SqMapSet::Save(CFile &file)
 	SqmsStepHeader stepheader;
 	for(u32 i=0;i<m_StageCount;++i)
 	{
-		stageheader.LevelIdx=m_StageList[i].LevelIdx;
-		stageheader.StageIdx=m_StageList[i].StageIdx;
+		stageheader.EntryLevel=m_StageList[i].EntryLevel;
+		stageheader.EntryStage=m_StageList[i].EntryStage;
 		stageheader.StepCount=m_StageList[i].StepCount;
 		stageheader.StepTableOffset=steptablepos;
 		
@@ -408,8 +408,8 @@ bool SqMapSet::LoadFromRom(CFile &file)
 			file.Seek(mxioffset,CFile::begin);
 			file.Read(mxitmp,mxilen);
 			mxi.Load(mxitmp);
-			sdtmp.LevelIdx=a;
-			sdtmp.StageIdx=s;
+			sdtmp.EntryLevel=a;
+			sdtmp.EntryStage=s;
 			sdtmp.StepCount=mxi.GetStepCount();
 			sdtmp.StepList=new StageData::StepData[sdtmp.StepCount];
 			//Read step data.
@@ -600,6 +600,9 @@ bool SqMapSet::LoadFromRom(CFile &file)
 	}
 	PrintLog("\n");
 
+	PrintLog("Repair Mxp Header\n");
+	RepairMxpHeader();
+
 
 	m_Loaded=true;
 	PrintLog("SqMapSet::ReadFromRom done\n");
@@ -612,7 +615,7 @@ void SqMapSet::Dump(FILE* pf)
 	fprintf(pf,"Stage-Step tree\n");
 	for(u32 i=0;i<m_StageCount;++i)
 	{
-		fprintf(pf,"[%02d]Level%dStage%02d\n",i,m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
+		fprintf(pf,"[%02d]Level%dStage%02d\n",i,m_StageList[i].EntryLevel,m_StageList[i].EntryStage);
 		for(u16 j=0;j<m_StageList[i].StepCount;++j)
 		{
 			fprintf(pf,"   [step%02d]bg=x%02X,fgl=x%02X,bgl=x%02X,pl=x%02X\n",j,
@@ -795,7 +798,7 @@ u32 SqMapSet::GetStageIndex(u8 levelidx,u8 substageidx)
 	ASSERT(m_Loaded);
 	for(u32 i=0;i<m_StageCount;++i)
 	{
-		if(m_StageList[i].LevelIdx==levelidx && m_StageList[i].StageIdx==substageidx)
+		if(m_StageList[i].EntryLevel==levelidx && m_StageList[i].EntryStage==substageidx)
 			return i;
 	}
 	return 0xFFFFFFFF;
@@ -902,12 +905,12 @@ void SqMapSet::SetSecitemName(u8 SiSwitch,u32 index,const char *pname)
 	ASSERT(index<m_SecitemCount[SiSwitch]);
 	memcpy(m_SecitemList[SiSwitch][index].Name,pname,16);
 }
-void SqMapSet::GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx)
+void SqMapSet::GetStageEntry(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx)
 {
 	ASSERT(m_Loaded);
 	ASSERT(StageIdx<m_StageCount);
-	if(plevelidx)*plevelidx=m_StageList[StageIdx].LevelIdx;
-	if(psubstageidx)*psubstageidx=m_StageList[StageIdx].StageIdx;
+	if(plevelidx)*plevelidx=m_StageList[StageIdx].EntryLevel;
+	if(psubstageidx)*psubstageidx=m_StageList[StageIdx].EntryStage;
 }
 u8 *SqMapSet::GetMxpBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
 {
@@ -924,6 +927,26 @@ u8 *SqMapSet::GetDoeBuffer(u32 StageIdx,u16 StepIndex,u32* pGetLen)
 	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
 	if(pGetLen)*pGetLen=m_StageList[StageIdx].StepList[StepIndex].DoeLen;
 	return m_StageList[StageIdx].StepList[StepIndex].pDoe;
+}
+void SqMapSet::RepairMxpHeader(u32 StageIdx,u16 StepIdx)
+{
+	if(StageIdx==0xFFFFFFFF)
+	{
+		for(u32 i=0;i<m_StageCount;++i)
+			RepairMxpHeader(i);
+		return;
+	}
+	ASSERT(StageIdx<m_StageCount);
+	if(StepIdx==0xFFFF)
+	{
+		for(u16 i=0;i<m_StageList[StageIdx].StepCount;++i)
+			RepairMxpHeader(StageIdx,i);
+		return;
+	}
+	ASSERT(StepIdx<m_StageList[StageIdx].StepCount);
+	SqMa::Header &head=*(SqMa::Header*)m_StageList[StageIdx].StepList[StepIdx].pMxp;
+	head.Attribute.EntryLevel_ZB=m_StageList[StageIdx].EntryLevel-1;
+	head.Attribute.EntryStage_ZB=m_StageList[StageIdx].EntryStage-1;
 }
 u16 SqMapSet::NewStep(u32 StageIdx)
 {
@@ -1035,8 +1058,8 @@ bool SqMapSet::MakeRom(CFile &file)
 	{
 		//Create a mxi file
 		sqmx.Create(m_StageList[i].StepCount);
-		sqmx.LevelIndex=m_StageList[i].LevelIdx;
-		sqmx.StageIndex=m_StageList[i].StageIdx;
+		sqmx.EntryLevel=m_StageList[i].EntryLevel;
+		sqmx.EntryStage=m_StageList[i].EntryStage;
 
 		//Step File
 		for(u16 j=0;j<m_StageList[i].StepCount;++j)
@@ -1072,7 +1095,7 @@ bool SqMapSet::MakeRom(CFile &file)
 				sqmx.Step(j).Pl="";
 		}
 
-		nsfa.name.Format("a%ds%d.mxi",m_StageList[i].LevelIdx,m_StageList[i].StageIdx);
+		nsfa.name.Format("a%ds%d.mxi",m_StageList[i].EntryLevel,m_StageList[i].EntryStage);
 		sqmx.Make(&mxi[i],&nsfa.DataLen);
 		nsfa.pData=mxi[i];
 		nsfal.AddTail(nsfa);

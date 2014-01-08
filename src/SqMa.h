@@ -61,14 +61,15 @@ private:
 	SQROM_STRUCT tMapAttribute
 	{
 
-		u8 LevelD;
-		u8 StageD;
+		u8 EntryLevel_ZB;
+		u8 EntryStage_ZB;
 		u16 Version;//=0x0101
 		u8 Boss;
 		u8 x09;//?
 		u8 x0A;//?
 		u8 Bgm;
 	};
+public:
 	SQROM_STRUCT Header
 	{
 		u16 Magic;
@@ -77,7 +78,7 @@ private:
 		u32 SectionOff[13];
 		u32 x40;//=0
 	};
-
+private:
 	//struct Section10
 	//{
 		//u16 SectionLen;

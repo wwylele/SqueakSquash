@@ -25,8 +25,8 @@ public:
 	};
 	StepInfo &Step(u16 i);
 	u16 GetStepCount();
-	u8 LevelIndex;
-	u8 StageIndex;
+	u8 EntryLevel;
+	u8 EntryStage;
 private:
 	u16 StepCount;
 	StepInfo *pStep;
@@ -36,8 +36,8 @@ private:
 		u16 HeaderSize;//=12
 		u16 DataOffset;//=12
 		u16 x06;//=0
-		u8 LevelDec;
-		u8 StageDec;
+		u8 EntryLevel_ZB;
+		u8 EntryStage_ZB;
 		u16 StepCount;
 	};
 	enum{

@@ -32,8 +32,8 @@ void SqMx::Make(u8 **ppData,u32 *pLen)
 	head.Magic=MAGIC;
 	head.HeaderSize=head.DataOffset=12;
 	head.x06=0;
-	head.LevelDec=LevelIndex-1;
-	head.StageDec=StageIndex-1;
+	head.EntryLevel_ZB=EntryLevel-1;
+	head.EntryStage_ZB=EntryStage-1;
 	head.StepCount=StepCount;
 	file.Write(&head,sizeof(head));
 	const char 
@@ -113,8 +113,8 @@ bool SqMx::Load(const u8* psrc)
 	Header *head=(Header*)psrc;
 	if(head->Magic!=MAGIC)return false;
 	Unload();
-	LevelIndex=head->LevelDec+1;
-	StageIndex=head->StageDec+1;
+	EntryLevel=head->EntryLevel_ZB+1;
+	EntryStage=head->EntryStage_ZB+1;
 	StepCount=head->StepCount;
 	pStep=new StepInfo[StepCount];
 	psrc+=12;

@@ -21,8 +21,8 @@ private:
 	};
 	struct SqmsStageHeader
 	{
-		u8 LevelIdx;
-		u8 StageIdx;
+		u8 EntryLevel;
+		u8 EntryStage;
 		u16 StepCount;
 		u32 StepTableOffset;//ptr to SqmsStepHeader[StepCount]
 	};
@@ -102,8 +102,8 @@ private:
 	u32 m_StageCount;
 	struct StageData
 	{
-		u8 LevelIdx;
-		u8 StageIdx;
+		u8 EntryLevel;
+		u8 EntryStage;
 		u16 StepCount;
 		struct StepData
 		{
@@ -182,13 +182,11 @@ public:
 
 
 	inline u32 GetStageCount(){ASSERT(m_Loaded);return m_StageCount;}
-	void GetStageInfo(u32 StageIdx,u8 *plevelidx,u8 *psubstageidx);
+	void GetStageEntry(u32 StageIdx,u8 *pEntryLevel,u8 *pEntryStage);
 
-	//Get the main index of a stage by level index and sub stage index
-	//Return 0xFFFFFFFF means not found the stage
-	u32 GetStageIndex(u8 levelidx,u8 substageidx);
-	//the StageIdx below means the main index of a stage, and you can get its value by GetStageIndex()
-
+	//Return 0xFFFFFFFF means not find the stage
+	u32 GetStageIndex(u8 EntryLevel,u8 EntryStage);
+	
 	inline u16 GetStepCount(u32 StageIdx)
 	{
 		ASSERT(m_Loaded);
@@ -201,6 +199,7 @@ public:
 	u8 *ResizeDoeBuffer(u32 StageIdx,u16 StepIndex,u32 Len);
 	void DeleteStep(u32 StageIdx,u16 StepIndex);
 	u16/*StepIndex*/ NewStep(u32 StageIdx);
+	void RepairMxpHeader(u32 StageIdx=0xFFFFFFFF,u16 StepIdx=0xFFFF);
 
 	//Bg/BGl/FGl/Pl =0    means not to get the value
 	void GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl);
