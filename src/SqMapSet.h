@@ -2,6 +2,7 @@
 #include "Nitro.h"
 
 #define ROM_LOCK_FILE "wwylele_LOCK"
+#define TEXTURE__CHAINBOMB "chainbomb.bin"
 class SqMapSet
 {
 private:

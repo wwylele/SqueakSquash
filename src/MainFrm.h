@@ -91,6 +91,8 @@ public:
 	afx_msg void OnFileTreeSelChanged(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnFileTreeDblclk(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnFileTreeRclk(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnFileTreeBeginLabelEdit(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnFileTreeEndLabelEdit(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 
 	afx_msg void OnBoptmRename();
@@ -102,6 +104,7 @@ public:
 	afx_msg void OnBoptmImport();
 	afx_msg void OnBoptmNew();
 	afx_msg void OnBoptmRom();
+	afx_msg void OnBoptmTexMap();
 
 	void PopupBoptm(int x,int y);
 };

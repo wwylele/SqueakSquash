@@ -237,19 +237,19 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\DlgRename.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\DlgRename.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\DlgRomInfo.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\src\DlgRomInfo.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgTexMapping.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgTexMapping.h"
 				>
 			</File>
 			<File
@@ -342,6 +342,10 @@
 				Name="nsbtx_temp"
 				>
 				<File
+					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_00"
+					>
+				</File>
+				<File
 					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_08"
 					>
 				</File>
@@ -359,10 +363,6 @@
 				</File>
 				<File
 					RelativePath=".\NSBTX_TEMP\nsbtx_temp_HORI_25"
-					>
-				</File>
-				<File
-					RelativePath=".\NSBTX_TEMP\nsbtx_temp_NORI_00"
 					>
 				</File>
 				<File

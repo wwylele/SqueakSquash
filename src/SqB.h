@@ -9,6 +9,7 @@ public:
 	SqB(void);
 	~SqB(void);
 	bool Load(const u8* psrc);
+	void LoadDefault(bool AniExt);
 	inline bool IsLoaded(){return pTile!=0;}
 	void Unload();
 	u32 MakeLen();
@@ -22,8 +23,12 @@ public:
 			return pSqPl1->GetFrameAni(line)[i];
 		else return Pal[(line<<4)|i];
 	}
-	inline Nitro::Tile& Tile(u32 i,bool ani=false){
+	inline Nitro::Tile& Tile(u32 i,bool ani=false,bool GetNull=false){
 		ASSERT(IsLoaded());
+		if(GetNull)
+		{
+			return NullTile;
+		}
 		if(ani &&TileCount>0x400 && i>=0x3E0 && i<0x400)
 		{
 			return pTile[i+(CurrentFrame+1)*32];
@@ -66,8 +71,8 @@ public:
 private:
 	
 	u32 TileCount;
-	Nitro::Tile *pTile;
-	u8 *pPalLine;
+	Nitro::Tile *pTile,NullTile;
+	u8 *pPalLine,NullPalLine;
 	
 	u8 CurrentTime;
 	u8 CurrentFrame;

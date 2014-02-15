@@ -1,6 +1,8 @@
 #pragma once
 #include "Nitro.h"
 
+#define TEXM_F 0
+#define TEXM_B 1
 class SqMa
 {
 private:
@@ -144,44 +146,35 @@ public:
 		ASSERT(y<h);
 		return pCell[x+y*w];
 	}
+	void ZeroCell();
 
 	//Section 0
 	inline u8 GetW(){ASSERT(IsLoaded());return w;}
 	inline u8 GetH(){ASSERT(IsLoaded());return h;}
 
-	//Section1~2
-	inline TEX_MAPPING& TexMappingA(u16 i,bool ani=false)
+	//Section 1~2
+	inline TEX_MAPPING& TexMapping(u8 TexMPlane,u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
-		ASSERT(i<TexMappingCountA);
+		if(i>=TexMappingCount[TexMPlane])
+		{
+			return TexMappingNull;
+		}
 		if(ani)
 		{
 			for(u16 j=0;j<GraScriptCount;++j)
 			{
 				if(pGraScript[j].TexMappingIndex==i &&
-					pGraScript[j].TexMappingPlane==0)
-					return pTexMappingA[i+pGraScriptCurrent[j].CurrentFrame+1];
+					pGraScript[j].TexMappingPlane==TexMPlane)
+					return pTexMapping[TexMPlane][i+pGraScriptCurrent[j].CurrentFrame+1];
 			}
 		}
-		return pTexMappingA[i];
+		return pTexMapping[TexMPlane][i];
 	}
-	inline TEX_MAPPING& TexMappingB(u16 i,bool ani=false)
-	{
-		ASSERT(IsLoaded());
-		ASSERT(i<TexMappingCountB);
-		if(ani)
-		{
-			for(u16 j=0;j<GraScriptCount;++j)
-			{
-				if(pGraScript[j].TexMappingIndex==i &&
-					pGraScript[j].TexMappingPlane==1)
-					return pTexMappingB[i+pGraScriptCurrent[j].CurrentFrame+1];
-			}
-		}
-		return pTexMappingB[i];
+	inline u16 GetTexMappingCount(u8 TexMPlane){
+		ASSERT(IsLoaded());return TexMappingCount[TexMPlane];
 	}
-	inline u16 GetTexMappingACount(){ASSERT(IsLoaded());return TexMappingCountA;};
-	inline u16 GetTexMappingBCount(){ASSERT(IsLoaded());return TexMappingCountB;};
+	void CopyTexMapping(SqMa& src,u8 TexMPlane);
 
 	//Section 9 ex
 	inline u16 GetGuideCount(){ASSERT(IsLoaded());return GuideCount;}
@@ -233,8 +226,9 @@ private:
 	u8 w,h;
 
 	//Section 1~2
-	u16 TexMappingCountA,TexMappingCountB;
-	TEX_MAPPING *pTexMappingA,*pTexMappingB;
+	u16 TexMappingCount[2];
+	TEX_MAPPING *pTexMapping[2];
+	TEX_MAPPING TexMappingNull;
 
 	//Section 3~8~9
 	CellData *pCell;

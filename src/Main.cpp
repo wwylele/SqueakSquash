@@ -82,6 +82,51 @@ void GetProductVersion(CString *pstr,UINT *pu)
 	// Get rid of the allocated string buffer  
 	delete[] pBuffer;  
 }  
+
+void OnScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+   int minpos;
+   int maxpos;
+   pScrollBar->GetScrollRange(&minpos, &maxpos); 
+   maxpos = pScrollBar->GetScrollLimit();
+   int curpos = pScrollBar->GetScrollPos();
+   switch (nSBCode)
+   {
+   case SB_LEFT:curpos = minpos;break;
+   case SB_RIGHT:curpos = maxpos;break;
+   case SB_LINELEFT:
+      if (curpos > minpos)
+         curpos--;
+      break;
+   case SB_LINERIGHT:
+      if (curpos < maxpos)
+         curpos++;
+      break;
+   case SB_PAGELEFT:
+   {
+      SCROLLINFO   info;
+      pScrollBar->GetScrollInfo(&info, SIF_ALL);
+      if (curpos > minpos)
+      curpos = max(minpos, curpos - (int) info.nPage);
+   }
+      break;
+   case SB_PAGERIGHT:
+   {
+      SCROLLINFO   info;
+      pScrollBar->GetScrollInfo(&info, SIF_ALL);
+      if (curpos < maxpos)
+         curpos = min(maxpos, curpos + (int) info.nPage);
+   }
+      break;
+   case SB_THUMBPOSITION: 
+      curpos = nPos;     
+      break;
+   case SB_THUMBTRACK:   
+      curpos = nPos;     
+      break;
+   }
+   pScrollBar->SetScrollPos(curpos);
+}
 BEGIN_MESSAGE_MAP(CSqsqApp, CWinApp)
 
 END_MESSAGE_MAP()
@@ -282,7 +327,7 @@ BOOL CDlgAbout::OnInitDialog()
 		,strVer);
 	m_EditAbout.SetWindowText(str);
 	m_EditAbout.SetSel(0,0,0);
-	return TRUE;
+	return FALSE;
 }
 
 void CDlgAbout::OnBnClickedButtonCheckForUpdates()

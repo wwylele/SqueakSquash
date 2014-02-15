@@ -34,7 +34,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	SqMctrlPack m_Ep;
+	SqMctrlPack m_Mctrl;
 	CCanvas m_CanMap;
 	CCanvas m_CanStock;
 	CCanvas m_CanCurGrid;
@@ -77,11 +77,14 @@ public:
 
 	
 	void OnMapLButtonDown(u8 x,u8 y);
+	void OnMapLButtonDown_Obj(u16 x,u16 y);
 	void OnMapLButtonUp(u8 x,u8 y);
 	void OnMapDraw(u8 x,u8 y);
 	void OnMapMouseMove(u8 x,u8 y);
+	void OnMapMouseMove_Obj(u16 x,u16 y);
 	void OnStockMouseMove(u8 x,u8 y);
 	void OnStockLButtonDown(u8 x,u8 y);
+	
 
 	CStatic m_StaticCurCoord;
 	CEdit m_EditCurGrid0;
@@ -111,4 +114,14 @@ public:
 	void UpdateGuideList();
 	afx_msg void OnBnClickedRadioMapPtBoss();
 	
+	CButton m_CheckHideFoe;
+	CButton m_CheckHideSup;
+	CButton m_CheckHideDoor;
+	CButton m_CheckHideMctrl;
+	afx_msg void OnBnClickedCheckHideObj();
+
+	enum PICKOBJ_GROUP{FOE,SUP,DOOR,MCTRL};
+	u16 PickObj(u16 x,u16 y,PICKOBJ_GROUP *retPickGroup);
+	PICKOBJ_GROUP cur_objgroup,cur_sel_objgroup;
+	u16 cur_obj,cur_sel_obj;
 };

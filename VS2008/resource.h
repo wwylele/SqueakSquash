@@ -7,7 +7,6 @@
 #define IDB_MAKEROM                     107
 #define IDD_MAP                         108
 #define IDB_DET0                        109
-#define IDD_RENAME                      110
 #define IDD_CHANGELIB                   111
 #define IDB_DET1                        112
 #define IDD_ABOUT                       113
@@ -23,13 +22,13 @@
 #define IDD_IMPORTBG                    125
 #define IDD_ROMINFO                     126
 #define IDD_UPDATE                      127
+#define IDD_TEXMAPPING                  128
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
 #define IDC_BUTTON_MR_NEWROM            1005
 #define IDC_EDIT_MR_MAPSET              1006
 #define IDC_BUTTON_MAKEROM              1007
-#define IDC_EDIT_RENAME                 1009
 #define IDC_COMBO_CHANGELIB_BG          1010
 #define IDC_COMBO_CHANGELIB_BGL         1011
 #define IDC_COMBO_CHANGELIB_FGL         1012
@@ -57,12 +56,10 @@
 #define IDC_COMBO_BGM                   1031
 #define IDC_COMBO_BOSS                  1032
 #define IDC_RADIO_MAP_PT_GRID           1036
-#define IDC_RADIO_MAP_PT_DOOR           1037
 #define IDC_COMBO_IMPORTBG              1037
 #define IDC_RADIO_MAP_PT_OBJ            1038
 #define IDC_PROGRESS_IMPORTBG           1038
 #define IDC_RADIO_MAP_PT_BOSS           1039
-#define IDC_RADIO_MAP_PT_SOBJ           1040
 #define IDC_CHECK_MAP_ANI               1041
 #define IDC_STATIC_IMPORTBG             1042
 #define IDC_LIST_MAP_OBJ                1043
@@ -70,8 +67,27 @@
 #define IDC_EDIT1                       1045
 #define IDC_BUTTON_DL_TIEBA             1050
 #define IDC_BUTTON_DL_GITHUB            1051
-#define IDC_BUTTON1                     1052
 #define IDC_BUTTON_CHECK_FOR_UPDATES    1052
+#define IDC_STATIC_TEXMAPPING           1057
+#define IDC_RADIO_TEXMAPPING_A          1059
+#define IDC_RADIO_TEXMAPPING_B          1060
+#define IDC_TEXMAPPING_VSCROLL          1061
+#define IDC_TEXMAPPING_HSCROLL          1062
+#define IDC_BUTTON_TEXMAPPING_COPY      1063
+#define IDC_STATIC_TEXMAPPING_DETAIL    1064
+#define IDC_CHECK_TEXMAPPING_CLR0       1065
+#define IDC_STATIC_MAP_CX               1066
+#define IDC_STATIC_MAP_CY               1067
+#define IDC_STATIC_TILE                 1068
+#define IDC_EDIT_TILE_ANI0              1069
+#define IDC_CHECK_HIDE_FOE              1070
+#define IDC_CHECK_HIDE_SUP              1071
+#define IDC_EDIT_TILE_ANI1              1072
+#define IDC_CHECK_HIDE_DOOR             1072
+#define IDC_EDIT_TILE_ANI2              1073
+#define IDC_CHECK4                      1073
+#define IDC_CHECK_HIDE_MCTRL            1073
+#define IDC_EDIT_TILE_ANI3              1074
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -84,9 +100,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        128
+#define _APS_NEXT_RESOURCE_VALUE        129
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1074
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

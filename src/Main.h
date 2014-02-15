@@ -1,5 +1,5 @@
 
-//
+
 #pragma once
 
 #ifndef __AFXWIN_H__
@@ -12,6 +12,8 @@
 void OpenConsole();
 #define PrintLog printf
 void GetProductVersion(CString *pstr,UINT *pu);
+
+void OnScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 
 
 extern const CString ProfilePath;

@@ -73,6 +73,7 @@ BOOL CDlgChangeLib::OnInitDialog()
 
 void CDlgChangeLib::OnOK()
 {
+	char n1[16],n2[16];
 	ASSERT((u8)m_ComboBg.GetCurSel()<pMapSet->GetBgCount());
 	ASSERT((u8)m_ComboBGl.GetCurSel()<pMapSet->GetGlCount());
 	ASSERT((u8)m_ComboFGl.GetCurSel()<pMapSet->GetGlCount());
@@ -81,6 +82,13 @@ void CDlgChangeLib::OnOK()
 	BGl=(u8)m_ComboBGl.GetCurSel();
 	FGl=(u8)m_ComboFGl.GetCurSel();
 	Pl=(u8)m_ComboPl.GetCurSel();
+	pMapSet->GetGlName(BGl,n1);
+	pMapSet->GetGlName(FGl,n2);
+	if(strcmp(n1,TEXTURE__CHAINBOMB)==0 || strcmp(n2,TEXTURE__CHAINBOMB)==0)
+	{
+		MessageBox(_T("\"chainbomb.bin\" can't be chose."),0,MB_ICONERROR);
+		return;
+	}
 	if(Pl==pMapSet->GetPlCount())Pl=0xFF;
 	CDialog::OnOK();
 }
