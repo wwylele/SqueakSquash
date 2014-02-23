@@ -23,6 +23,7 @@
 #define IDD_ROMINFO                     126
 #define IDD_UPDATE                      127
 #define IDD_TEXMAPPING                  128
+#define IDD_OBJ                         129
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -53,6 +54,8 @@
 #define IDC_BUTTON_NDSEMU               1028
 #define IDC_EDIT_MAP_CUR_GRID_BOSS      1028
 #define IDC_BUTTON_BEGINEMU             1029
+#define IDC_STATIC_MAP_SCALE            1029
+#define IDC_STATIC_MAP_THUMBNAIL        1029
 #define IDC_COMBO_BGM                   1031
 #define IDC_COMBO_BOSS                  1032
 #define IDC_RADIO_MAP_PT_GRID           1036
@@ -85,9 +88,20 @@
 #define IDC_EDIT_TILE_ANI1              1072
 #define IDC_CHECK_HIDE_DOOR             1072
 #define IDC_EDIT_TILE_ANI2              1073
-#define IDC_CHECK4                      1073
 #define IDC_CHECK_HIDE_MCTRL            1073
 #define IDC_EDIT_TILE_ANI3              1074
+#define IDC_CHECK_OBJ_MOVING_ALIGN      1074
+#define IDC_BUTTON_OBJ_UP               1075
+#define IDC_BUTTON_OBJ_DOWN             1076
+#define IDC_BUTTON_OBJ_NEW              1077
+#define IDC_BUTTON_OBJ_DELETE           1078
+#define IDC_BUTTON_OBJ_PROPERTY         1079
+#define IDC_COMBO_OBJ_CLASS             1080
+#define IDC_EDIT_OBJ_PARAM              1081
+#define IDC_EDIT_OBJ_X                  1082
+#define IDC_EDIT_OBJ_XP                 1083
+#define IDC_EDIT_OBJ_Y                  1084
+#define IDC_EDIT_OBJ_YP                 1085
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -100,9 +114,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        129
+#define _APS_NEXT_RESOURCE_VALUE        130
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1074
+#define _APS_NEXT_CONTROL_VALUE         1086
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

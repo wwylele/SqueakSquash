@@ -22,10 +22,14 @@ public:
 		u16 class_id;
 		u16 x;
 		u16 y;
-		u16 pa;
-		u16 pb;
-		u16 pc;
-		u16 pd;
+		u8 pa;
+		u8 pb;
+		u8 pc;
+		u8 pd;
+		u8 pe;
+		u8 pf;
+		u8 pg;
+		u8 ph;
 	};
 	bool Load(const u8* psrc);
 	void LoadDefault();
@@ -45,6 +49,11 @@ public:
 	}
 	inline u16 GetFoeCount(){ASSERT(IsLoaded());return FoeCount;}
 	inline u16 GetSupCount(){ASSERT(IsLoaded());return SupCount;}
+	void RepairIndex();
+	void RemoveFoe(u16 i);
+	void RemoveSup(u16 i);
+	u16 NewFoe();
+	u16 NewSup();
 private:
 	bool m_Loaded;
 	u16 FoeCount;

@@ -237,6 +237,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgObj.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgObj.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgRomInfo.cpp"
 				>
 			</File>
@@ -412,6 +420,14 @@
 			</File>
 			<File
 				RelativePath="..\src\Det.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Door.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Door.h"
 				>
 			</File>
 			<File

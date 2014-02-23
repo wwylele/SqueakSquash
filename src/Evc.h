@@ -33,6 +33,8 @@ public:
 		ASSERT(i<MctrlCount);
 		return pMctrl[i];
 	}
+	void RemoveMctrl(u8 i);
+	u8 NewMctrl();
 private:
 	MctrlNote *pMctrl;
 	u8 MctrlCount;

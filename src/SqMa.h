@@ -11,24 +11,24 @@ private:
 		MAGIC=0x614D,//"Ma"
 	};
 public:
-	SQROM_STRUCT CellData
+	SQROM_STRUCT SqCell
 	{
 		u16 gra[3];
 		u32 det[3];
 		u8 guide_id;
 	};
-	SQROM_STRUCT GUIDE_DATA
+	SQROM_STRUCT SqGuide
 	{
 		u16 id;
 		u16 x;
 		u16 y;
 		u16 U;
 	};
-	SQROM_STRUCT TEX_MAPPING
+	SQROM_STRUCT SqTexMapping
 	{
 		Nitro::CharData mapping[4];
 	};
-	SQROM_STRUCT DOOR
+	SQROM_STRUCT SqDoor
 	{
 
 		u16 index;
@@ -44,7 +44,7 @@ public:
 		u8 BackgroundScript[6];
 		u8 TileTimeDelta[4];
 	};
-	SQROM_STRUCT GRA_SCRIPT
+	SQROM_STRUCT SqGraScript
 	{
 		u16 TexMappingIndex;
 		u8 FrameCount;
@@ -57,7 +57,7 @@ private:
 	{
 		S12H_SCRIPT HScript;
 		u16 GraScriptCount;
-		//GRA_SCRIPT GraScript[GraScriptCount];
+		//SqGraScript GraScript[GraScriptCount];
 	};
 	
 	SQROM_STRUCT tMapAttribute
@@ -139,7 +139,7 @@ public:
 	tMapAttribute MapAttribute;
 
 	//Section 3~8~9
-	inline CellData& Cell(u8 x,u8 y)
+	inline SqCell& Cell(u8 x,u8 y)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(x<w);
@@ -153,7 +153,7 @@ public:
 	inline u8 GetH(){ASSERT(IsLoaded());return h;}
 
 	//Section 1~2
-	inline TEX_MAPPING& TexMapping(u8 TexMPlane,u16 i,bool ani=false)
+	inline SqTexMapping& TexMapping(u8 TexMPlane,u16 i,bool ani=false)
 	{
 		ASSERT(IsLoaded());
 		if(i>=TexMappingCount[TexMPlane])
@@ -178,7 +178,7 @@ public:
 
 	//Section 9 ex
 	inline u16 GetGuideCount(){ASSERT(IsLoaded());return GuideCount;}
-	inline GUIDE_DATA& Guide(u16 i){
+	inline SqGuide& Guide(u16 i){
 		ASSERT(IsLoaded());ASSERT(i<GuideCount);
 		return pGuide[i];
 	}
@@ -200,17 +200,20 @@ public:
 
 	//Section 11
 	inline u16 GetDoorCount(){ASSERT(IsLoaded());return DoorCount;}
-	inline DOOR &Door(u16 i)
+	inline SqDoor &Door(u16 i)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(i<DoorCount);
 		return pDoor[i];
 	}
+	void RepairDoorIndex();
+	void RemoveDoor(u16 i);
+	u16 NewDoor();
 
 	//Section12
 	S12H_SCRIPT S12HScript;
 	inline u16 GetGraScriptCount(){ASSERT(IsLoaded());return GraScriptCount;}
-	inline GRA_SCRIPT &GraScript(u16 i)
+	inline SqGraScript &GraScript(u16 i)
 	{
 		ASSERT(IsLoaded());
 		ASSERT(i<GraScriptCount);
@@ -227,15 +230,15 @@ private:
 
 	//Section 1~2
 	u16 TexMappingCount[2];
-	TEX_MAPPING *pTexMapping[2];
-	TEX_MAPPING TexMappingNull;
+	SqTexMapping *pTexMapping[2];
+	SqTexMapping TexMappingNull;
 
 	//Section 3~8~9
-	CellData *pCell;
+	SqCell *pCell;
 
 	//Section 9 
 	u16 GuideCount;
-	GUIDE_DATA *pGuide;
+	SqGuide *pGuide;
 	u8* pGuideMatrix;
 
 
@@ -252,11 +255,11 @@ private:
 
 	//Section 11
 	u16 DoorCount;
-	DOOR* pDoor;
+	SqDoor* pDoor;
 
 	//Section 12
 	u16 GraScriptCount;
-	GRA_SCRIPT* pGraScript;
+	SqGraScript* pGraScript;
 	
 	//Section 12 ani
 	struct GRA_SCRIPT_CURRENT

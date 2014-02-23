@@ -12,6 +12,10 @@
 #define FORMAT_BOSS _T("%d")
 
 #define ID_TIMER_REDRAW_MAP 35000
+#define ID_NEWOBJ_FOE 35001
+#define ID_NEWOBJ_SUP 35002
+#define ID_NEWOBJ_DOOR 35003
+#define ID_NEWOBJ_MCTRL 35004
 class CDlgMapEdit : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgMapEdit)
@@ -44,7 +48,7 @@ protected:
 	u32 cursel_stock;
 	u8 cursel_stock_x,cursel_stock_y;
 
-	enum{
+	enum MODE{
 		MPT_GRID,
 		MPT_OBJ,
 		MPT_BOSS
@@ -78,6 +82,7 @@ public:
 	
 	void OnMapLButtonDown(u8 x,u8 y);
 	void OnMapLButtonDown_Obj(u16 x,u16 y);
+	void OnMapLButtonUp_Obj();
 	void OnMapLButtonUp(u8 x,u8 y);
 	void OnMapDraw(u8 x,u8 y);
 	void OnMapMouseMove(u8 x,u8 y);
@@ -124,4 +129,30 @@ public:
 	u16 PickObj(u16 x,u16 y,PICKOBJ_GROUP *retPickGroup);
 	PICKOBJ_GROUP cur_objgroup,cur_sel_objgroup;
 	u16 cur_obj,cur_sel_obj;
+	bool IsListObjChangeFromSoftWare;
+	afx_msg void OnLvnItemchangedListMapObj(NMHDR *pNMHDR, LRESULT *pResult);
+	bool obj_moving;
+	int obj_moving_ox,obj_moving_oy;
+	int obj_moving_dx,obj_moving_dy;
+
+	int Obj_GameIdtoListId(u16 id,PICKOBJ_GROUP group);
+
+
+	afx_msg void OnDestroy();
+	CButton m_CheckObjMovingAlign;
+	CButton m_ButtonObjUp;
+	CButton m_ButtonObjDown;
+	CButton m_ButtonObjNew;
+	CButton m_ButtonObjDelete;
+	CButton m_ButtonObjProperty;
+	afx_msg void OnBnClickedButtonObjUp();
+	afx_msg void OnBnClickedButtonObjDown();
+	afx_msg void OnBnClickedButtonObjNew();
+	afx_msg void OnBnClickedButtonObjDelete();
+	afx_msg void OnBnClickedButtonObjProperty();
+	afx_msg void OnNMDblclkListMapObj(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnNewFoe();
+	afx_msg void OnNewSup();
+	afx_msg void OnNewDoor();
+	afx_msg void OnNewMctrl();
 };

@@ -38,14 +38,14 @@ void SqMa::LoadDefault()
 	//Section 1~2
 	TexMappingCount[TEXM_F]=256;
 	TexMappingCount[TEXM_B]=256;
-	pTexMapping[TEXM_F]=new TEX_MAPPING[TexMappingCount[TEXM_F]];
-	pTexMapping[TEXM_B]=new TEX_MAPPING[TexMappingCount[TEXM_B]];
-	ZeroMemory(pTexMapping[TEXM_F],sizeof(TEX_MAPPING)*TexMappingCount[TEXM_F]);
-	ZeroMemory(pTexMapping[TEXM_B],sizeof(TEX_MAPPING)*TexMappingCount[TEXM_B]);
+	pTexMapping[TEXM_F]=new SqTexMapping[TexMappingCount[TEXM_F]];
+	pTexMapping[TEXM_B]=new SqTexMapping[TexMappingCount[TEXM_B]];
+	ZeroMemory(pTexMapping[TEXM_F],sizeof(SqTexMapping)*TexMappingCount[TEXM_F]);
+	ZeroMemory(pTexMapping[TEXM_B],sizeof(SqTexMapping)*TexMappingCount[TEXM_B]);
 
 	//Section 3~9
-	pCell=new CellData[w*h];
-	ZeroMemory(pCell,sizeof(CellData)*w*h);
+	pCell=new SqCell[w*h];
+	ZeroMemory(pCell,sizeof(SqCell)*w*h);
 	GuideCount=0;
 	
 	//Section 10
@@ -76,13 +76,13 @@ bool SqMa::Load(const u8* psrc)
 	//Section 1~2
 	TexMappingCount[TEXM_F]=*(u16*)(psrc+head.SectionOff[1]);
 	TexMappingCount[TEXM_B]=*(u16*)(psrc+head.SectionOff[2]);
-	pTexMapping[TEXM_F]=new TEX_MAPPING[TexMappingCount[TEXM_F]];
-	pTexMapping[TEXM_B]=new TEX_MAPPING[TexMappingCount[TEXM_B]];
-	memcpy(pTexMapping[TEXM_F],psrc+head.SectionOff[1]+2,sizeof(TEX_MAPPING)*TexMappingCount[TEXM_F]);
-	memcpy(pTexMapping[TEXM_B],psrc+head.SectionOff[2]+2,sizeof(TEX_MAPPING)*TexMappingCount[TEXM_B]);
+	pTexMapping[TEXM_F]=new SqTexMapping[TexMappingCount[TEXM_F]];
+	pTexMapping[TEXM_B]=new SqTexMapping[TexMappingCount[TEXM_B]];
+	memcpy(pTexMapping[TEXM_F],psrc+head.SectionOff[1]+2,sizeof(SqTexMapping)*TexMappingCount[TEXM_F]);
+	memcpy(pTexMapping[TEXM_B],psrc+head.SectionOff[2]+2,sizeof(SqTexMapping)*TexMappingCount[TEXM_B]);
 
 	//Section 3~9
-	pCell=new CellData[w*h];
+	pCell=new SqCell[w*h];
 	for(u16 i=0;i<w*h;++i)
 	{
 		pCell[i].gra[0]=*((u16*)(psrc+head.SectionOff[3])+i);
@@ -106,9 +106,9 @@ bool SqMa::Load(const u8* psrc)
 	else
 	{
 		GuideCount=*(u16*)(ps9ex);ps9ex+=2;
-		pGuide=new GUIDE_DATA[GuideCount];
-		memcpy(pGuide,ps9ex,sizeof(GUIDE_DATA)*GuideCount);
-		ps9ex+=sizeof(GUIDE_DATA)*GuideCount;
+		pGuide=new SqGuide[GuideCount];
+		memcpy(pGuide,ps9ex,sizeof(SqGuide)*GuideCount);
+		ps9ex+=sizeof(SqGuide)*GuideCount;
 		pGuideMatrix=new u8[GuideCount*GuideCount];
 		memcpy(pGuideMatrix,ps9ex,GuideCount*GuideCount);
 	}
@@ -176,9 +176,10 @@ bool SqMa::Load(const u8* psrc)
 	DoorCount=*(u16*)(psrc+head.SectionOff[11]);
 	if(DoorCount)
 	{
-		pDoor=new DOOR[DoorCount];
-		memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(DOOR));
+		pDoor=new SqDoor[DoorCount];
+		memcpy(pDoor,psrc+head.SectionOff[11]+2,DoorCount*sizeof(SqDoor));
 	}
+	else pDoor=0;
 
 	//Section 12
 	S12HEADER S12Header;
@@ -186,9 +187,9 @@ bool SqMa::Load(const u8* psrc)
 	GraScriptCount=S12Header.GraScriptCount;
 	if(GraScriptCount)
 	{
-		pGraScript=new GRA_SCRIPT[GraScriptCount];
+		pGraScript=new SqGraScript[GraScriptCount];
 		memcpy(pGraScript,psrc+head.SectionOff[12]+sizeof(S12Header),
-			sizeof(GRA_SCRIPT)*GraScriptCount);
+			sizeof(SqGraScript)*GraScriptCount);
 		pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
 	}
 	S12HScript=S12Header.HScript;
@@ -212,21 +213,24 @@ u32 SqMa::MakeLen()
 	ASSERT(IsLoaded());
 	return sizeof(Header)
 		+2//s0
-		+2+sizeof(TEX_MAPPING)*TexMappingCount[TEXM_F]//s1
-		+2+sizeof(TEX_MAPPING)*TexMappingCount[TEXM_B]//s2
+		+2+sizeof(SqTexMapping)*TexMappingCount[TEXM_F]//s1
+		+2+sizeof(SqTexMapping)*TexMappingCount[TEXM_B]//s2
 		+w*h*(2+2+2+4+4+4+1)//s3~s9
 		+w*h%2//s9pad
 		+(GuideCount?(2
-			+GuideCount*sizeof(GUIDE_DATA)
+			+GuideCount*sizeof(SqGuide)
 			+GuideCount*GuideCount+GuideCount%2)
 			:0)//s9ex
 		+S10MakeLen()//s10
-		+2+sizeof(DOOR)*DoorCount//s11
-		+sizeof(S12HEADER)+sizeof(GRA_SCRIPT)*GraScriptCount;//s12
+		+2+sizeof(SqDoor)*DoorCount//s11
+		+sizeof(S12HEADER)+sizeof(SqGraScript)*GraScriptCount;//s12
 }
 void SqMa::Make(u8* pdst)
 {
 	ASSERT(IsLoaded());
+
+	RepairDoorIndex();
+
 	u8 *p=pdst;
 	Header head;
 	head.Magic=MAGIC;
@@ -244,12 +248,12 @@ void SqMa::Make(u8* pdst)
 	//Section 1~2
 	head.SectionOff[1]=p-pdst;
 	*(u16*)p=TexMappingCount[TEXM_F];p+=2;
-	memcpy(p,pTexMapping[TEXM_F],sizeof(TEX_MAPPING)*TexMappingCount[TEXM_F]);
-	p+=sizeof(TEX_MAPPING)*TexMappingCount[TEXM_F];
+	memcpy(p,pTexMapping[TEXM_F],sizeof(SqTexMapping)*TexMappingCount[TEXM_F]);
+	p+=sizeof(SqTexMapping)*TexMappingCount[TEXM_F];
 	head.SectionOff[2]=p-pdst;
 	*(u16*)p=TexMappingCount[TEXM_B];p+=2;
-	memcpy(p,pTexMapping[TEXM_B],sizeof(TEX_MAPPING)*TexMappingCount[TEXM_B]);
-	p+=sizeof(TEX_MAPPING)*TexMappingCount[TEXM_B];
+	memcpy(p,pTexMapping[TEXM_B],sizeof(SqTexMapping)*TexMappingCount[TEXM_B]);
+	p+=sizeof(SqTexMapping)*TexMappingCount[TEXM_B];
 
 	//Section 3~8
 	head.SectionOff[3]=p-pdst;
@@ -277,7 +281,7 @@ void SqMa::Make(u8* pdst)
 	if(GuideCount)
 	{
 		*(u16*)p=GuideCount;p+=2;
-		memcpy(p,pGuide,GuideCount*sizeof(GUIDE_DATA));p+=GuideCount*sizeof(GUIDE_DATA);
+		memcpy(p,pGuide,GuideCount*sizeof(SqGuide));p+=GuideCount*sizeof(SqGuide);
 		memcpy(p,pGuideMatrix,GuideCount*GuideCount);p+=GuideCount*GuideCount;
 		if(GuideCount%2)*(p++)=0;
 	}
@@ -359,7 +363,7 @@ void SqMa::Make(u8* pdst)
 	//Section 11
 	head.SectionOff[11]=p-pdst;
 	*(u16*)p=DoorCount;p+=2;
-	memcpy(p,pDoor,sizeof(DOOR)*DoorCount);p+=sizeof(DOOR)*DoorCount;
+	memcpy(p,pDoor,sizeof(SqDoor)*DoorCount);p+=sizeof(SqDoor)*DoorCount;
 
 	//Secttion 12
 	head.SectionOff[12]=p-pdst;
@@ -367,7 +371,7 @@ void SqMa::Make(u8* pdst)
 	S12Header.HScript=S12HScript;
 	S12Header.GraScriptCount=GraScriptCount;
 	memcpy(p,&S12Header,sizeof(S12Header));p+=sizeof(S12Header);
-	memcpy(p,pGraScript,sizeof(GRA_SCRIPT)*GraScriptCount);
+	memcpy(p,pGraScript,sizeof(SqGraScript)*GraScriptCount);
 
 	memcpy(pdst,&head,sizeof(head));
 
@@ -401,9 +405,9 @@ void SqMa::CopyTexMapping(SqMa& src,u8 TexMPlane)
 	ASSERT(src.IsLoaded());
 	delete[] pTexMapping[TexMPlane];
 	TexMappingCount[TexMPlane]=src.TexMappingCount[TexMPlane];
-	pTexMapping[TexMPlane]=new TEX_MAPPING[TexMappingCount[TexMPlane]];
+	pTexMapping[TexMPlane]=new SqTexMapping[TexMappingCount[TexMPlane]];
 	memcpy(pTexMapping[TexMPlane],src.pTexMapping[TexMPlane],
-		TexMappingCount[TexMPlane]*sizeof(TEX_MAPPING));
+		TexMappingCount[TexMPlane]*sizeof(SqTexMapping));
 }
 
 void SqMa::TicketClear()
@@ -438,5 +442,41 @@ bool SqMa::TicketIn()
 void SqMa::ZeroCell()
 {
 	ASSERT(IsLoaded());
-	ZeroMemory(pCell,sizeof(CellData)*w*h);
+	ZeroMemory(pCell,sizeof(SqCell)*w*h);
+}
+void SqMa::RepairDoorIndex()
+{
+	for(u16 i=0;i<DoorCount;++i)pDoor[i].index=i;
+}
+void SqMa::RemoveDoor(u16 i)
+{
+	ASSERT(IsLoaded());
+	ASSERT(i<DoorCount);
+	if(DoorCount==1)
+	{
+		DoorCount=0;
+		delete[] pDoor;
+		pDoor=0;
+	}
+	else
+	{
+		SqDoor *newData=new SqDoor[--DoorCount];
+		memcpy(newData,pDoor,i*sizeof(SqDoor));
+		memcpy(newData+i,pDoor+i+1,(DoorCount-i)*sizeof(SqDoor));
+		delete[] pDoor;
+		pDoor=newData;
+	}
+}
+u16 SqMa::NewDoor()
+{
+	ASSERT(IsLoaded());
+	SqDoor *newData=new SqDoor[++DoorCount];
+	if(DoorCount!=1)
+	{
+		memcpy(newData,pDoor,(DoorCount-1)*sizeof(SqDoor));
+		delete[]pDoor;
+	}
+	pDoor=newData;
+	memset(&pDoor[DoorCount-1],0,sizeof(SqDoor));
+	return DoorCount-1;
 }
