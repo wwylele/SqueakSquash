@@ -213,6 +213,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgColor555.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgColor555.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgImportBg.cpp"
 				>
 			</File>
@@ -242,6 +250,14 @@
 			</File>
 			<File
 				RelativePath="..\src\DlgObj.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgResize.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgResize.h"
 				>
 			</File>
 			<File

@@ -151,6 +151,7 @@ public:
 	//Section 0
 	inline u8 GetW(){ASSERT(IsLoaded());return w;}
 	inline u8 GetH(){ASSERT(IsLoaded());return h;}
+	void ResizeMap(u8 W,u8 H,int ox=0,int oy=0);
 
 	//Section 1~2
 	inline SqTexMapping& TexMapping(u8 TexMPlane,u16 i,bool ani=false)

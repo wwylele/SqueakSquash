@@ -47,6 +47,8 @@ protected:
 	u8 cur_stock_x,cur_stock_y;
 	u32 cursel_stock;
 	u8 cursel_stock_x,cursel_stock_y;
+	u8 cursel_stock_x2,cursel_stock_y2;
+	u32 cursel_stock2;
 
 	enum MODE{
 		MPT_GRID,
@@ -89,6 +91,8 @@ public:
 	void OnMapMouseMove_Obj(u16 x,u16 y);
 	void OnStockMouseMove(u8 x,u8 y);
 	void OnStockLButtonDown(u8 x,u8 y);
+	void OnStockRButtonDown(u8 x,u8 y);
+	afx_msg void OnMapDbClick();
 	
 
 	CStatic m_StaticCurCoord;
@@ -155,4 +159,7 @@ public:
 	afx_msg void OnNewSup();
 	afx_msg void OnNewDoor();
 	afx_msg void OnNewMctrl();
+	afx_msg void OnBnClickedButtonMapCancel();
+	afx_msg void OnBnClickedButtonMapResize();
+	afx_msg void OnBnClickedButtonZeroCell();
 };

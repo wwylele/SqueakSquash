@@ -24,6 +24,8 @@
 #define IDD_UPDATE                      127
 #define IDD_TEXMAPPING                  128
 #define IDD_OBJ                         129
+#define IDD_COLOR                       130
+#define IDD_RESIZE                      131
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -36,6 +38,9 @@
 #define IDC_COMBO_CHANGELIB_PL          1013
 #define IDC_MAP_VSCROLL                 1013
 #define IDC_MAP_HSCROLL                 1014
+#define IDC_COMBO_CHANGELIB_BGL_CTM     1014
+#define IDC_COMBO_CHANGELIB_FGL2        1015
+#define IDC_COMBO_CHANGELIB_FGL_CTM     1015
 #define IDC_CHECK_MAP_PLANE2            1016
 #define IDC_CHECK_MAP_PLANE0            1017
 #define IDC_CHECK_MAP_DET               1018
@@ -102,6 +107,15 @@
 #define IDC_EDIT_OBJ_XP                 1083
 #define IDC_EDIT_OBJ_Y                  1084
 #define IDC_EDIT_OBJ_YP                 1085
+#define IDC_BUTTON_MAP_CANCEL           1086
+#define IDC_BUTTON_MAP_RESIZE           1087
+#define IDC_EDIT_RESIZE_H               1088
+#define IDC_EDIT_RESIZE_W               1089
+#define IDC_BUTTON_ZERO_CELL            1090
+#define IDC_RADIO_RESIZE_UL             1092
+#define IDC_RADIO_RESIZE_UR             1093
+#define IDC_RADIO_RESIZE_DL             1094
+#define IDC_RADIO_RESIZE_DR             1095
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -114,9 +128,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        130
+#define _APS_NEXT_RESOURCE_VALUE        132
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1086
+#define _APS_NEXT_CONTROL_VALUE         1093
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

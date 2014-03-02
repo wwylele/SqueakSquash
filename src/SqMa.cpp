@@ -192,6 +192,7 @@ bool SqMa::Load(const u8* psrc)
 			sizeof(SqGraScript)*GraScriptCount);
 		pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
 	}
+	else{pGraScript=0;pGraScriptCurrent=0;}
 	S12HScript=S12Header.HScript;
 	TicketClear();
 
@@ -408,6 +409,38 @@ void SqMa::CopyTexMapping(SqMa& src,u8 TexMPlane)
 	pTexMapping[TexMPlane]=new SqTexMapping[TexMappingCount[TexMPlane]];
 	memcpy(pTexMapping[TexMPlane],src.pTexMapping[TexMPlane],
 		TexMappingCount[TexMPlane]*sizeof(SqTexMapping));
+
+	//Ani
+	SqGraScript* newDataTemp=new SqGraScript[GraScriptCount+src.GraScriptCount];
+	u16 newCount=0;
+	for(u16 i=0;i<GraScriptCount;++i)
+	{
+		if(pGraScript[i].TexMappingPlane!=TexMPlane)
+		{
+			newDataTemp[newCount]=pGraScript[i];
+			++newCount;
+		}
+	}
+	for(u16 i=0;i<src.GraScriptCount;++i)
+	{
+		if(src.pGraScript[i].TexMappingPlane==TexMPlane)
+		{
+			newDataTemp[newCount]=src.pGraScript[i];
+			++newCount;
+		}
+	}
+	if(GraScriptCount)
+	{
+		delete[] pGraScript;
+		delete[] pGraScriptCurrent;
+	}
+	GraScriptCount=newCount;
+	pGraScript=new SqGraScript[newCount];
+	memcpy(pGraScript,newDataTemp,newCount*sizeof(SqGraScript));
+	delete[] newDataTemp;
+	pGraScriptCurrent=new GRA_SCRIPT_CURRENT[newCount];
+	TicketClear();
+
 }
 
 void SqMa::TicketClear()
@@ -479,4 +512,27 @@ u16 SqMa::NewDoor()
 	pDoor=newData;
 	memset(&pDoor[DoorCount-1],0,sizeof(SqDoor));
 	return DoorCount-1;
+}
+void SqMa::ResizeMap(u8 W,u8 H,int ox,int oy)
+{
+	ASSERT(IsLoaded());
+	ASSERT(W && H);
+	SqCell *newData=new SqCell[W*H];
+	
+	for(int y=0;y<(int)H;++y)for(int x=0;x<(int)W;++x)
+	{
+		if(x>=ox && x<ox+w && y>=oy && y<oy+h)
+		{
+			newData[x+y*W]=pCell[x-ox+(y-oy)*w];
+		}
+		else
+		{
+			memset(&newData[x+y*W],0,sizeof(SqCell));
+		}
+	}
+
+	delete[] pCell;
+	pCell=newData;
+	w=W;
+	h=H;
 }

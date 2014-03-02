@@ -14,6 +14,10 @@ public:
 
 	SqMapSet* pMapSet;
 	u8 Bg,BGl,FGl,Pl;
+	u32 StageIdx;
+	u16 StepIdx;
+
+	u32 RetBGlCtm,RetFGlCtm;
 	
 
 	enum { IDD = IDD_CHANGELIB };
@@ -30,4 +34,9 @@ public:
 	CComboBox m_ComboPl;
 protected:
 	virtual void OnOK();
+public:
+	CComboBox m_ComboBglCtm;
+	CComboBox m_ComboFglCtm;
+	afx_msg void OnCbnSelchangeComboChangelibBgl();
+	afx_msg void OnCbnSelchangeComboChangelibFgl();
 };

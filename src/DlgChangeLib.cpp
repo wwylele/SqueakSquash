@@ -25,10 +25,14 @@ void CDlgChangeLib::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO_CHANGELIB_BGL, m_ComboBGl);
 	DDX_Control(pDX, IDC_COMBO_CHANGELIB_FGL, m_ComboFGl);
 	DDX_Control(pDX, IDC_COMBO_CHANGELIB_PL, m_ComboPl);
+	DDX_Control(pDX, IDC_COMBO_CHANGELIB_BGL_CTM, m_ComboBglCtm);
+	DDX_Control(pDX, IDC_COMBO_CHANGELIB_FGL_CTM, m_ComboFglCtm);
 }
 
 
 BEGIN_MESSAGE_MAP(CDlgChangeLib, CDialog)
+	ON_CBN_SELCHANGE(IDC_COMBO_CHANGELIB_BGL, &CDlgChangeLib::OnCbnSelchangeComboChangelibBgl)
+	ON_CBN_SELCHANGE(IDC_COMBO_CHANGELIB_FGL, &CDlgChangeLib::OnCbnSelchangeComboChangelibFgl)
 END_MESSAGE_MAP()
 
 
@@ -66,6 +70,9 @@ BOOL CDlgChangeLib::OnInitDialog()
 	str=_T("None");
 	m_ComboPl.AddString(str);
 	if(Pl==0xFF)m_ComboPl.SelectString(-1,str);
+
+	OnCbnSelchangeComboChangelibBgl();
+	OnCbnSelchangeComboChangelibFgl();
 	
 
 	return TRUE;
@@ -90,5 +97,55 @@ void CDlgChangeLib::OnOK()
 		return;
 	}
 	if(Pl==pMapSet->GetPlCount())Pl=0xFF;
+	RetBGlCtm=m_ComboBglCtm.GetItemData(m_ComboBglCtm.GetCurSel());
+	RetFGlCtm=m_ComboFglCtm.GetItemData(m_ComboFglCtm.GetCurSel());
 	CDialog::OnOK();
+}
+#define COMBOCTM_NO _T("---")
+void CDlgChangeLib::OnCbnSelchangeComboChangelibBgl()
+{
+	m_ComboBglCtm.ResetContent();
+	CString str;
+	BGl=(u8)m_ComboBGl.GetCurSel();
+	u8 bb;
+	u8 el,es;
+	m_ComboBglCtm.SetItemData(m_ComboBglCtm.AddString(COMBOCTM_NO),0xFFFFFFFF);
+	for(u32 i=0;i<pMapSet->GetStageCount();++i)
+		for(u16 j=0;j<pMapSet->GetStepCount(i);++j)
+			if(i!=StageIdx && j!=StepIdx)
+			{
+				pMapSet->GetStepInfo(i,j,0,&bb,0,0);
+				if(bb==BGl)
+				{
+					pMapSet->GetStageEntry(i,&el,&es);
+					str.Format(_T("Level%d:Stage%d:Step%02d"),el,es,j);
+					m_ComboBglCtm.SetItemData(m_ComboBglCtm.AddString(str),
+						(i<<16)|j);
+				}
+			}
+	m_ComboBglCtm.SelectString(-1,COMBOCTM_NO);
+}
+
+void CDlgChangeLib::OnCbnSelchangeComboChangelibFgl()
+{
+	m_ComboFglCtm.ResetContent();
+	FGl=(u8)m_ComboFGl.GetCurSel();
+	CString str;
+	u8 fb;
+	u8 el,es;
+	m_ComboFglCtm.SetItemData(m_ComboFglCtm.AddString(COMBOCTM_NO),0xFFFFFFFF);
+	for(u32 i=0;i<pMapSet->GetStageCount();++i)
+		for(u16 j=0;j<pMapSet->GetStepCount(i);++j)
+			if(i!=StageIdx && j!=StepIdx)
+			{
+				pMapSet->GetStepInfo(i,j,0,0,&fb,0);
+				if(fb==FGl)
+				{
+					pMapSet->GetStageEntry(i,&el,&es);
+					str.Format(_T("Level%d:Stage%d:Step%02d"),el,es,j);
+					m_ComboFglCtm.SetItemData(m_ComboFglCtm.AddString(str),
+						(i<<16)|j);
+				}
+			}
+	m_ComboFglCtm.SelectString(-1,COMBOCTM_NO);
 }

@@ -18,16 +18,17 @@ namespace Nitro{
 	};
 	inline COLORREF Color15to24(Color15 value)
 	{
-		return RGB(value.r*255/31,
-			value.g*255/31,
-			value.b*255/31);
+		return RGB(
+			(value.r*255+15)/31,
+			(value.g*255+15)/31,
+			(value.b*255+15)/31);
 	}
 	inline Color15 Color24to15(COLORREF value)
 	{
 		Color15 c;
-		c.r=GetRValue(value)*31/255;
-		c.g=GetGValue(value)*31/255;
-		c.b=GetBValue(value)*31/255;
+		c.r=(GetRValue(value)*31+127)/255;
+		c.g=(GetGValue(value)*31+127)/255;
+		c.b=(GetBValue(value)*31+127)/255;
 		return c;
 	}
 	struct Tile
