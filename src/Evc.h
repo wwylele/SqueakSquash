@@ -1,5 +1,5 @@
 #pragma once
-#include "SqMa.h"
+#include "MaDeComm.h"
 
 #define MAX_EVC_COUNT 27
 struct EVC_DESC
@@ -10,6 +10,7 @@ struct EVC_DESC
 extern const EVC_DESC EvcDesc[];
 u16 GetEvcDataLen(u8 class_id);
 
+class SqMa;
 
 class SqMctrlPack
 {
@@ -35,6 +36,8 @@ public:
 	}
 	void RemoveMctrl(u8 i);
 	u8 NewMctrl();
+
+	MaDeComm **ppMaDeComm;
 private:
 	MctrlNote *pMctrl;
 	u8 MctrlCount;

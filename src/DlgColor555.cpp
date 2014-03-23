@@ -37,9 +37,9 @@ static void HSLtoRGB(const COLOR_HSL *hsl, COLOR_RGB *rgb)
         float p = (2.0f * l) - q;
         float Hk = h/360.0f;
         float T[3];
-        T[0] = Hk + 0.3333333f; // Tr   0.3333333f=1.0/3.0
+        T[0] = Hk + 1.0f/3; // Tr  
         T[1] = Hk;              // Tb
-        T[2] = Hk - 0.3333333f; // Tg
+        T[2] = Hk - 1.0f/3; // Tg
         for(int i=0; i<3; i++)
         {
             if(T[i] < 0) T[i] += 1.0f;
@@ -112,7 +112,7 @@ void CDlgColor555::OnPaint()
 			theta=atan2((float)px,(float)py);
 			chsl.hue=theta/(2*3.14159265358979323846f)*360.0f;
 			chsl.luminance=50.0f;
-			chsl.saturation=r/R*100.0f;
+			chsl.saturation=r*100.0f/R;
 			HSLtoRGB(&chsl,&crgb);
 			rgb=RGB(crgb.red,crgb.green,crgb.blue);
 			c555=Nitro::Color24to15(rgb);

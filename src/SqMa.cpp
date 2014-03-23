@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "SqMa.h"
+#include "SqDe.h"
 #include "Evc.h"
-#include "Boss.h"
 
 SqMa::SqMa(void):
 	pCell(0),
@@ -9,10 +9,10 @@ SqMa::SqMa(void):
 	pGuideMatrix(0),
 	pMctrl(0),
 	pMctrlGroup(0),
-	//pEvpPack(0),
 	pDoor(0),
 	pGraScript(0),
-	pGraScriptCurrent(0)
+	pGraScriptCurrent(0),
+	pMaDeComm(0)
 {
 	pTexMapping[TEXM_F]=pTexMapping[TEXM_B]=0;
 	for(int i=0;i<4;++i)
@@ -22,6 +22,7 @@ SqMa::SqMa(void):
 		TexMappingNull.mapping[i].flipy=i>>1;
 		TexMappingNull.mapping[i].plt=0xF;//just a mark
 	}
+	MctrlPack.ppMaDeComm=&pMaDeComm;
 }
 
 SqMa::~SqMa(void){Unload();}
@@ -384,18 +385,12 @@ void SqMa::Unload()
 	if(pTexMapping[TEXM_B]){delete[] pTexMapping[TEXM_B];pTexMapping[TEXM_B]=0;}
 	if(pGuide){delete[] pGuide;pGuide=0;}
 	if(pGuideMatrix){delete[] pGuideMatrix;pGuideMatrix=0;}
-	//if(pSection10){delete[] pSection10;pSection10=0;}
 	if(pMctrl){delete[] pMctrl;pMctrl=0;}
 	if(pMctrlGroup){
 		for(u8 i=0;i<MctrlGroupCount;++i)delete[] pMctrlGroup[i].pData;
 		delete[] pMctrlGroup;
 		pMctrlGroup=0;
 	}
-	/*if(pEvpPack){
-		for(u8 i=0;i<MctrlCount;++i)delete[] pEvpPack[i].pExtData;
-		delete[] pEvpPack;
-		pEvpPack=0;
-	}*/
 	if(pDoor){delete[] pDoor;pDoor=0;}
 	if(pGraScript){delete[] pGraScript;pGraScript=0;}
 	if(pGraScriptCurrent){delete[]pGraScriptCurrent;pGraScriptCurrent=0;}
@@ -499,6 +494,34 @@ void SqMa::RemoveDoor(u16 i)
 		delete[] pDoor;
 		pDoor=newData;
 	}
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Door(N_DELETE,i);
+		pMaDeComm->pDe->Notify_Door(N_DELETE,i);
+	}
+}
+void SqMa::RemoveGraScript(u16 i)
+{
+	ASSERT(IsLoaded());
+	ASSERT(i<GraScriptCount);
+	if(GraScriptCount==1)
+	{
+		GraScriptCount=0;
+		delete[] pGraScript;
+		pGraScript=0;
+		delete[] pGraScriptCurrent;
+		pGraScriptCurrent=0;
+	}
+	else
+	{
+		SqGraScript *newData=new SqGraScript[--GraScriptCount];
+		memcpy(newData,pGraScript,i*sizeof(SqGraScript));
+		memcpy(newData+i,pGraScript+i+1,(GraScriptCount-i)*sizeof(SqGraScript));
+		delete[] pGraScript;
+		pGraScript=newData;
+		delete[] pGraScriptCurrent;
+		pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
+	}
 }
 u16 SqMa::NewDoor()
 {
@@ -511,7 +534,30 @@ u16 SqMa::NewDoor()
 	}
 	pDoor=newData;
 	memset(&pDoor[DoorCount-1],0,sizeof(SqDoor));
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Door(N_NEW,DoorCount-1);
+		pMaDeComm->pDe->Notify_Door(N_NEW,DoorCount-1);
+	}
 	return DoorCount-1;
+}
+u16 SqMa::NewGraScript()
+{
+	ASSERT(IsLoaded());
+	ASSERT(IsLoaded());
+	SqGraScript *newData=new SqGraScript[++GraScriptCount];
+	if(GraScriptCount!=1)
+	{
+		memcpy(newData,pGraScript,(GraScriptCount-1)*sizeof(SqGraScript));
+		delete[]pGraScript;
+	}
+	pGraScript=newData;
+	memset(&pGraScript[GraScriptCount-1],0,sizeof(SqGraScript));
+
+	delete[] pGraScriptCurrent;
+	pGraScriptCurrent=new GRA_SCRIPT_CURRENT[GraScriptCount];
+
+	return GraScriptCount-1;
 }
 void SqMa::ResizeMap(u8 W,u8 H,int ox,int oy)
 {
@@ -535,4 +581,41 @@ void SqMa::ResizeMap(u8 W,u8 H,int ox,int oy)
 	pCell=newData;
 	w=W;
 	h=H;
+}
+void SqMa::ParseMctrl()
+{
+	ASSERT(IsLoaded());
+	MctrlPack.FromMa(*this);
+
+}
+void SqMa::SerializeMctrl()
+{
+	ASSERT(IsLoaded());
+	MctrlPack.ToMa(*this);
+	MctrlPack.Unload();
+}
+void SqMa::ResizeTexMapping(u8 TexMPlane,u16 size)
+{
+	ASSERT(IsLoaded());
+	ASSERT(size);
+	SqTexMapping *newData=new SqTexMapping[size];
+	memset(newData,0,size*sizeof(SqTexMapping));
+	memcpy(newData,pTexMapping[TexMPlane],
+		min(size,TexMappingCount[TexMPlane])*sizeof(SqTexMapping));
+	delete[] pTexMapping[TexMPlane];
+	pTexMapping[TexMPlane]=newData;
+	TexMappingCount[TexMPlane]=size;
+}
+void SqMa::Notify_Door(MadeCommNOTIFY ncode,u16 index)
+{
+}
+void SqMa::Notify_Mctrl(MadeCommNOTIFY ncode,u8 index)
+{
+}
+
+void SqMa::Notify_Foe(MadeCommNOTIFY ncode,u16 index)
+{
+}
+void SqMa::Notify_Sup(MadeCommNOTIFY ncode,u16 index)
+{
 }

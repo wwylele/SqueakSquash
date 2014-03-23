@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "DlgTexMapping.h"
+#include "DlgTmani.h"
+#include "DlgTmResize.h"
 
 struct MENU_TMCOPY_ITEM_MAP
 {
@@ -32,6 +34,7 @@ void CDlgTexMapping::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_TILE_ANI1, m_EditTileAni1);
 	DDX_Control(pDX, IDC_EDIT_TILE_ANI2, m_EditTileAni2);
 	DDX_Control(pDX, IDC_EDIT_TILE_ANI3, m_EditTileAni3);
+	DDX_Control(pDX, IDC_LIST_TEXMAPPING_ANI, m_ListAni);
 }
 
 
@@ -50,6 +53,13 @@ BEGIN_MESSAGE_MAP(CDlgTexMapping, CDialog)
 	ON_EN_CHANGE(IDC_EDIT_TILE_ANI1, &CDlgTexMapping::OnEnChangeEditTileAni1)
 	ON_EN_CHANGE(IDC_EDIT_TILE_ANI2, &CDlgTexMapping::OnEnChangeEditTileAni2)
 	ON_EN_CHANGE(IDC_EDIT_TILE_ANI3, &CDlgTexMapping::OnEnChangeEditTileAni3)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_FX, &CDlgTexMapping::OnBnClickedButtonTexmappingFx)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_FY, &CDlgTexMapping::OnBnClickedButtonTexmappingFy)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_ANI_REMOVE, &CDlgTexMapping::OnBnClickedButtonTexmappingAniRemove)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_ANI_PROPERTY, &CDlgTexMapping::OnBnClickedButtonTexmappingAniProperty)
+	ON_LBN_DBLCLK(IDC_LIST_TEXMAPPING_ANI, &CDlgTexMapping::OnLbnDblclkListTexmappingAni)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_ANI_NEW, &CDlgTexMapping::OnBnClickedButtonTexmappingAniNew)
+	ON_BN_CLICKED(IDC_BUTTON_TEXMAPPING_RESIZE, &CDlgTexMapping::OnBnClickedButtonTexmappingResize)
 END_MESSAGE_MAP()
 
 void CDlgTexMapping::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -69,6 +79,7 @@ void CDlgTexMapping::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 }
 void CDlgTexMapping::SetScroll()
 {
+	cursel_tmindex=0xFFFF;
 	u32 W,H;
 	if(m_TmF)
 	{
@@ -111,6 +122,8 @@ void CDlgTexMapping::SetScroll()
 BOOL CDlgTexMapping::OnInitDialog()
 {
 	CDialog::OnInitDialog();
+	cur_tmindex=0xFFFF;
+	cursel_tmindex=0xFFFF;
 	m_AniDisp=true;
 	CheckRadioButton(0,30000,IDC_RADIO_TEXMAPPING_A);
 	m_TmF=true;
@@ -132,6 +145,8 @@ BOOL CDlgTexMapping::OnInitDialog()
 	m_EditTileAni3.SetLimitText(3);
 	m_EditTileAni3.SetWindowText(str);
 
+	UpdateAniList();
+
 	SetTimer(ID_TIMER_ANI_DISP,200,0);
 	return TRUE;
 }
@@ -139,6 +154,7 @@ BOOL CDlgTexMapping::OnInitDialog()
 void CDlgTexMapping::OnBnClickedRadioTexmappingA()
 {
 	m_TmF=true;
+	cursel_tmindex=0xFFFF;
 	SetScroll();
 	PaintTile();
 	GetDlgItem(IDC_STATIC_TILE)->RedrawWindow();
@@ -147,6 +163,7 @@ void CDlgTexMapping::OnBnClickedRadioTexmappingA()
 void CDlgTexMapping::OnBnClickedRadioTexmappingB()
 {
 	m_TmF=false;
+	cursel_tmindex=0xFFFF;
 	SetScroll();
 	PaintTile();
 	GetDlgItem(IDC_STATIC_TILE)->RedrawWindow();
@@ -181,6 +198,7 @@ void CDlgTexMapping::PaintTile()
 void CDlgTexMapping::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 {
 	RECT rc;
+	CPen* pOldPen;
 	if(nIDCtl==IDC_STATIC_TEXMAPPING)
 	{
 		GetDlgItem(IDC_STATIC_TEXMAPPING)->GetClientRect(&rc);
@@ -193,8 +211,8 @@ void CDlgTexMapping::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 		dc.Attach(lpDrawItemStruct->hDC);
 		CBrush NullBrush,*pOldBrush;
 		static CPen PenAniM(PS_DOT,1,RGB(255,128,0)),PenAniS(PS_DOT,1,RGB(0,0,255)),
-			PenCur(PS_SOLID,1,RGB(255,0,0)),PenCurL(PS_DOT,1,RGB(255,0,0));
-		CPen* pOldPen;
+			PenCur(PS_SOLID,1,RGB(255,0,0)),PenCurL(PS_DOT,1,RGB(255,0,0)),
+			PenCurSel(PS_SOLID,2,RGB(255,0,0));
 		NullBrush.CreateStockObject(NULL_BRUSH);
 		pOldBrush=dc.SelectObject(&NullBrush);
 		pOldPen=dc.SelectObject(&PenAniM);
@@ -238,6 +256,15 @@ void CDlgTexMapping::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 				x+(cur_stm&1)*8+8,y+(cur_stm>>1)*8+8);
 			
 		}
+		if(cursel_tmindex!=0xFFFF)
+		{
+			int x,y;
+			x=(cursel_tmindex%w)*16-m_HScroll.GetScrollPos();
+			y=(cursel_tmindex/w)*16-m_VScroll.GetScrollPos();
+			dc.SelectObject(&PenCurSel);
+			dc.Rectangle(x+(cursel_stm&1)*8-1,y+(cursel_stm>>1)*8-1,
+				x+(cursel_stm&1)*8+8+1,y+(cursel_stm>>1)*8+8+1);
+		}
 		dc.SelectObject(pOldPen);
 		dc.SelectObject(pOldBrush);
 		NullBrush.DeleteObject();
@@ -246,6 +273,27 @@ void CDlgTexMapping::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
 	else if(nIDCtl==IDC_STATIC_TILE)
 	{
 		m_CanTile.Present(lpDrawItemStruct->hDC,0,0,256,256,0,0);
+		if(cursel_tmindex!=0xFFFF)
+		{
+			CDC dc;
+			dc.Attach(lpDrawItemStruct->hDC);
+			int x,y;
+			static CPen PenCur(PS_SOLID,1,RGB(255,0,0));
+			CBrush NullBrush,*pOldBrush;
+			NullBrush.CreateStockObject(NULL_BRUSH);
+			pOldPen=dc.SelectObject(&PenCur);
+			pOldBrush=dc.SelectObject(&NullBrush);
+			u16 ti=m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm].tile;
+			x=(ti%32)*8;
+			y=(ti/32)*8;
+			
+			dc.Rectangle(x,y,x+8,y+8);
+
+			dc.SelectObject(pOldPen);
+			dc.SelectObject(pOldBrush);
+			NullBrush.DeleteObject();
+			dc.Detach();
+		}
 	}
 }
 void CDlgTexMapping::PaintTexMapping()
@@ -350,6 +398,7 @@ void CDlgTexMapping::OnMenuTmcopy(UINT nID)
 	SqMa copysrc;
 	copysrc.Load(m_pMapSet->GetMxpBuffer(stage.StageIndex,stage.StepIndex));
 	m_Ma.CopyTexMapping(copysrc,m_TmF?TEXM_F:TEXM_B);
+	UpdateAniList();
 	SetScroll();
 	
 
@@ -369,16 +418,32 @@ BOOL CDlgTexMapping::OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message)
 		pt.y+=m_VScroll.GetScrollPos();
 		u16 tmindex=(u16)((pt.x>>4)|((pt.y>>4)<<(m_TmF?5:6)));
 		u8 stm=((pt.x&8)>>3)|((pt.y&8)>>2);
-		switch(message)
+		if(tmindex<m_Ma.GetTexMappingCount(m_TmF?TEXM_F:TEXM_B))switch(message)
 		{
 		case WM_MOUSEMOVE:OnTexMappingMouseMove(tmindex,stm);break;
 		case WM_LBUTTONDOWN:OnTexMappingLButtonDown(tmindex,stm);break;
+		}
+		else OnTexMappingMouseMove(0xFFFF,0xFF);
+	}
+	else if(Id==IDC_STATIC_TILE && message==WM_LBUTTONDOWN && cursel_tmindex!=0xFFFF)
+	{
+		if(pt.x<256 && pt.y<256)
+		{
+			u16 ti=(u16)(pt.x/8+pt.y/8*32);
+			m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm].tile=ti;
+			m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm].flipx=0;
+			m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm].flipy=0;
+			PaintTexMapping();
+			GetDlgItem(IDC_STATIC_TEXMAPPING)->RedrawWindow();
+			GetDlgItem(IDC_STATIC_TILE)->RedrawWindow();
+
 		}
 	}
 	else
 	{
 		OnTexMappingMouseMove(0xFFFF,0xFF);
 	}
+	
 
 	return CDialog::OnSetCursor(pWnd, nHitTest, message);
 }
@@ -402,6 +467,10 @@ void CDlgTexMapping::OnTexMappingMouseMove(u16 tmindex,u8 stm)
 }
 void CDlgTexMapping::OnTexMappingLButtonDown(u16 tmindex,u8 stm)
 {
+	cursel_tmindex=tmindex;
+	cursel_stm=stm;
+	GetDlgItem(IDC_STATIC_TEXMAPPING)->RedrawWindow();
+	GetDlgItem(IDC_STATIC_TILE)->RedrawWindow();
 }
 
 void CDlgTexMapping::OnBnClickedCheckTexmappingClr0()
@@ -446,4 +515,98 @@ void CDlgTexMapping::OnEnChangeEditTileAni3()
 	int n=_ttoi(str);
 	if(n>255)n=255;
 	m_Ma.S12HScript.TileTimeDelta[3]=(u8)n;
+}
+
+void CDlgTexMapping::OnBnClickedButtonTexmappingFx()
+{
+	if(cursel_tmindex!=0xFFFF)
+	{
+		Nitro::CharData &c=m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm];
+		c.flipx=1-c.flipx;
+		PaintTexMapping();
+		GetDlgItem(IDC_STATIC_TEXMAPPING)->RedrawWindow();
+	}
+}
+
+void CDlgTexMapping::OnBnClickedButtonTexmappingFy()
+{
+	if(cursel_tmindex!=0xFFFF)
+	{
+		Nitro::CharData &c=m_Ma.TexMapping(m_TmF?TEXM_F:TEXM_B,cursel_tmindex).mapping[cursel_stm];
+		c.flipy=1-c.flipy;
+		PaintTexMapping();
+		GetDlgItem(IDC_STATIC_TEXMAPPING)->RedrawWindow();
+	}
+}
+
+void CDlgTexMapping::UpdateAniList()
+{
+	m_ListAni.ResetContent();
+	CString str,str2;
+	for(u16 i=0;i<m_Ma.GetGraScriptCount();++i)
+	{
+		str.Format(_T("%s-%d,%d Frames:"),m_Ma.GraScript(i).TexMappingPlane?
+			_T("Plane1"):_T("Plane0"),m_Ma.GraScript(i).TexMappingIndex,
+			m_Ma.GraScript(i).FrameCount);
+		for(u8 j=0;j<m_Ma.GraScript(i).FrameCount;++j)
+		{
+			str2.Format(_T("%d "),m_Ma.GraScript(i).TimeDelta[j]);
+			str+=str2;
+		}
+		m_ListAni.AddString(str);
+	}
+}
+void CDlgTexMapping::OnBnClickedButtonTexmappingAniRemove()
+{
+	int i=m_ListAni.GetCurSel();
+	if(i!=LB_ERR)
+	{
+		m_Ma.RemoveGraScript((u16)i);
+		UpdateAniList();
+	}
+}
+
+void CDlgTexMapping::OnBnClickedButtonTexmappingAniProperty()
+{
+	int i=m_ListAni.GetCurSel();
+	if(i!=LB_ERR)
+	{
+		CDlgTmani dlg;
+		dlg.m_GraScript=m_Ma.GraScript((u16)i);
+		if(dlg.DoModal()==IDOK)
+		{
+			m_Ma.GraScript((u16)i)=dlg.m_GraScript;
+			UpdateAniList();
+		}
+	}
+}
+
+void CDlgTexMapping::OnLbnDblclkListTexmappingAni()
+{
+	OnBnClickedButtonTexmappingAniProperty();
+
+}
+
+void CDlgTexMapping::OnBnClickedButtonTexmappingAniNew()
+{
+	CDlgTmani dlg;
+	ZeroMemory(&dlg.m_GraScript,sizeof(dlg.m_GraScript));
+	if(dlg.DoModal()==IDOK)
+	{
+		m_Ma.GraScript(m_Ma.NewGraScript())=dlg.m_GraScript;
+		UpdateAniList();
+	}
+	
+}
+
+void CDlgTexMapping::OnBnClickedButtonTexmappingResize()
+{
+	u8 plane=m_TmF?TEXM_F:TEXM_B;
+	CDlgTmResize dlg;
+	dlg.m_TexMappingCount=m_Ma.GetTexMappingCount(plane);
+	if(dlg.DoModal()==IDOK)
+	{
+		m_Ma.ResizeTexMapping(plane,dlg.m_TexMappingCount);
+		SetScroll();
+	}
 }

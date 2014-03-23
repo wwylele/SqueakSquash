@@ -44,6 +44,9 @@ void OpenConsole()
 	}
 
 }
+void PrintLogDummy(const char*,...)
+{
+}
 void GetProductVersion(CString *pstr,UINT *pu)
 {  
 	int nMaxPathName=4096; // Max length of file name/path  
@@ -259,7 +262,9 @@ BOOL CSqsqApp::InitInstance()
 	}
 	AfxEnableControlContainer();
 	
+#ifdef _DEBUG
 	OpenConsole();
+#endif
 	PrintLog("SqueakSquash:\n");
 
 	::CreateThread(0,0,CheckForUpdates_Thread,0,0,0);

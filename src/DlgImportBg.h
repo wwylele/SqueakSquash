@@ -26,9 +26,11 @@ public:
 	u8 *m_DataBuf;
 	u32 m_DataLen;
 protected:
-	virtual void OnOK();
+	static DWORD WINAPI Thread_ImportBg(LPVOID lpThreadParameter);
+	void Thread_ImportBg_Entry();
 public:
 	CProgressCtrl m_Progress;
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 	afx_msg void OnCbnSelchangeComboImportbg();
+	afx_msg void OnBnClickedButtonImportbg();
 };

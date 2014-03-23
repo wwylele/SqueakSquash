@@ -1207,3 +1207,25 @@ bool SqMapSet::MakeRom(CFile &file)
 	PrintLog("SqMapSet::MakeRom done\n");
 	return true;
 }
+void SqMapSet::MoveStep(u32 StageIdx,u16 StepIndex,u16 NewStepIndex)
+{
+	ASSERT(m_Loaded);
+	ASSERT(StageIdx<m_StageCount);
+	ASSERT(StepIndex<m_StageList[StageIdx].StepCount);
+	ASSERT(NewStepIndex<m_StageList[StageIdx].StepCount);
+	if(StepIndex==NewStepIndex)return;
+	StageData::StepData t=m_StageList[StageIdx].StepList[StepIndex];
+	if(StepIndex<NewStepIndex)
+	{
+		memmove(m_StageList[StageIdx].StepList+StepIndex,
+			m_StageList[StageIdx].StepList+StepIndex+1,
+			(NewStepIndex-StepIndex)*sizeof(StageData::StepData));
+	}
+	else
+	{
+		memmove(m_StageList[StageIdx].StepList+NewStepIndex+1,
+			m_StageList[StageIdx].StepList+NewStepIndex,
+			(StepIndex-NewStepIndex)*sizeof(StageData::StepData));
+	}
+	m_StageList[StageIdx].StepList[NewStepIndex]=t;
+}

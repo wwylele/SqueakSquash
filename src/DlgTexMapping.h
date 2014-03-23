@@ -57,6 +57,8 @@ public:
 	void OnTexMappingLButtonDown(u16 tmindex,u8 stm);
 	u16 cur_tmindex;
 	u8 cur_stm;
+	u16 cursel_tmindex;
+	u8 cursel_stm;
 	CStatic m_StaticTmDetail;
 	CButton m_CheckClr0;
 	afx_msg void OnBnClickedCheckTexmappingClr0();
@@ -68,4 +70,13 @@ public:
 	afx_msg void OnEnChangeEditTileAni1();
 	afx_msg void OnEnChangeEditTileAni2();
 	afx_msg void OnEnChangeEditTileAni3();
+	afx_msg void OnBnClickedButtonTexmappingFx();
+	afx_msg void OnBnClickedButtonTexmappingFy();
+	CListBox m_ListAni;
+	void UpdateAniList();
+	afx_msg void OnBnClickedButtonTexmappingAniRemove();
+	afx_msg void OnBnClickedButtonTexmappingAniProperty();
+	afx_msg void OnLbnDblclkListTexmappingAni();
+	afx_msg void OnBnClickedButtonTexmappingAniNew();
+	afx_msg void OnBnClickedButtonTexmappingResize();
 };

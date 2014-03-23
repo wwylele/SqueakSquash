@@ -15,7 +15,9 @@ public:
 	u32 MakeLen();
 	void Make(u8* pdst);
 
-	Nitro::Color15 Pal[0x100];
+	Nitro::Color15 Pal[0x100],PalBackup[0x100];
+	bool DoublePal;
+	void SwapPal();
 	inline Nitro::Color15 Pal_Ani(u8 line,u8 i)
 	{
 		ASSERT(line<16 && i<16);

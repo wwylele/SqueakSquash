@@ -1,4 +1,5 @@
 #pragma once
+#include "MaDeComm.h"
 class SqDe
 {
 private:
@@ -54,6 +55,12 @@ public:
 	void RemoveSup(u16 i);
 	u16 NewFoe();
 	u16 NewSup();
+
+	MaDeComm *pMaDeComm;
+	void Notify_Door(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Mctrl(MadeCommNOTIFY ncode,u8 index);
+	void Notify_Foe(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Sup(MadeCommNOTIFY ncode,u16 index);
 private:
 	bool m_Loaded;
 	u16 FoeCount;

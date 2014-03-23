@@ -48,6 +48,7 @@ void CDlgImportBg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CDlgImportBg, CDialog)
 	ON_WM_DRAWITEM()
 	ON_CBN_SELCHANGE(IDC_COMBO_IMPORTBG, &CDlgImportBg::OnCbnSelchangeComboImportbg)
+	ON_BN_CLICKED(IDC_BUTTON_IMPORTBG, &CDlgImportBg::OnBnClickedButtonImportbg)
 END_MESSAGE_MAP()
 
 
@@ -65,12 +66,14 @@ BOOL CDlgImportBg::OnInitDialog()
 	m_Progress.SetRange(0,14);
 	return TRUE; 
 }
-
-void CDlgImportBg::OnOK()
+DWORD WINAPI CDlgImportBg::Thread_ImportBg(LPVOID lpThreadParameter)
 {
-	GetDlgItem(IDOK)->EnableWindow(FALSE);
-	GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
-	UpdateWindow();
+	((CDlgImportBg*)lpThreadParameter)->Thread_ImportBg_Entry();
+
+	return 0;
+}
+void CDlgImportBg::Thread_ImportBg_Entry()
+{
 
 	int bgstyle=m_ComboBgStyle.GetCurSel();
 	int w=BgStyle[bgstyle].Shape==BG_STYLE::HORI?512:256;
@@ -109,7 +112,19 @@ void CDlgImportBg::OnOK()
 	}
 	BmpToPlt256(BmpIn,w*h,RGB(0,0,0),pbmp,(Nitro::Color15*)pplt,this,&m_Progress);
 	delete[]BmpIn;
-	CDialog::OnOK();
+
+	PostMessage(WM_COMMAND,IDOK,0);
+}
+void CDlgImportBg::OnBnClickedButtonImportbg()
+{
+
+	GetDlgItem(IDC_BUTTON_IMPORTBG)->EnableWindow(FALSE);
+	GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
+	EnableWindow(FALSE);
+
+	CreateThread(0,0,Thread_ImportBg,this,0,0);
+
+	
 }
 
 void CDlgImportBg::OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct)
@@ -148,3 +163,4 @@ void CDlgImportBg::OnCbnSelchangeComboImportbg()
 {
 	GetDlgItem(IDC_STATIC_IMPORTBG)->RedrawWindow();
 }
+

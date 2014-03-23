@@ -44,7 +44,8 @@ protected:
 #define ID_BOPTM_CHANGELIB	30004
 #define ID_BOPTM_TEXMAP		30005
 #define ID_BOPTM_DELETE		30006
-#define ID_BOPTM_MOVE		30007
+#define ID_BOPTM_UP			30007
+#define ID_BOPTM_DOWN		30013
 #define ID_BOPTM_COPY		30008
 #define ID_BOPTM_RENAME		30009
 #define ID_BOPTM_EXPORT		30010
@@ -105,6 +106,8 @@ public:
 	afx_msg void OnBoptmNew();
 	afx_msg void OnBoptmRom();
 	afx_msg void OnBoptmTexMap();
+	afx_msg void OnBoptmUp();
+	afx_msg void OnBoptmDown();
 
 	void PopupBoptm(int x,int y);
 };

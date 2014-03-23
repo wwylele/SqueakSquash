@@ -1,15 +1,26 @@
 #pragma once
 #include "Main.h"
-#include "afxwin.h"
 #include "SqMa.h"
 #include "SqDe.h"
 #include "Evc.h"
 #include "SqB.h"
 #include "Canvas.h"
-#include "afxcmn.h"
 
 #define FORMAT_BGM _T("%d:%s")
 #define FORMAT_BOSS _T("%d")
+
+#define GUIDE_COLOR_COUNT 200
+class GuideColorTable
+{
+public:
+	struct floatrgb
+	{
+		float r,g,b;
+	}Color[GUIDE_COLOR_COUNT];
+	void LoadDefault();
+	void Load();
+	void Save();
+};
 
 #define ID_TIMER_REDRAW_MAP 35000
 #define ID_NEWOBJ_FOE 35001
@@ -38,7 +49,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 protected:
-	SqMctrlPack m_Mctrl;
+	//SqMctrlPack m_Mctrl;
 	CCanvas m_CanMap;
 	CCanvas m_CanStock;
 	CCanvas m_CanCurGrid;
@@ -162,4 +173,9 @@ public:
 	afx_msg void OnBnClickedButtonMapCancel();
 	afx_msg void OnBnClickedButtonMapResize();
 	afx_msg void OnBnClickedButtonZeroCell();
+	afx_msg void OnBnClickedButtonSwapPal();
+	CButton m_ButtonBackgroundScript;
+	afx_msg void OnBnClickedButtonBackgroundScript();
+	void UpdateBackgroundScript();
+
 };

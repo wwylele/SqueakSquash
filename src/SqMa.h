@@ -1,5 +1,7 @@
 #pragma once
 #include "Nitro.h"
+#include "Evc.h"
+#include "MaDeComm.h"
 
 #define TEXM_F 0
 #define TEXM_B 1
@@ -133,6 +135,12 @@ public:
 	u32 MakeLen();
 	void Make(u8* pdst);
 
+	MaDeComm *pMaDeComm;
+	void Notify_Door(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Mctrl(MadeCommNOTIFY ncode,u8 index);
+	void Notify_Foe(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Sup(MadeCommNOTIFY ncode,u16 index);
+
 private:u16 S10MakeLen();
 public:
 	//Section -1
@@ -176,6 +184,7 @@ public:
 		ASSERT(IsLoaded());return TexMappingCount[TexMPlane];
 	}
 	void CopyTexMapping(SqMa& src,u8 TexMPlane);
+	void ResizeTexMapping(u8 TexMPlane,u16 size);
 
 	//Section 9 ex
 	inline u16 GetGuideCount(){ASSERT(IsLoaded());return GuideCount;}
@@ -197,6 +206,10 @@ public:
 		ASSERT(IsLoaded());ASSERT(i<MctrlGroupCount);
 		return pMctrlGroup[i].Header.class_id;
 	}
+	SqMctrlPack MctrlPack;
+	void ParseMctrl();
+	void SerializeMctrl();
+	
 	
 
 	//Section 11
@@ -220,6 +233,9 @@ public:
 		ASSERT(i<GraScriptCount);
 		return pGraScript[i];
 	}
+	void RemoveGraScript(u16 i);
+	u16 NewGraScript();
+
 	void TicketClear();
 	bool TicketIn();
 

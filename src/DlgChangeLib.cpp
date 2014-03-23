@@ -93,7 +93,7 @@ void CDlgChangeLib::OnOK()
 	pMapSet->GetGlName(FGl,n2);
 	if(strcmp(n1,TEXTURE__CHAINBOMB)==0 || strcmp(n2,TEXTURE__CHAINBOMB)==0)
 	{
-		MessageBox(_T("\"chainbomb.bin\" can't be chose."),0,MB_ICONERROR);
+		MessageBox(_T("\"chainbomb.bin\" can't be chose."),_T("Squeak Squash"),MB_ICONERROR);
 		return;
 	}
 	if(Pl==pMapSet->GetPlCount())Pl=0xFF;

@@ -201,6 +201,7 @@ public:
 	void DeleteStep(u32 StageIdx,u16 StepIndex);
 	u16/*StepIndex*/ NewStep(u32 StageIdx);
 	void RepairMxpHeader(u32 StageIdx=0xFFFFFFFF,u16 StepIdx=0xFFFF);
+	void MoveStep(u32 StageIdx,u16 StepIndex,u16 NewStepIndex);
 
 	//Bg/BGl/FGl/Pl =0    means not to get the value
 	void GetStepInfo(u32 StageIdx,u16 StepIndex,u8* Bg,u8* BGl,u8* FGl,u8* Pl);

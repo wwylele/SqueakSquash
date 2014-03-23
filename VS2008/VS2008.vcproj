@@ -205,6 +205,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgBgScript.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgBgScript.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgChangeLib.cpp"
 				>
 			</File>
@@ -277,6 +285,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgTmani.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgTmani.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgTmResize.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgTmResize.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\HexEdit.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\HexEdit.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\Main.cpp"
 				>
 			</File>
@@ -338,6 +370,10 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+			<File
+				RelativePath=".\bitmap1.bmp"
+				>
+			</File>
 			<File
 				RelativePath=".\det0.bmp"
 				>
@@ -419,14 +455,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\Boss.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\src\Boss.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\clrred_MedianCut.cpp"
 				>
 			</File>
@@ -460,6 +488,10 @@
 			</File>
 			<File
 				RelativePath="..\src\Foe.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\MaDeComm.h"
 				>
 			</File>
 			<File

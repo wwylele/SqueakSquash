@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "SqDe.h"
+#include "SqMa.h"
 
-
-SqDe::SqDe():pFoe(0),pSup(0),m_Loaded(false)
+SqDe::SqDe():
+	pFoe(0),
+	pSup(0),
+	m_Loaded(false),
+	pMaDeComm(0)
 {
 }
 SqDe::~SqDe()
@@ -106,6 +110,11 @@ void SqDe::RemoveFoe(u16 i)
 		delete[] pFoe;
 		pFoe=newData;
 	}
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Foe(N_DELETE,i);
+		pMaDeComm->pDe->Notify_Foe(N_DELETE,i);
+	}
 }
 void SqDe::RemoveSup(u16 i)
 {
@@ -125,6 +134,11 @@ void SqDe::RemoveSup(u16 i)
 		delete[] pSup;
 		pSup=newData;
 	}
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Sup(N_DELETE,i);
+		pMaDeComm->pDe->Notify_Sup(N_DELETE,i);
+	}
 }
 u16 SqDe::NewFoe()
 {
@@ -137,6 +151,11 @@ u16 SqDe::NewFoe()
 	}
 	pFoe=newData;
 	memset(&pFoe[FoeCount-1],0,sizeof(SqItem));
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Foe(N_NEW,FoeCount-1);
+		pMaDeComm->pDe->Notify_Foe(N_NEW,FoeCount-1);
+	}
 	return FoeCount-1;
 
 }
@@ -151,6 +170,23 @@ u16 SqDe::NewSup()
 	}
 	pSup=newData;
 	memset(&pSup[SupCount-1],0,sizeof(SqItem));
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Sup(N_NEW,SupCount-1);
+		pMaDeComm->pDe->Notify_Sup(N_NEW,SupCount-1);
+	}
 	return SupCount-1;
 
+}
+void SqDe::Notify_Door(MadeCommNOTIFY ncode,u16 index)
+{
+}
+void SqDe::Notify_Mctrl(MadeCommNOTIFY ncode,u8 index)
+{
+}
+void SqDe::Notify_Foe(MadeCommNOTIFY ncode,u16 index)
+{
+}
+void SqDe::Notify_Sup(MadeCommNOTIFY ncode,u16 index)
+{
 }

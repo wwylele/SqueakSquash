@@ -26,6 +26,10 @@
 #define IDD_OBJ                         129
 #define IDD_COLOR                       130
 #define IDD_RESIZE                      131
+#define IDD_TMANI                       136
+#define IDD_BACKGROUND_SCRIPT           137
+#define IDB_SUBSTITUTE                  138
+#define IDD_TMRESIZE                    139
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -39,7 +43,6 @@
 #define IDC_MAP_VSCROLL                 1013
 #define IDC_MAP_HSCROLL                 1014
 #define IDC_COMBO_CHANGELIB_BGL_CTM     1014
-#define IDC_COMBO_CHANGELIB_FGL2        1015
 #define IDC_COMBO_CHANGELIB_FGL_CTM     1015
 #define IDC_CHECK_MAP_PLANE2            1016
 #define IDC_CHECK_MAP_PLANE0            1017
@@ -114,8 +117,33 @@
 #define IDC_BUTTON_ZERO_CELL            1090
 #define IDC_RADIO_RESIZE_UL             1092
 #define IDC_RADIO_RESIZE_UR             1093
+#define IDC_BUTTON_SWAP_PAL             1093
 #define IDC_RADIO_RESIZE_DL             1094
 #define IDC_RADIO_RESIZE_DR             1095
+#define IDC_BUTTON_TEXMAPPING_FX        1095
+#define IDC_BUTTON_TEXMAPPING_FY        1096
+#define IDC_BUTTON_IMPORTBG             1096
+#define IDC_LIST_TEXMAPPING_ANI         1097
+#define IDC_BUTTON_TEXMAPPING_ANI_REMOVE 1098
+#define IDC_BUTTON_TEXMAPPING_ANI_NEW   1099
+#define IDC_BUTTON_TEXMAPPING_ANI_PROPERTY 1100
+#define IDC_RADIO_TMANI_PLANE0          1101
+#define IDC_RADIO_TMANI_PLANE1          1102
+#define IDC_EDIT_TMANI_TMINDEX          1103
+#define IDC_SLIDER_TMANI_FRAME          1105
+#define IDC_EDIT_TMANI_TIMEDELTA0       1106
+#define IDC_EDIT_TMANI_TIMEDELTA1       1107
+#define IDC_BUTTON_BACKGROUND_SCRIPT    1107
+#define IDC_EDIT_TMANI_TIMEDELTA2       1108
+#define IDC_BUTTON_TEXMAPPING_RESIZE    1108
+#define IDC_EDIT_TMANI_TIMEDELTA3       1109
+#define IDC_EDIT_TEXMAPPING_COUNT       1109
+#define IDC_EDIT_TMANI_TIMEDELTA4       1110
+#define IDC_BUTTON1                     1110
+#define IDC_BUTTON_GUIDE_COLOR          1110
+#define IDC_EDIT_TMANI_TIMEDELTA5       1111
+#define IDC_EDIT_TMANI_TIMEDELTA6       1112
+#define IDC_EDIT_TMANI_TIMEDELTA7       1113
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -128,9 +156,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        132
+#define _APS_NEXT_RESOURCE_VALUE        140
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1093
+#define _APS_NEXT_CONTROL_VALUE         1111
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

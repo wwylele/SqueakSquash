@@ -55,9 +55,6 @@ BOOL CDlgRomInfo::OnInitDialog()
 
 	m_EditTitle.SetWindowText(str);
 
-	CDialog::PreInitDialog();
-
-
 
 	return TRUE;
 }

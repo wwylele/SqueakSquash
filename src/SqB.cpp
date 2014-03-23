@@ -10,7 +10,7 @@
 
 
 
-SqB::SqB():pTile(0),pPalLine(0)
+SqB::SqB():pTile(0),pPalLine(0),DoublePal(false),pSqPl1(0)
 {
 	const u32 ntd[8]={
 		0x00000000,
@@ -107,5 +107,15 @@ void SqB::DrawTile(CDC* pDC,Nitro::CharData chardt,int x,int y,bool flip,bool tr
 	{
 		pali=pTile[ci].Get(flipx?7-bx:bx,flipy?7-by:by);
 		if(pali||(!tran))pDC->SetPixel(x+bx,y+by,Nitro::Color15to24(Pal[pali|(pPalLine[ci]<<4)]));
+	}
+}
+void SqB::SwapPal()
+{
+	if(DoublePal)
+	{
+		Nitro::Color15 PalT[0x100];
+		memcpy(PalT,Pal,sizeof(PalT));
+		memcpy(Pal,PalBackup,sizeof(PalT));
+		memcpy(PalBackup,PalT,sizeof(PalT));
 	}
 }

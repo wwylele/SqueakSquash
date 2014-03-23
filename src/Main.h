@@ -10,7 +10,19 @@
 #include "afxwin.h"
 
 void OpenConsole();
+void PrintLogDummy(const char*,...);
+#ifdef _DEBUG
 #define PrintLog printf
+#else
+#define PrintLog PrintLogDummy
+#endif
+
+#ifdef _DEBUG
+#define RES_PATH _T("..\\..\\..\\res\\")
+#else 
+#define RES_PATH _T("res\\")
+#endif
+
 void GetProductVersion(CString *pstr,UINT *pu);
 
 void OnScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
