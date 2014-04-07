@@ -9,7 +9,7 @@ private:
 	//
 	//SQMS File Data Structure
 	//
-	struct SqmsFileHeader
+	struct SqmsFileHeader/*V1*/
 	{
 		u8 Magic[8];//="SQSQMAPS"
 		u32 Version;

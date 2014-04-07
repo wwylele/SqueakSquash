@@ -75,6 +75,8 @@ DWORD WINAPI CDlgImportBg::Thread_ImportBg(LPVOID lpThreadParameter)
 void CDlgImportBg::Thread_ImportBg_Entry()
 {
 
+	
+
 	int bgstyle=m_ComboBgStyle.GetCurSel();
 	int w=BgStyle[bgstyle].Shape==BG_STYLE::HORI?512:256;
 	int h=BgStyle[bgstyle].Shape==BG_STYLE::VERT?512:256;
@@ -122,6 +124,7 @@ void CDlgImportBg::OnBnClickedButtonImportbg()
 	GetDlgItem(IDCANCEL)->EnableWindow(FALSE);
 	EnableWindow(FALSE);
 
+
 	CreateThread(0,0,Thread_ImportBg,this,0,0);
 
 	
@@ -164,3 +167,11 @@ void CDlgImportBg::OnCbnSelchangeComboImportbg()
 	GetDlgItem(IDC_STATIC_IMPORTBG)->RedrawWindow();
 }
 
+
+void CDlgImportBg::OnOK()
+{
+
+
+
+	CDialog::OnOK();
+}

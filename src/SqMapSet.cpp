@@ -212,6 +212,7 @@ void SqMapSet::Unload()
 	m_StageCount=0;
 	m_Loaded=false;
 }
+
 bool SqMapSet::Save(CFile &file)
 {
 	if(!m_Loaded)return false;
@@ -773,14 +774,19 @@ void SqMapSet::DeleteSecitem(u8 SiSwitch,u32 index)
 		if(SiSwitch==0)
 		{
 			if(m_StageList[i].StepList[j].BgId==index)m_StageList[i].StepList[j].BgId=0;
-			if(m_StageList[i].StepList[j].BgId>index)--m_StageList[i].StepList[j].BgId;
+			else if(m_StageList[i].StepList[j].BgId>index)--m_StageList[i].StepList[j].BgId;
 		}
 		else if(SiSwitch==1)
 		{
-			if(m_StageList[i].StepList[j].BGlId==index)m_StageList[i].StepList[j].BGlId=0;
-			if(m_StageList[i].StepList[j].BGlId>index)--m_StageList[i].StepList[j].BGlId;
-			if(m_StageList[i].StepList[j].FGlId==index)m_StageList[i].StepList[j].FGlId=0;
-			if(m_StageList[i].StepList[j].FGlId>index)--m_StageList[i].StepList[j].FGlId;
+			int thefirst;
+			if(!strcmp((char*)m_GlList[0].Name,TEXTURE__CHAINBOMB))
+				thefirst=1;
+			else
+				thefirst=0;
+			if(m_StageList[i].StepList[j].BGlId==index)m_StageList[i].StepList[j].BGlId=thefirst;
+			else if(m_StageList[i].StepList[j].BGlId>index)--m_StageList[i].StepList[j].BGlId;
+			if(m_StageList[i].StepList[j].FGlId==index)m_StageList[i].StepList[j].FGlId=thefirst;
+			else if(m_StageList[i].StepList[j].FGlId>index)--m_StageList[i].StepList[j].FGlId;
 		}
 		else if(SiSwitch==2)
 		{
@@ -1030,7 +1036,7 @@ bool SqMapSet::MakeRom(CFile &file)
 	PrintLog("List Gl File\n");
 	for(u32 i=0;i<m_GlCount;++i)
 	{
-		if(!strcmp((char*)m_GlList[i].Name,"chainbomb.bin"))nsfa.name="chainbomb.bin";
+		if(!strcmp((char*)m_GlList[i].Name,TEXTURE__CHAINBOMB))nsfa.name=TEXTURE__CHAINBOMB;
 		else nsfa.name.Format("%Xzg",i);
 		nsfa.pData=m_GlList[i].pData;
 		nsfa.DataLen=m_GlList[i].DataLen;

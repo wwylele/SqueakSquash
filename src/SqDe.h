@@ -1,5 +1,9 @@
 #pragma once
 #include "MaDeComm.h"
+
+#define MAX_FOE_COUNT 1000
+#define MAX_SUP_COUNT 1000
+
 class SqDe
 {
 private:

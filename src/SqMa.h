@@ -5,6 +5,9 @@
 
 #define TEXM_F 0
 #define TEXM_B 1
+
+#define MAX_DOOR_COUNT 32
+
 class SqMa
 {
 private:
@@ -17,11 +20,11 @@ public:
 	{
 		u16 gra[3];
 		u32 det[3];
-		u8 guide_id;
+		u8 guide;
 	};
 	SQROM_STRUCT SqGuide
 	{
-		u16 id;
+		u16 index;//?
 		u16 x;
 		u16 y;
 		u16 U;
@@ -196,11 +199,10 @@ public:
 		ASSERT(IsLoaded());ASSERT(i<GuideCount*GuideCount);
 		return pGuideMatrix[i];
 	}
+	void RepairGuideIndex();
+	void ResizeGuide(u16 count);
 
 	//Section 10
-	//inline u8* Section10(){ASSERT(IsLoaded());return pSection10;}
-	//inline u8 GetSObjCount(){ASSERT(IsLoaded());return pSection10[8];}
-	//inline u8* GetSObj(u8 i){ASSERT(IsLoaded());return pSection10+10+i*8;}
 	inline u8 GetMctrlGroupCount(){ASSERT(IsLoaded());return MctrlGroupCount;}
 	inline u8 GetMctrlGroupId(u8 i){
 		ASSERT(IsLoaded());ASSERT(i<MctrlGroupCount);

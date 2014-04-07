@@ -5,11 +5,13 @@
 #include "Evc.h"
 #include "SqB.h"
 #include "Canvas.h"
+#include "afxwin.h"
 
 #define FORMAT_BGM _T("%d:%s")
 #define FORMAT_BOSS _T("%d")
 
-#define GUIDE_COLOR_COUNT 200
+#define MAX_GUIDE_COUNT 200
+#define GUIDE_COLOR_COUNT MAX_GUIDE_COUNT
 class GuideColorTable
 {
 public:
@@ -131,7 +133,7 @@ public:
 	afx_msg void OnBnClickedRadioMapPtObj();
 	CListCtrl m_ListObj;
 	void UpdateObjList();
-	void UpdateGuideList();
+	//void UpdateGuideList();
 	afx_msg void OnBnClickedRadioMapPtBoss();
 	
 	CButton m_CheckHideFoe;
@@ -178,4 +180,10 @@ public:
 	afx_msg void OnBnClickedButtonBackgroundScript();
 	void UpdateBackgroundScript();
 
+	CComboBox m_ComboUnk10;
+	CButton m_CheckUnk9;
+	afx_msg void OnBnClickedCheckMapUnk9();
+	afx_msg void OnCbnSelchangeComboMapUnk10();
+	CButton m_ButtonGuide;
+	afx_msg void OnBnClickedButtonGuide();
 };

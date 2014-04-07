@@ -33,4 +33,6 @@ public:
 	afx_msg void OnDrawItem(int nIDCtl, LPDRAWITEMSTRUCT lpDrawItemStruct);
 	afx_msg void OnCbnSelchangeComboImportbg();
 	afx_msg void OnBnClickedButtonImportbg();
+protected:
+	virtual void OnOK();
 };

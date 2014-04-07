@@ -143,6 +143,7 @@ void SqDe::RemoveSup(u16 i)
 u16 SqDe::NewFoe()
 {
 	ASSERT(m_Loaded);
+	if(FoeCount>=MAX_FOE_COUNT)return 0xFFFF;
 	SqItem *newData=new SqItem[++FoeCount];
 	if(FoeCount!=1)
 	{
@@ -162,6 +163,7 @@ u16 SqDe::NewFoe()
 u16 SqDe::NewSup()
 {
 	ASSERT(m_Loaded);
+	if(SupCount>=MAX_SUP_COUNT)return 0xFFFF;
 	SqItem *newData=new SqItem[++SupCount];
 	if(SupCount!=1)
 	{

@@ -2,6 +2,7 @@
 #include "MaDeComm.h"
 
 #define MAX_EVC_COUNT 27
+#define MAX_MCTRL_COUNT 250
 struct EVC_DESC
 {
 	u16 DataLen;

@@ -229,6 +229,22 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgGuide.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgGuide.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgGuideResize.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgGuideResize.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgImportBg.cpp"
 				>
 			</File>

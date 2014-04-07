@@ -30,6 +30,9 @@
 #define IDD_BACKGROUND_SCRIPT           137
 #define IDB_SUBSTITUTE                  138
 #define IDD_TMRESIZE                    139
+#define IDD_GUIDE                       140
+#define IDD_DIALOG1                     141
+#define IDD_GUIDE_RESIZE                141
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -139,11 +142,14 @@
 #define IDC_EDIT_TMANI_TIMEDELTA3       1109
 #define IDC_EDIT_TEXMAPPING_COUNT       1109
 #define IDC_EDIT_TMANI_TIMEDELTA4       1110
-#define IDC_BUTTON1                     1110
-#define IDC_BUTTON_GUIDE_COLOR          1110
 #define IDC_EDIT_TMANI_TIMEDELTA5       1111
+#define IDC_CHECK_MAP_UNK9              1111
 #define IDC_EDIT_TMANI_TIMEDELTA6       1112
+#define IDC_COMBO_MAP_UNK10             1112
 #define IDC_EDIT_TMANI_TIMEDELTA7       1113
+#define IDC_BUTTON_GUIDE                1113
+#define IDC_STATIC_TMRESIZE             1121
+#define IDC_EDIT_GUIDE_RESIZE           1122
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -156,9 +162,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        140
+#define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1111
+#define _APS_NEXT_CONTROL_VALUE         1123
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

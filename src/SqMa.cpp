@@ -92,7 +92,7 @@ bool SqMa::Load(const u8* psrc)
 		pCell[i].det[0]=*((u32*)(psrc+head.SectionOff[6])+i);
 		pCell[i].det[1]=*((u32*)(psrc+head.SectionOff[7])+i);
 		pCell[i].det[2]=*((u32*)(psrc+head.SectionOff[8])+i);
-		pCell[i].guide_id=*(psrc+head.SectionOff[9]+i);
+		pCell[i].guide=*(psrc+head.SectionOff[9]+i);
 	}
 
 	u8 pad=w*h%2;
@@ -103,6 +103,8 @@ bool SqMa::Load(const u8* psrc)
 	if(ps9ex==psrc+head.SectionOff[10] || *ps9ex==0)
 	{
 		GuideCount=0;
+		pGuide=0;
+		pGuideMatrix=0;
 	}
 	else
 	{
@@ -232,6 +234,7 @@ void SqMa::Make(u8* pdst)
 	ASSERT(IsLoaded());
 
 	RepairDoorIndex();
+	//RepairGuideIndex();
 
 	u8 *p=pdst;
 	Header head;
@@ -273,7 +276,7 @@ void SqMa::Make(u8* pdst)
 
 	//Section 9
 	head.SectionOff[9]=p-pdst;
-	for(u16 i=0;i<w*h;++i)*p++=pCell[i].guide_id;
+	for(u16 i=0;i<w*h;++i)*p++=pCell[i].guide;
 	if(w*h%2)*(p++)=0;
 
 	//section9 old
@@ -526,6 +529,10 @@ void SqMa::RemoveGraScript(u16 i)
 u16 SqMa::NewDoor()
 {
 	ASSERT(IsLoaded());
+	if(DoorCount>=MAX_DOOR_COUNT)
+	{
+		return 0xFFFF;
+	}
 	SqDoor *newData=new SqDoor[++DoorCount];
 	if(DoorCount!=1)
 	{
@@ -605,6 +612,60 @@ void SqMa::ResizeTexMapping(u8 TexMPlane,u16 size)
 	delete[] pTexMapping[TexMPlane];
 	pTexMapping[TexMPlane]=newData;
 	TexMappingCount[TexMPlane]=size;
+}
+void SqMa::RepairGuideIndex()
+{
+	ASSERT(IsLoaded());
+	for(u16 i=0;i<GuideCount;++i)
+	{
+		pGuide[i].index=i;
+	}
+}
+void SqMa::ResizeGuide(u16 count)
+{
+	ASSERT(IsLoaded());
+	if(count==GuideCount)return;
+	if(count==0)
+	{
+		GuideCount=0;
+		delete[] pGuide;
+		pGuide=0;
+		delete[] pGuideMatrix;
+		pGuideMatrix=0;
+	}
+	else
+	{
+		SqGuide *newGuide=new SqGuide[count];
+		u8 *newGuideMatrix=new u8[count*count];
+		memset(newGuide,0,sizeof(SqGuide)*count);
+		memset(newGuideMatrix,0,count*count);
+		for(u16 i=0;i<count;++i)
+		{
+			if(i<GuideCount)
+			{
+				newGuide[i]=pGuide[i];
+				for(u16 j=0;j<min(count,GuideCount);++j)
+				{
+					newGuideMatrix[i*count+j]=pGuideMatrix[i*GuideCount+j];
+				}
+			}
+			else
+			{
+				newGuide[i].index=i;
+			}
+		}
+
+
+
+		if(GuideCount)
+		{
+			delete[] pGuide;
+			delete[] pGuideMatrix;
+		}
+		GuideCount=count;
+		pGuide=newGuide;
+		pGuideMatrix=newGuideMatrix;
+	}
 }
 void SqMa::Notify_Door(MadeCommNOTIFY ncode,u16 index)
 {
