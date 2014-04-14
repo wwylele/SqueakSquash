@@ -1,8 +1,8 @@
 #pragma once
 #include "MaDeComm.h"
 
-#define MAX_FOE_COUNT 1000
-#define MAX_SUP_COUNT 1000
+#define MAX_FOE_COUNT 250
+#define MAX_SUP_COUNT 250
 
 class SqDe
 {
@@ -27,15 +27,44 @@ public:
 		u16 class_id;
 		u16 x;
 		u16 y;
-		u8 pa;
-		u8 pb;
-		u8 pc;
-		u8 pd;
-		u8 pe;
-		u8 pf;
-		u8 pg;
+
+		union{
+			u8 pa;
+			u8 foe_a;
+		};
+		union{
+			u8 pb;
+			u8 foe_b;
+		};
+		union{
+			u8 pc;
+			u8 foe_c;
+		};
+		union{
+			u8 pd;
+			u8 sup_flag;
+			u8 foe_d;
+		};
+		union{
+			u8 pe;
+			u8 sup_ff;
+			u8 foe_e;
+		};
+		union{
+			u8 pf;
+			u8 sup_treasure_id;
+		};
+		union{
+			u8 pg;
+			u8 sup_treasure_valid;
+		};
 		u8 ph;
+
 	};
+#define SQ_ITEM_SUP_FLAG_INVISIBLE     1
+#define SQ_ITEM_SUP_FLAG_BUBBLE        2
+#define SQ_ITEM_SUP_FLAG_SQNOW         4
+
 	bool Load(const u8* psrc);
 	void LoadDefault();
 	inline bool IsLoaded(){return m_Loaded;}

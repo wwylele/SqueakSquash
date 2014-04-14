@@ -3,6 +3,7 @@
 // Used by VS2008.rc
 //
 #define IDR_MAINFRAME                   101
+#define IDDB_OBJ_PARAM_SUP              103
 #define IDD_MAKEROM                     106
 #define IDB_MAKEROM                     107
 #define IDD_MAP                         108
@@ -31,8 +32,12 @@
 #define IDB_SUBSTITUTE                  138
 #define IDD_TMRESIZE                    139
 #define IDD_GUIDE                       140
-#define IDD_DIALOG1                     141
 #define IDD_GUIDE_RESIZE                141
+#define IDDB_OBJ_PARAM_NULL             142
+#define IDDB_OBJ_PARAM_DOOR             143
+#define IDDB_OBJ_PARAM_MCTRL_0          144
+#define IDDB_OBJ_PARAM_MCTRL_SINGLE     145
+#define IDDB_OBJ_PARAM_MCTRL_3          146
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -150,6 +155,27 @@
 #define IDC_BUTTON_GUIDE                1113
 #define IDC_STATIC_TMRESIZE             1121
 #define IDC_EDIT_GUIDE_RESIZE           1122
+#define IDC_BUTTON_TEXMAPPING_CANCEL    1123
+#define IDC_BUTTON_TEXMAPPING_PLANE0_REF 1124
+#define IDC_TAB_PARAM                   1126
+#define IDC_CHECK_OP_S_INVISIBLE        1127
+#define IDC_CHECK_OP_S_BUBBLE           1128
+#define IDC_CHECK_OP_S_SQNOW            1129
+#define IDC_CHECK_OP_S_FF               1130
+#define IDC_COMBO_OP_S_TREASURE         1131
+#define IDC_CHECK_OP_S_TREASURE         1132
+#define IDC_EDIT_OP_D_DOOR              1132
+#define IDC_EDIT_OP_D_STEP              1133
+#define IDC_CHECK_OBJ_MCTRL2            1134
+#define IDC_EDIT_OBJ_MCTRL1             1135
+#define IDC_TAB_OP_M_0_COUNT            1137
+#define IDC_EDIT_OP_M_0_REL0            1138
+#define IDC_EDIT_OP_M_0_REL1            1139
+#define IDC_EDIT_OP_M_0_REL2            1140
+#define IDC_COMBO_OP_M_SINGLE           1142
+#define IDC_CHECK_OP_M_3_FALL           1143
+#define IDC_CHECK2                      1144
+#define IDC_CHECK_OP_M_3_UNK            1144
 #define ID_OPEN                         40001
 #define ID_SAVE                         40002
 #define ID_SAVEAS                       40003
@@ -164,7 +190,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        142
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1123
+#define _APS_NEXT_CONTROL_VALUE         1145
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

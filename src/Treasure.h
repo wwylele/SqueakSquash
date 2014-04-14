@@ -1,0 +1,1 @@
+void GetTreasureName(u8 code,CString &str);

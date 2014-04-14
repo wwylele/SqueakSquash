@@ -21,6 +21,9 @@ public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
 
 protected:
+	HACCEL m_hAccel;
+#define ID_KEY_DELETE 7001
+
 	CToolBar m_ToolBar;
 	CTreeCtrl m_FileTree;
 #define ID_FILETREE 20001
@@ -110,6 +113,9 @@ public:
 	afx_msg void OnBoptmDown();
 
 	void PopupBoptm(int x,int y);
+
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnKeyDelete();
 };
 
 

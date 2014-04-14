@@ -79,4 +79,6 @@ public:
 	afx_msg void OnLbnDblclkListTexmappingAni();
 	afx_msg void OnBnClickedButtonTexmappingAniNew();
 	afx_msg void OnBnClickedButtonTexmappingResize();
+	afx_msg void OnBnClickedButtonTexmappingCancel();
+	afx_msg void OnBnClickedButtonTexmappingPlane0Ref();
 };

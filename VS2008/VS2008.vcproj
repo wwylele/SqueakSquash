@@ -578,6 +578,14 @@
 				RelativePath="..\src\SqPl1.h"
 				>
 			</File>
+			<File
+				RelativePath="..\src\Treasure.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\Treasure.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

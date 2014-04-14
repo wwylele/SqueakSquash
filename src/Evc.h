@@ -45,24 +45,26 @@ private:
 
 };
 
-struct EVC_EXT_0{
-	u8 RelEvpCount_LSL8;
-	u8 RelEvpIndex[3];
-};
-struct EVC_EXT_1{
-	u8 RelEvpCount_LSL8_OR_Unk0;
+struct MCTRL_EXT_0{
+	u8 RelMctrlCount_LSL4;
+	u8 RelMctrlIndex[3];
+};//OK
+struct MCTRL_EXT_1{
+	u8 RelMctrlCount_LSL4_OR_Unk0;
 	u8 Unk1;
-	u8 RelEvpIndex[2];
+	u8 RelMctrlIndex[2];
 	u16 Dummy;//=0x00FF
 };
-struct EVC_EXT_3{
+struct MCTRL_EXT_3{
 	u16 Style;/*=
 			  0x0000
-			  0x0010
-			  0x0011
+			  0x0010 - fall
+			  0x0011 - fall?
 			  */
-};
-struct EVC_EXT_6{
+};//OK
+#define MCTRL_EXT_3_FLAG_UNK  0x0001
+#define MCTRL_EXT_3_FLAG_FALL 0x0010
+struct MCTRL_EXT_6{
 	u16 Style;/*=
 			  0x0000
 			  0x0010
@@ -71,8 +73,8 @@ struct EVC_EXT_6{
 			  0x0090
 			  */
 };
-struct EVC_EXT_9{u16 Dummy/*=0*/;};
-struct EVC_EXT_11{
+struct MCTRL_EXT_9{u16 Dummy/*=0*/;};
+struct MCTRL_EXT_11{
 	u16 Style;/*
 			  0
 			  1
@@ -85,24 +87,23 @@ struct EVC_EXT_11{
 			  36*7
 			  */
 };
-struct EVC_EXT_16{u16 Dummy/*=0xCCCC*/;};
-struct EVC_EXT_17{
-	u8 IsSup_OR_IsUnk_LSL8;
+struct MCTRL_EXT_16{u16 Dummy/*=0xCCCC*/;};
+struct MCTRL_EXT_17{
+	u8 IsSup_OR_IsUnk_LSL4;
 	u8 RelFoeSupIndex;//?
 };
-struct EVC_EXT_21{
-	u8 Unk0;
-	u8 RelEvpCount_LSL10_OR_Unk;
-	u8 RelEvpIndex[3];
-	u8 Dummy;//0
-};
-struct EVC_EXT_22{
-	u8 RelEvpCount;
-	u8 RelEvpIndex[5];
+struct MCTRL_EXT_22{
+	u8 RelMctrlCount;
+	u8 RelMctrlIndex[5];
 	u16 TimeDelta[5];
 };
-struct EVC_EXT_23{
+struct MCTRL_EXT_23{
 	u32 Const;//=0x001E0000
-	u8 RelEvpIndex[8];
+	u8 RelMctrlIndex[8];
 };
-struct EVC_EXT_25{u16 Unk/*=0,1*/;};
+struct MCTRL_EXT_25{
+	u16 Style;/*
+			  0 fire
+			  1 bubble
+			  */
+};
