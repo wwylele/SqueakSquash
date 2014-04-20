@@ -24,6 +24,20 @@ public:
 	void Save();
 };
 
+class CImageList_ObjIcon:public CImageList
+{
+	bool Inited;
+	int SupIdBase;
+public:
+	CImageList_ObjIcon();
+	void Init(CDC* pDC);
+	int GetFoeIconId(int class_id);
+	int GetSupIconId(int class_id);
+	int GetDoorIconId(int class_id);
+	int GetMctrlIconId(int class_id);
+};
+extern CImageList_ObjIcon ImageList_ObjIcon;
+
 #define ID_TIMER_REDRAW_MAP 35000
 #define ID_NEWOBJ_FOE 35001
 #define ID_NEWOBJ_SUP 35002

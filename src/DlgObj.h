@@ -38,7 +38,7 @@ public:
 	CEdit m_EditObjXp;
 	CEdit m_EditObjY;
 	CEdit m_EditObjYp;
-	CComboBox m_ComboClass;
+	CComboBoxEx m_ComboClass;
 	CEdit m_EditMctrl1;
 	CButton m_CheckMctrl2;
 	afx_msg void OnCbnSelchangeComboObjClass();
@@ -63,5 +63,29 @@ public:
 
 	afx_msg void OnBnClicked_M_3_Fall();
 	afx_msg void OnBnClicked_M_3_Unk();
+
+	afx_msg void OnTcnSelchange_M_22_Count(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnEnChange_M_22_Rel0();
+	afx_msg void OnEnChange_M_22_Rel1();
+	afx_msg void OnEnChange_M_22_Rel2();
+	afx_msg void OnEnChange_M_22_Rel3();
+	afx_msg void OnEnChange_M_22_Rel4();
+	afx_msg void OnEnChange_M_22_Time0();
+	afx_msg void OnEnChange_M_22_Time1();
+	afx_msg void OnEnChange_M_22_Time2();
+	afx_msg void OnEnChange_M_22_Time3();
+	afx_msg void OnEnChange_M_22_Time4();
+	afx_msg void OnBnClicked_M_22_WaitBoss();
+
+	afx_msg void OnEnChange_M_23_Rel0();
+	afx_msg void OnEnChange_M_23_Rel1();
+	afx_msg void OnEnChange_M_23_Rel2();
+	afx_msg void OnEnChange_M_23_Rel3();
+	afx_msg void OnEnChange_M_23_Rel4();
+	afx_msg void OnEnChange_M_23_Rel5();
+	afx_msg void OnEnChange_M_23_Rel6();
+	afx_msg void OnEnChange_M_23_Rel7();
+
+	afx_msg void OnCbnSelchange_M_Single();
 };
 

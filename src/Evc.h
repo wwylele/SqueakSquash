@@ -9,6 +9,7 @@ struct EVC_DESC
 	TCHAR *Name;
 };
 extern const EVC_DESC EvcDesc[];
+extern const u8 MctrlDefault[64][27];
 u16 GetEvcDataLen(u8 class_id);
 
 class SqMa;
@@ -93,10 +94,12 @@ struct MCTRL_EXT_17{
 	u8 RelFoeSupIndex;//?
 };
 struct MCTRL_EXT_22{
-	u8 RelMctrlCount;
+	u8 RelMctrlCount_OR_WaitBoss;
+#define MCTRL_EXT_22_WAITBOSS 0x80 
+#define MCTRL_EXT_22_RELMCTRLCOUNT_MASK 0x0F
 	u8 RelMctrlIndex[5];
 	u16 TimeDelta[5];
-};
+};//OK
 struct MCTRL_EXT_23{
 	u32 Const;//=0x001E0000
 	u8 RelMctrlIndex[8];
@@ -106,4 +109,4 @@ struct MCTRL_EXT_25{
 			  0 fire
 			  1 bubble
 			  */
-};
+};//OK
