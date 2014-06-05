@@ -116,6 +116,7 @@ public:
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnKeyDelete();
+	afx_msg void OnClose();
 };
 
 

@@ -503,6 +503,22 @@ void SqMa::RemoveDoor(u16 i)
 		pMaDeComm->pDe->Notify_Door(N_DELETE,i);
 	}
 }
+void SqMa::DownDoor(u16 i)
+{
+	ASSERT(IsLoaded());
+	ASSERT(i+1<DoorCount);
+
+	SqDoor t;
+	t=pDoor[i];
+	pDoor[i]=pDoor[i+1];
+	pDoor[i+1]=t;
+
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Door(N_DOWN,i);
+		pMaDeComm->pDe->Notify_Door(N_DOWN,i);
+	}
+}
 void SqMa::RemoveGraScript(u16 i)
 {
 	ASSERT(IsLoaded());
@@ -541,11 +557,7 @@ u16 SqMa::NewDoor()
 	}
 	pDoor=newData;
 	memset(&pDoor[DoorCount-1],0,sizeof(SqDoor));
-	if(pMaDeComm)
-	{
-		pMaDeComm->pMa->Notify_Door(N_NEW,DoorCount-1);
-		pMaDeComm->pDe->Notify_Door(N_NEW,DoorCount-1);
-	}
+
 	return DoorCount-1;
 }
 u16 SqMa::NewGraScript()
@@ -593,7 +605,6 @@ void SqMa::ParseMctrl()
 {
 	ASSERT(IsLoaded());
 	MctrlPack.FromMa(*this);
-
 }
 void SqMa::SerializeMctrl()
 {
@@ -667,16 +678,80 @@ void SqMa::ResizeGuide(u16 count)
 		pGuideMatrix=newGuideMatrix;
 	}
 }
-void SqMa::Notify_Door(MadeCommNOTIFY ncode,u16 index)
+void SqMa::Notify_Door(MaDeCommNOTIFY ncode,u16 index)
 {
 }
-void SqMa::Notify_Mctrl(MadeCommNOTIFY ncode,u8 index)
+void SqMa::Notify_Mctrl(MaDeCommNOTIFY ncode,u8 index)
 {
+	for(u8 i=0;i<MctrlPack.GetMctrlCount();++i)
+	{
+		for(int j=0;j<EvcDesc[MctrlPack[i].class_id].RelMctrlIndex_Count;++j)
+		{
+			u8 *pRelIndex;
+			pRelIndex=MctrlPack[i].pExtData+
+				EvcDesc[MctrlPack[i].class_id].RelMctrlIndex_Offset+j;
+
+			if(*pRelIndex!=0xFF)switch(ncode)
+			{
+			case N_DELETE:
+				if(*pRelIndex==index)*pRelIndex=0xFF;
+				else if(*pRelIndex>index)--*pRelIndex;
+				break;
+			case N_DOWN:
+				if(*pRelIndex==index)++*pRelIndex;
+				else if(*pRelIndex==index+1)--*pRelIndex;
+				break;
+			}
+		}	
+	}
+	
 }
 
-void SqMa::Notify_Foe(MadeCommNOTIFY ncode,u16 index)
+void SqMa::Notify_Foe(MaDeCommNOTIFY ncode,u16 index)
 {
+	for(u8 i=0;i<MctrlPack.GetMctrlCount();++i)
+	{
+		//14 Cao / 15 Mutong / 17 Apear
+		if(MctrlPack[i].class_id==14 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_14_ISSUP)||
+			MctrlPack[i].class_id==15 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_15_ISSUP)||
+			MctrlPack[i].class_id==17 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_17_ISSUP)
+			)
+		{
+			if(MctrlPack[i].pExtData[1]!=0xFF)switch(ncode)
+			{
+			case N_DELETE:
+				if(MctrlPack[i].pExtData[1]==index)MctrlPack[i].pExtData[1]=0xFF;
+				else if(MctrlPack[i].pExtData[1]>index)--MctrlPack[i].pExtData[1];
+				break;
+			case N_DOWN:
+				if(MctrlPack[i].pExtData[1]==index)++MctrlPack[i].pExtData[1];
+				else if(MctrlPack[i].pExtData[1]==index+1)--MctrlPack[i].pExtData[1];
+				break;
+			}
+		}
+	}
 }
-void SqMa::Notify_Sup(MadeCommNOTIFY ncode,u16 index)
+void SqMa::Notify_Sup(MaDeCommNOTIFY ncode,u16 index)
 {
+	for(u8 i=0;i<MctrlPack.GetMctrlCount();++i)
+	{
+		//14 Cao / 15 Mutong / 17 Apear
+		if((MctrlPack[i].class_id==14 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_14_ISSUP))||
+			(MctrlPack[i].class_id==15 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_15_ISSUP))||
+			(MctrlPack[i].class_id==17 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_17_ISSUP))
+			)
+		{
+			if(MctrlPack[i].pExtData[1]!=0xFF)switch(ncode)
+			{
+			case N_DELETE:
+				if(MctrlPack[i].pExtData[1]==index)MctrlPack[i].pExtData[1]=0xFF;
+				else if(MctrlPack[i].pExtData[1]>index)--MctrlPack[i].pExtData[1];
+				break;
+			case N_DOWN:
+				if(MctrlPack[i].pExtData[1]==index)++MctrlPack[i].pExtData[1];
+				else if(MctrlPack[i].pExtData[1]==index+1)--MctrlPack[i].pExtData[1];
+				break;
+			}
+		}
+	}
 }

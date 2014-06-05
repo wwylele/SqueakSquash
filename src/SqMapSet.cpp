@@ -4,6 +4,7 @@
 #include "SqMx.h"
 #include "SqMa.h"
 #include "SqDe.h"
+#include "LogoIn.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -210,6 +211,7 @@ void SqMapSet::Unload()
 	delete[]m_StageList;
 	m_StageList=0;
 	m_StageCount=0;
+
 	m_Loaded=false;
 }
 
@@ -603,7 +605,6 @@ bool SqMapSet::LoadFromRom(CFile &file)
 
 	PrintLog("Repair Mxp Header\n");
 	RepairMxpHeader();
-
 
 	m_Loaded=true;
 	PrintLog("SqMapSet::ReadFromRom done\n");
@@ -1002,6 +1003,20 @@ bool SqMapSet::MakeRom(CFile &file)
 	{
 		PrintLog("Detected ROM_LOCK_FILE\n");
 		return false;
+	}
+
+	//LogoIn
+	u32 logolength;
+	u32 logooff=
+		Nitro::GetSubFileOffset(file,
+		Nitro::GetSubFileId(file,"title/com_logo_s.bin"),
+		&logolength);
+	if(logooff && logolength<=LOGO_FILE_LENGTH)
+	{
+		u8 *p=CreateLogoFile();
+		file.Seek(logooff,CFile::begin);
+		file.Write(p,LOGO_FILE_LENGTH);
+		delete[] p;
 	}
 
 	struct NSFA

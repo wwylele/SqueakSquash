@@ -45,6 +45,7 @@ public:
 public:
 
 	DECLARE_MESSAGE_MAP()
+	virtual int ExitInstance();
 };
 
 #ifdef _UNICODE
@@ -74,7 +75,10 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	CImage m_BmpLogo;
+#define ID_TIMER_LOGO 5555
 	virtual BOOL OnInitDialog();
 	CEdit m_EditAbout;
 	afx_msg void OnBnClickedButtonCheckForUpdates();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };

@@ -6,6 +6,7 @@
 #include "SqB.h"
 #include "Canvas.h"
 #include "afxwin.h"
+#include <stack>
 
 #define FORMAT_BGM _T("%d:%s")
 #define FORMAT_BOSS _T("%d")
@@ -28,6 +29,7 @@ class CImageList_ObjIcon:public CImageList
 {
 	bool Inited;
 	int SupIdBase;
+	int MctrlIdBase;
 public:
 	CImageList_ObjIcon();
 	void Init(CDC* pDC);
@@ -35,6 +37,7 @@ public:
 	int GetSupIconId(int class_id);
 	int GetDoorIconId(int class_id);
 	int GetMctrlIconId(int class_id);
+	CBitmap MctrlIcon[27];
 };
 extern CImageList_ObjIcon ImageList_ObjIcon;
 
@@ -57,6 +60,7 @@ public:
 	SqMa m_Ma;
 	SqDe m_De;
 	SqB m_Fb,m_Bb;
+	MaDeComm theMaDeComm;
 	
 
 protected:
@@ -76,6 +80,8 @@ protected:
 	u8 cursel_stock_x,cursel_stock_y;
 	u8 cursel_stock_x2,cursel_stock_y2;
 	u32 cursel_stock2;
+
+	int refrect_x,refrect_y;
 
 	enum MODE{
 		MPT_GRID,
@@ -128,14 +134,36 @@ public:
 	CEdit m_EditCurGrid2;
 	CEdit m_EditCurGridBoss;
 
-	struct OPT_STACK_NOTE
-	{
-		u8 x,y;
-		u8 plane;
-		bool det;
-		u32 oldcode;
+	enum HistoryNodeCellMain{
+		HISTORY_CELL_GRA,
+		HISTORY_CELL_DET,
+		HISTORY_CELL_GUIDE,
+		BASE_HISTORY
 	};
-	CList<OPT_STACK_NOTE> m_StackUndo,m_StackRedo;
+	struct HistoryCellNode
+	{
+		HistoryNodeCellMain Main;
+		u8 x,y;
+		union HistoryNodeCellDetail{
+			struct HistoryNodeCellGra
+			{
+				u8 plane;
+				u16 before,after;
+			}Gra;
+			struct HistoryNodeCellDet
+			{
+				u8 plane;
+				u32 before,after;
+			}Det;
+			struct HistoryNodeCellGuide
+			{
+				u8 before,after;
+			}Guide;
+		}Detail;
+		
+	};
+	std::stack<HistoryCellNode> m_HistoryCell;
+
 	CComboBox m_ComboBgm;
 	afx_msg void OnCbnSelchangeComboBgm();
 	CComboBox m_ComboBoss;
@@ -200,4 +228,8 @@ public:
 	afx_msg void OnCbnSelchangeComboMapUnk10();
 	CButton m_ButtonGuide;
 	afx_msg void OnBnClickedButtonGuide();
+	CButton m_ButtonUndo;
+	afx_msg void OnBnClickedButtonMapUndo();
+	CButton m_CheckRefrect;
+	afx_msg void OnBnClickedCheckRefrect();
 };

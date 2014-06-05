@@ -88,12 +88,15 @@ public:
 	void RemoveSup(u16 i);
 	u16 NewFoe();
 	u16 NewSup();
+	void DownFoe(u16 i);
+	void DownSup(u16 i);
+
 
 	MaDeComm *pMaDeComm;
-	void Notify_Door(MadeCommNOTIFY ncode,u16 index);
-	void Notify_Mctrl(MadeCommNOTIFY ncode,u8 index);
-	void Notify_Foe(MadeCommNOTIFY ncode,u16 index);
-	void Notify_Sup(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Door(MaDeCommNOTIFY ncode,u16 index);
+	void Notify_Mctrl(MaDeCommNOTIFY ncode,u8 index);
+	void Notify_Foe(MaDeCommNOTIFY ncode,u16 index);
+	void Notify_Sup(MaDeCommNOTIFY ncode,u16 index);
 private:
 	bool m_Loaded;
 	u16 FoeCount;

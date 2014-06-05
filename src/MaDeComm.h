@@ -8,10 +8,8 @@ struct MaDeComm
 	SqDe *pDe;
 };
 
-enum MadeCommNOTIFY
+enum MaDeCommNOTIFY
 {
 	N_DELETE,
-	N_UP,
-	N_DOWN,
-	N_NEW
+	N_DOWN
 };

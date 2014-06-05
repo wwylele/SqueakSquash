@@ -17,6 +17,7 @@ void CCanvas::Create(int w_, int h_)
 	w=w_;
 	h=h_;
 	pCanvas=new BYTE[w*h*3];
+	ZeroMemory(pCanvas,w*h*3);
 }
 
 void CCanvas::Present(HDC hdc,

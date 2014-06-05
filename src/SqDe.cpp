@@ -152,11 +152,7 @@ u16 SqDe::NewFoe()
 	}
 	pFoe=newData;
 	memset(&pFoe[FoeCount-1],0,sizeof(SqItem));
-	if(pMaDeComm)
-	{
-		pMaDeComm->pMa->Notify_Foe(N_NEW,FoeCount-1);
-		pMaDeComm->pDe->Notify_Foe(N_NEW,FoeCount-1);
-	}
+
 	return FoeCount-1;
 
 }
@@ -172,23 +168,51 @@ u16 SqDe::NewSup()
 	}
 	pSup=newData;
 	memset(&pSup[SupCount-1],0,sizeof(SqItem));
-	if(pMaDeComm)
-	{
-		pMaDeComm->pMa->Notify_Sup(N_NEW,SupCount-1);
-		pMaDeComm->pDe->Notify_Sup(N_NEW,SupCount-1);
-	}
+
 	return SupCount-1;
 
 }
-void SqDe::Notify_Door(MadeCommNOTIFY ncode,u16 index)
+void SqDe::DownFoe(u16 i)
+{
+	ASSERT(m_Loaded);
+	ASSERT(i+1<FoeCount);
+
+	SqItem t;
+	t=pFoe[i];
+	pFoe[i]=pFoe[i+1];
+	pFoe[i+1]=t;
+
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Foe(N_DOWN,i);
+		pMaDeComm->pDe->Notify_Sup(N_DOWN,i);
+	}
+}
+void SqDe::DownSup(u16 i)
+{
+	ASSERT(m_Loaded);
+	ASSERT(i+1<SupCount);
+
+	SqItem t;
+	t=pSup[i];
+	pSup[i]=pSup[i+1];
+	pSup[i+1]=t;
+
+	if(pMaDeComm)
+	{
+		pMaDeComm->pMa->Notify_Sup(N_DOWN,i);
+		pMaDeComm->pDe->Notify_Sup(N_DOWN,i);
+	}
+}
+void SqDe::Notify_Door(MaDeCommNOTIFY ncode,u16 index)
 {
 }
-void SqDe::Notify_Mctrl(MadeCommNOTIFY ncode,u8 index)
+void SqDe::Notify_Mctrl(MaDeCommNOTIFY ncode,u8 index)
 {
 }
-void SqDe::Notify_Foe(MadeCommNOTIFY ncode,u16 index)
+void SqDe::Notify_Foe(MaDeCommNOTIFY ncode,u16 index)
 {
 }
-void SqDe::Notify_Sup(MadeCommNOTIFY ncode,u16 index)
+void SqDe::Notify_Sup(MaDeCommNOTIFY ncode,u16 index)
 {
 }

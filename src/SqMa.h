@@ -139,10 +139,10 @@ public:
 	void Make(u8* pdst);
 
 	MaDeComm *pMaDeComm;
-	void Notify_Door(MadeCommNOTIFY ncode,u16 index);
-	void Notify_Mctrl(MadeCommNOTIFY ncode,u8 index);
-	void Notify_Foe(MadeCommNOTIFY ncode,u16 index);
-	void Notify_Sup(MadeCommNOTIFY ncode,u16 index);
+	void Notify_Door(MaDeCommNOTIFY ncode,u16 index);
+	void Notify_Mctrl(MaDeCommNOTIFY ncode,u8 index);
+	void Notify_Foe(MaDeCommNOTIFY ncode,u16 index);
+	void Notify_Sup(MaDeCommNOTIFY ncode,u16 index);
 
 private:u16 S10MakeLen();
 public:
@@ -224,6 +224,7 @@ public:
 	}
 	void RepairDoorIndex();
 	void RemoveDoor(u16 i);
+	void DownDoor(u16 i);
 	u16 NewDoor();
 
 	//Section12
@@ -288,3 +289,72 @@ private:
 	} *pGraScriptCurrent;
 	
 };
+
+/*
+struct file .mxp
+{
+	Header Header;
+
+	//Header.SectionOff[0] to here
+	u8 W;
+	u8 H;
+
+	//Header.SectionOff[1] to here
+	u16 TextureMappingCountF;
+	SqTexMapping TextureMappingF[TextureMappingCountF];
+
+	//Header.SectionOff[2] to here
+	u16 TextureMappingCountB;
+	SqTexMapping TextureMappingF[TextureMappingCountB];
+
+	//Header.SectionOff[3] to here
+	u16 CellGra0[W*H];
+
+	//Header.SectionOff[4] to here
+	u16 CellGra1[W*H];
+
+	//Header.SectionOff[5] to here
+	u16 CellGra2[W*H];
+
+	//Header.SectionOff[6] to here
+	u32 CellDet0[W*H];
+
+	//Header.SectionOff[7] to here
+	u32 CellDet1[W*H];
+
+	//Header.SectionOff[8] to here
+	u32 CellDet2[W*H];
+
+	//Header.SectionOff[9] to here
+	u8 CellGuide[W*H];
+	u8 Padding[W*H%2];
+	may_not_exist{
+		u16 GuideCount;
+		SqGuide Guide[GuideCount];
+		u8 DistanceMatrix[GuideCount*GuideCount];
+		u8 Padding[GuideCount%2];
+	}
+
+	//Header.SectionOff[10] to here
+	u16 Length:from Header.SectionOff[10] to Header.SectionOff[11];
+	//S10Header.?Off,MctrlGroupEntry[?] from here
+	S10HEADER S10Header;
+	//S10Header.MctrlListOff to here
+	MctrlData MctrlData[S10Header.MctrlCount];
+	//S10Header.MctrlGroupListOff to here
+	u16 MctrlGroupEntry[S10Header.MctrlGroupCount];
+	struct {
+		MctrlGroupHeader MctrlGroupHeader;
+		u8 [MctrlGroupHeader.count*MctrlGroupHeader.data_len] data;
+	}MctrlGroup[S10Header.MctrlGroupCount];
+
+	//Header.SectionOff[11] to here
+	u16 DoorCount;
+	SqDoor Door[DoorCount]
+
+	//Header.SectionOff[12] to here
+	S12HEADER S12Header;
+	SqGraScript GraScript[S12Header.GraScript];
+}
+
+*/

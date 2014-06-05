@@ -9,7 +9,7 @@
 
 IMPLEMENT_DYNCREATE(CWndWait, CFrameWnd)
 
-CWndWait CWndWait::WndWait;
+CWndWait* CWndWait::WndWait;
 HANDLE CWndWait::hEvent=0,CWndWait::hEventStop=0,CWndWait::hEventStopRet=0;
 
 CWndWait::CWndWait()
@@ -18,17 +18,21 @@ CWndWait::CWndWait()
 
 CWndWait::~CWndWait()
 {
+}
+void CWndWait::ExitWndWait()
+{
 	SetEvent(hEventStop);
 	SetEvent(hEvent);
 	WaitForSingleObject(hEventStopRet,INFINITE);
 	CloseHandle(hEvent);
 	CloseHandle(hEventStop);
 	CloseHandle(hEventStopRet);
+	CWndWait::WndWait->DestroyWindow();
 }
 DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 {
 	int p=0;
-	CDC* pDC=WndWait.GetDC();
+	CDC* pDC=WndWait->GetDC();
 	CBrush ba(RGB(10,10,10)),bb(RGB(220,220,220));
 
 	while(1)
@@ -47,7 +51,7 @@ DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 		Sleep(100);
 	}
 
-	WndWait.ReleaseDC(pDC);
+	WndWait->ReleaseDC(pDC);
 	SetEvent(hEventStopRet);
 	return 0;
 }
@@ -56,7 +60,8 @@ DWORD WINAPI CWndWait::WndWaitThread(LPVOID lpThreadParameter)
 
 void CWndWait::InitWndWait()
 {
-	WndWait.Create(0,_T("Wait"),WS_CLIPCHILDREN|WS_CLIPSIBLINGS|WS_POPUP,
+	WndWait=new CWndWait;
+	WndWait->Create(0,_T("Wait"),WS_CLIPCHILDREN|WS_CLIPSIBLINGS|WS_POPUP,
 		(RECT)CRect(
 		(GetSystemMetrics(SM_CXSCREEN)-WAITWND_W)/2,
 		(GetSystemMetrics(SM_CYSCREEN)-WAITWND_H)/2,
@@ -69,13 +74,13 @@ void CWndWait::InitWndWait()
 }
 void CWndWait::ShowWndWait()
 {
-	WndWait.ShowWindow(SW_SHOW);
+	WndWait->ShowWindow(SW_SHOW);
 	SetEvent(hEvent);
 	
 }
 void CWndWait::HideWndWait()
 {
-	WndWait.ShowWindow(SW_HIDE);
+	WndWait->ShowWindow(SW_HIDE);
 	ResetEvent(hEvent);
 }
 

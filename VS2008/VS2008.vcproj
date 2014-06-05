@@ -399,6 +399,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\logo.bmp"
+				>
+			</File>
+			<File
 				RelativePath=".\Main.ico"
 				>
 			</File>
@@ -504,6 +508,14 @@
 			</File>
 			<File
 				RelativePath="..\src\Foe.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\LogoIn.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\LogoIn.h"
 				>
 			</File>
 			<File
