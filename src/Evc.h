@@ -132,7 +132,9 @@ struct MCTRL_EXT_5{
 	s8 dx0,dy0;
 	s8 dx1,dy1;
 	s8 dx2,dy2;
-};
+};//OK
+#define MCTRL_EXT_5_SUBSTYLE_MASK 0x0F
+#define MCTRL_EXT_5_CODECOUNT_MASK 0xF0
 struct MCTRL_EXT_6{
 	u16 Style;/*=
 			  0x0000 waiting

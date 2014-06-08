@@ -94,6 +94,16 @@ public:
 	afx_msg void OnBnClicked_M_3_Fall();
 	afx_msg void OnBnClicked_M_3_Unk();
 
+	afx_msg void OnCbnSelchange_M_5_Style();
+	afx_msg void OnCbnSelchange_M_5_SubStyle();
+	afx_msg void OnTcnSelchange_M_5_Count(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnEnChange_M_5_DX0();
+	afx_msg void OnEnChange_M_5_DY0();
+	afx_msg void OnEnChange_M_5_DX1();
+	afx_msg void OnEnChange_M_5_DY1();
+	afx_msg void OnEnChange_M_5_DX2();
+	afx_msg void OnEnChange_M_5_DY2();
+
 	afx_msg void OnCbnSelchange_M_14_Style();
 	afx_msg void OnBnClicked_M_14_Sup();
 	afx_msg void OnEnChange_M_14_Rel();

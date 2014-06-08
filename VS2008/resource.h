@@ -47,6 +47,7 @@
 #define IDDB_OBJ_PARAM_MCTRL_17         152
 #define IDDB_OBJ_PARAM_MCTRL_14         153
 #define IDDB_OBJ_PARAM_MCTRL_2          154
+#define IDDB_OBJ_PARAM_MCTRL_5          155
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -208,8 +209,17 @@
 #define IDC_CHECK_OP_M_2_REVERSE        1192
 #define IDC_COMBO_OP_M_2_STYLE_EX       1193
 #define IDC_EDIT_OP_M_2_HOLDTIME        1194
-#define IDC_CHECK1                      1195
 #define IDC_CHECK_REFRECT               1195
+#define IDC_COMBO_OP_M_5_MAIN           1196
+#define IDC_COMBO_OP_M_5_SUB            1197
+#define IDC_TAB_OP_M_5_COUNT            1198
+#define IDC_EDIT_OP_M_5_DX0             1199
+#define IDC_EDIT_OP_M_5_DY0             1200
+#define IDC_EDIT_OP_M_5_DX1             1201
+#define IDC_EDIT_OP_M_5_DY1             1202
+#define IDC_EDIT_OP_M_5_DX3             1203
+#define IDC_EDIT_OP_M_5_DX2             1203
+#define IDC_EDIT_OP_M_5_DY2             1204
 #define IDC_MAP_VSCROLL                 2013
 #define IDC_COMBO_CHANGELIB_BGL_CTM     2014
 #define IDC_MAP_STOCK_SCROLL            2019
@@ -241,7 +251,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        144
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1196
+#define _APS_NEXT_CONTROL_VALUE         1200
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
