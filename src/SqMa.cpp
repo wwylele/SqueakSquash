@@ -712,9 +712,9 @@ void SqMa::Notify_Foe(MaDeCommNOTIFY ncode,u16 index)
 	for(u8 i=0;i<MctrlPack.GetMctrlCount();++i)
 	{
 		//14 Cao / 15 Mutong / 17 Apear
-		if(MctrlPack[i].class_id==14 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_14_ISSUP)||
-			MctrlPack[i].class_id==15 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_15_ISSUP)||
-			MctrlPack[i].class_id==17 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_17_ISSUP)
+		if((MctrlPack[i].class_id==14 && !((MCTRL_EXT_14*)MctrlPack[i].pExtData)->IsSup)||
+			(MctrlPack[i].class_id==15 && !(MctrlPack[i].pExtData[0]&MCTRL_EXT_15_ISSUP))||
+			(MctrlPack[i].class_id==17 && !((MCTRL_EXT_17*)MctrlPack[i].pExtData)->IsSup)
 			)
 		{
 			if(MctrlPack[i].pExtData[1]!=0xFF)switch(ncode)
@@ -736,11 +736,11 @@ void SqMa::Notify_Sup(MaDeCommNOTIFY ncode,u16 index)
 	for(u8 i=0;i<MctrlPack.GetMctrlCount();++i)
 	{
 		//14 Cao / 15 Mutong / 17 Apear
-		if((MctrlPack[i].class_id==14 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_14_ISSUP))||
+		if((MctrlPack[i].class_id==14 && ((MCTRL_EXT_14*)MctrlPack[i].pExtData)->IsSup)||
 			(MctrlPack[i].class_id==15 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_15_ISSUP))||
-			(MctrlPack[i].class_id==17 && (MctrlPack[i].pExtData[0]&MCTRL_EXT_17_ISSUP))
+			(MctrlPack[i].class_id==17 && ((MCTRL_EXT_17*)MctrlPack[i].pExtData)->IsSup)
 			)
-		{
+	{
 			if(MctrlPack[i].pExtData[1]!=0xFF)switch(ncode)
 			{
 			case N_DELETE:

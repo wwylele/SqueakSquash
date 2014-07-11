@@ -52,7 +52,7 @@ END
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  16, 16
+IDR_MAINFRAME TOOLBAR  48, 48
 BEGIN
     BUTTON      ID_OPEN
     BUTTON      ID_SAVE
@@ -81,8 +81,8 @@ IDB_LOGO                BITMAP                  "logo.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,5,0,14
- PRODUCTVERSION 2,5,0,14
+ FILEVERSION 2,6,0,15
+ PRODUCTVERSION 2,6,0,15
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -98,12 +98,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "2, 5, 0, 14"
+            VALUE "FileVersion", "2, 6, 0, 15"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2014"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "2, 5, 0, 14"
+            VALUE "ProductVersion", "2, 6, 0, 15"
         END
     END
     BLOCK "VarFileInfo"
@@ -192,7 +192,7 @@ BEGIN
     PUSHBUTTON      "新",IDC_BUTTON_OBJ_NEW,378,240,18,18,NOT WS_VISIBLE
     PUSHBUTTON      "删",IDC_BUTTON_OBJ_DELETE,378,258,18,18,NOT WS_VISIBLE
     PUSHBUTTON      "属",IDC_BUTTON_OBJ_PROPERTY,378,276,18,18,NOT WS_VISIBLE
-    LTEXT           "提示:在贴图库里先后单击鼠标左右键可选择矩形区域",IDC_STATIC,0,354,188,8
+    LTEXT           "提示:在素材库里先后单击鼠标左右键可选择矩形区域",IDC_STATIC,0,354,188,8
     PUSHBUTTON      "放弃本次修改",IDC_BUTTON_MAP_CANCEL,474,348,58,14
     PUSHBUTTON      "↘",IDC_BUTTON_MAP_RESIZE,516,156,13,12
     PUSHBUTTON      "清",IDC_BUTTON_ZERO_CELL,0,0,13,12
@@ -489,7 +489,7 @@ BEGIN
     EDITTEXT        IDC_EDIT_OP_M_22_REL3,108,42,24,12,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_OP_M_22_REL4,144,42,24,12,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_OP_M_22_TIME0,0,72,30,12,ES_AUTOHSCROLL | ES_NUMBER
-    LTEXT           "时间间隔",IDC_STATIC,0,60,42,12
+    LTEXT           "时间延迟",IDC_STATIC,0,60,42,12
     EDITTEXT        IDC_EDIT_OP_M_22_TIME1,36,72,30,12,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_OP_M_22_TIME2,72,72,30,12,ES_AUTOHSCROLL | ES_NUMBER
     EDITTEXT        IDC_EDIT_OP_M_22_TIME3,108,72,30,12,ES_AUTOHSCROLL | ES_NUMBER
@@ -597,6 +597,40 @@ BEGIN
     EDITTEXT        IDC_EDIT_OP_M_5_DY1,36,72,30,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_OP_M_5_DX2,72,60,30,12,ES_AUTOHSCROLL
     EDITTEXT        IDC_EDIT_OP_M_5_DY2,72,72,30,12,ES_AUTOHSCROLL
+END
+
+IDDB_OBJ_PARAM_MCTRL_16 DIALOGEX 0, 0, 51, 23
+STYLE DS_SETFONT | WS_CHILD
+FONT 9, "宋体", 400, 0, 0x0
+BEGIN
+    LTEXT           "无参数",IDC_STATIC,6,6,45,17
+END
+
+IDDB_OBJ_PARAM_MCTRL_10 DIALOGEX 0, 0, 80, 44
+STYLE DS_SETFONT | WS_CHILD
+FONT 9, "宋体", 400, 0, 0x0
+BEGIN
+    COMBOBOX        IDC_COMBO_OP_M_10_STYLE,0,0,60,12,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "照明时间长度",IDC_STATIC,0,18,54,12
+    EDITTEXT        IDC_EDIT_OP_M_10_TIME,0,30,30,12,ES_AUTOHSCROLL | ES_NUMBER
+END
+
+IDD_PAL DIALOGEX 0, 0, 172, 174
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "调色板编辑器"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,0,162,48,12
+    PUSHBUTTON      "取消",IDCANCEL,54,162,48,12
+END
+
+IDD_GL DIALOGEX 0, 0, 316, 183
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "贴图库编辑器"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,205,162,50,14
+    PUSHBUTTON      "取消",IDCANCEL,259,162,50,14
 END
 
 
@@ -809,6 +843,27 @@ BEGIN
     BEGIN
         BOTTOMMARGIN, 16
     END
+
+    IDDB_OBJ_PARAM_MCTRL_10, DIALOG
+    BEGIN
+        BOTTOMMARGIN, 28
+    END
+
+    IDD_PAL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 165
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 167
+    END
+
+    IDD_GL, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 309
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -835,9 +890,9 @@ IDR_NSBTX_TEMP_VERT     BIN                     "NSBTX_TEMP\\nsbtx_temp_VERT"
 
 STRINGTABLE 
 BEGIN
-    ID_OPEN                 "打开"
-    ID_SAVE                 "保存"
-    ID_SAVEAS               "另存为"
+    ID_OPEN                 "载入地图集文件或游戏ROM"
+    ID_SAVE                 "保存地图集"
+    ID_SAVEAS               "另存为地图集"
     ID_SAVEFINAL            "Make ROM"
     ID_TESTGAME             "（wwylele的私人空间）"
     ID_MAKE                 "生成ROM/测试游戏"

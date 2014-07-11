@@ -143,7 +143,7 @@ void CDlgRomInfo::OnLButtonDblClk(UINT nFlags, CPoint point)
 		point.y>128 && point.y<256)
 	{
 		CColorDialog dlg;
-		dlg.m_cc.Flags|=CC_RGBINIT;
+		dlg.m_cc.Flags|=CC_RGBINIT|CC_FULLOPEN;
 		dlg.m_cc.rgbResult=Nitro::Color15to24(
 			m_RomInfo.Title_icon_palette[curcolor]);
 		if(dlg.DoModal()==IDOK){

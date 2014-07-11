@@ -133,6 +133,7 @@
 				PrecompiledHeaderThrough="StdAfx.h"
 				PrecompiledHeaderFile="$(IntDir)\$(TargetName).pch"
 				WarningLevel="3"
+				Detect64BitPortabilityProblems="false"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -274,6 +275,14 @@
 			</File>
 			<File
 				RelativePath="..\src\DlgObj.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgPal.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgPal.h"
 				>
 			</File>
 			<File
@@ -588,6 +597,14 @@
 			</File>
 			<File
 				RelativePath="..\src\SqPl1.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqStepPack.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\SqStepPack.h"
 				>
 			</File>
 			<File

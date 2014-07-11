@@ -6,6 +6,8 @@
 #include "afxcmn.h"
 #include "SqMa.h"
 
+void MctrlParamEnum_ComboBox(CComboBox& cb,const MCTRL_PARAM_ENUM mpe[]);
+
 class CDlgObj : public CDialog
 {
 	DECLARE_DYNAMIC(CDlgObj)
@@ -103,6 +105,9 @@ public:
 	afx_msg void OnEnChange_M_5_DY1();
 	afx_msg void OnEnChange_M_5_DX2();
 	afx_msg void OnEnChange_M_5_DY2();
+
+	afx_msg void OnCbnSelchange_M_10_Style();
+	afx_msg void OnEnChange_M_10_Time();
 
 	afx_msg void OnCbnSelchange_M_14_Style();
 	afx_msg void OnBnClicked_M_14_Sup();
