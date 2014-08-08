@@ -67,7 +67,7 @@ void CDlgRomInfo::OnBnClickedOk()
 #ifdef _UNICODE
 	strw=str;
 #else
-	strw.Format(_T("%S"),(char*)str);
+	strw.Format(L"%S",(const char*)str);
 #endif
 	ZeroMemory(m_RomInfo.Title_text,256*6);
 	for(int i=0;i<6;++i)

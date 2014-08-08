@@ -24,6 +24,7 @@ protected:
 	HACCEL m_hAccel;
 #define ID_KEY_DELETE 7001
 
+	CImageList m_ImglToolBar;
 	CToolBar m_ToolBar;
 	CTreeCtrl m_FileTree;
 #define ID_FILETREE 20001

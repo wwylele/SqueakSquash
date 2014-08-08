@@ -52,7 +52,7 @@ END
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  48, 48
+IDR_MAINFRAME TOOLBAR  32, 32
 BEGIN
     BUTTON      ID_OPEN
     BUTTON      ID_SAVE
@@ -74,6 +74,8 @@ IDB_DET0                BITMAP                  "det0.bmp"
 IDB_DET1                BITMAP                  "det1.bmp"
 IDB_SUBSTITUTE          BITMAP                  "bitmap1.bmp"
 IDB_LOGO                BITMAP                  "logo.bmp"
+IDB_MAINTOOLBAR         BITMAP                  "Maintoolbar24.bmp"
+IDB_MAINTOOLBARMASK     BITMAP                  "Maintoolbar24Mask.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -81,8 +83,8 @@ IDB_LOGO                BITMAP                  "logo.bmp"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,6,0,15
- PRODUCTVERSION 2,6,0,15
+ FILEVERSION 2,7,0,16
+ PRODUCTVERSION 2,7,0,16
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -98,12 +100,12 @@ BEGIN
         BLOCK "080404b0"
         BEGIN
             VALUE "FileDescription", "SqueakSquash"
-            VALUE "FileVersion", "2, 6, 0, 15"
+            VALUE "FileVersion", "2, 7, 0, 16"
             VALUE "InternalName", "SqueakSquash"
             VALUE "LegalCopyright", "Copyright (C) 2014"
             VALUE "OriginalFilename", "SqueakSquash.exe"
             VALUE "ProductName", "SqueakSquash"
-            VALUE "ProductVersion", "2, 6, 0, 15"
+            VALUE "ProductVersion", "2, 7, 0, 16"
         END
     END
     BLOCK "VarFileInfo"
@@ -127,7 +129,7 @@ IDR_MAINFRAME           ICON                    "Main.ico"
 // Dialog
 //
 
-IDD_MAKEROM DIALOGEX 0, 0, 228, 171
+IDD_MAKEROM DIALOGEX 0, 0, 228, 237
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "生成ROM"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
@@ -140,11 +142,13 @@ BEGIN
     PUSHBUTTON      "浏览...",IDC_BUTTON_MR_NEWROM,90,90,138,18
     EDITTEXT        IDC_EDIT_MR_MAPSET,90,36,138,18,ES_AUTOHSCROLL | ES_READONLY
     PUSHBUTTON      "生成ROM!",IDC_BUTTON_MAKEROM,0,114,168,18
-    ICON            "",IDC_STATIC_NDSEMU,0,150,21,20
+    ICON            "",IDC_STATIC_NDSEMU,0,150,20,20
     EDITTEXT        IDC_EDIT_NDSEMU,24,150,102,20,ES_AUTOHSCROLL
     PUSHBUTTON      "选择模拟器",IDC_BUTTON_NDSEMU,126,150,54,20
     LTEXT           "快捷启动游戏：",IDC_STATIC,0,138,72,8
     PUSHBUTTON      "启动游戏",IDC_BUTTON_BEGINEMU,180,150,48,20,WS_DISABLED
+    CONTROL         "生成游戏时使用新版数据覆盖方法",IDC_CHECK_MAKEROM_V2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,6,180,144,12
+    LTEXT           "新版数据覆盖方法较以前相比可以更有效地利用ROM的空间，在多数情况下生成的ROM的文件长度不会增加。但该方法的可靠性尚未得到充分的实验证明，因此若生成的ROM出现意外问题时，请去掉本项的勾选。",IDC_STATIC,6,198,216,36
 END
 
 IDD_MAP DIALOGEX 0, 0, 532, 363
@@ -615,22 +619,39 @@ BEGIN
     EDITTEXT        IDC_EDIT_OP_M_10_TIME,0,30,30,12,ES_AUTOHSCROLL | ES_NUMBER
 END
 
-IDD_PAL DIALOGEX 0, 0, 172, 174
+IDD_PAL DIALOGEX 0, 0, 172, 186
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "调色板编辑器"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,0,162,48,12
-    PUSHBUTTON      "取消",IDCANCEL,54,162,48,12
+    DEFPUSHBUTTON   "确定",IDOK,0,174,48,12
+    PUSHBUTTON      "取消",IDCANCEL,48,174,48,12
+    LTEXT           "↑第一列颜色在游戏中通常会变为透明",IDC_STATIC,0,162,168,12
 END
 
-IDD_GL DIALOGEX 0, 0, 316, 183
+IDD_GL DIALOGEX 0, 0, 304, 219
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "贴图库编辑器"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
-    DEFPUSHBUTTON   "确定",IDOK,205,162,50,14
-    PUSHBUTTON      "取消",IDCANCEL,259,162,50,14
+    DEFPUSHBUTTON   "确定",IDOK,0,204,42,12
+    PUSHBUTTON      "取消",IDCANCEL,42,204,42,12
+    PUSHBUTTON      "更改调色板",IDC_BUTTON_GL_PAL,0,186,60,12
+    CONTROL         "最后一行拓展为四行动画（只对主图层贴图有效）",IDC_CHECK_GL_EXTEND,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,66,186,216,12
+END
+
+IDD_PAL_ANI DIALOGEX 0, 0, 376, 180
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "调色板编辑器"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "确定",IDOK,288,168,42,12
+    PUSHBUTTON      "取消",IDCANCEL,330,168,42,12
+    LISTBOX         IDC_LIST_PAL_FRAME,192,114,162,54,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "停留时间(小于256):",IDC_STATIC,192,96,78,8
+    EDITTEXT        IDC_EDIT_PAL_TIME,276,96,72,12,ES_AUTOHSCROLL | ES_NUMBER
+    PUSHBUTTON      "新",IDC_BUTTON_PAL_NEW,354,114,18,18
+    PUSHBUTTON      "删",IDC_BUTTON_PAL_DELETE,354,132,18,18
 END
 
 
@@ -647,7 +668,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 221
         TOPMARGIN, 7
-        BOTTOMMARGIN, 164
+        BOTTOMMARGIN, 230
     END
 
     IDD_MAP, DIALOG
@@ -854,15 +875,23 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 165
         TOPMARGIN, 7
-        BOTTOMMARGIN, 167
+        BOTTOMMARGIN, 179
     END
 
     IDD_GL, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 309
+        RIGHTMARGIN, 297
         TOPMARGIN, 7
-        BOTTOMMARGIN, 176
+        BOTTOMMARGIN, 212
+    END
+
+    IDD_PAL_ANI, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 369
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 173
     END
 END
 #endif    // APSTUDIO_INVOKED

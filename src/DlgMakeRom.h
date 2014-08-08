@@ -32,4 +32,5 @@ public:
 	afx_msg void OnBnClickedButtonNdsemu();
 	CButton m_ButtonBeginEmu;
 	afx_msg void OnBnClickedButtonBeginemu();
+	CButton m_CheckV2;
 };

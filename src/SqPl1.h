@@ -38,6 +38,8 @@ public:
 	void TickedClear();
 	bool TickedIn();
 	
+	void InsertFrame(u8 Line,u8 FrameIdx);
+	void DeleteFrame(u8 Line,u8 FrameIdx);
 private:
 	bool loaded;
 	struct PlLine

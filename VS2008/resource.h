@@ -51,8 +51,10 @@
 #define IDDB_OBJ_PARAM_MCTRL_16         156
 #define IDDB_OBJ_PARAM_MCTRL_10         157
 #define IDD_PAL                         158
-#define IDD_DIALOG1                     159
 #define IDD_GL                          159
+#define IDB_MAINTOOLBAR                 160
+#define IDB_MAINTOOLBARMASK             161
+#define IDD_PAL_ANI                     162
 #define IDC_EDIT_MR_ROM                 1002
 #define IDC_EDIT_MR_NEWROM              1003
 #define IDC_BUTTON_MR_ROM               1004
@@ -224,8 +226,16 @@
 #define IDC_EDIT_OP_M_5_DX1             1201
 #define IDC_EDIT_OP_M_10_TIME           1201
 #define IDC_EDIT_OP_M_5_DY1             1202
+#define IDC_BUTTON_GL_PAL               1202
 #define IDC_EDIT_OP_M_5_DX2             1203
+#define IDC_CHECK_GL_EXTEND             1203
 #define IDC_EDIT_OP_M_5_DY2             1204
+#define IDC_LIST_PAL_FRAME              1204
+#define IDC_EDIT_PAL_TIME               1205
+#define IDC_BUTTON_PAL_NEW              1206
+#define IDC_BUTTON_PAL_DELETE           1207
+#define IDC_CHECK2                      1209
+#define IDC_CHECK_MAKEROM_V2            1209
 #define IDC_MAP_VSCROLL                 2013
 #define IDC_COMBO_CHANGELIB_BGL_CTM     2014
 #define IDC_MAP_STOCK_SCROLL            2019
@@ -255,9 +265,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        160
+#define _APS_NEXT_RESOURCE_VALUE        163
 #define _APS_NEXT_COMMAND_VALUE         40010
-#define _APS_NEXT_CONTROL_VALUE         1202
+#define _APS_NEXT_CONTROL_VALUE         1210
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

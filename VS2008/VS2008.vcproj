@@ -230,6 +230,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\DlgGl.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgGl.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\DlgGuide.cpp"
 				>
 			</File>
@@ -283,6 +291,14 @@
 			</File>
 			<File
 				RelativePath="..\src\DlgPal.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgPalAni.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\src\DlgPalAni.h"
 				>
 			</File>
 			<File
@@ -417,6 +433,14 @@
 			</File>
 			<File
 				RelativePath=".\Maintoolbar.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Maintoolbar24.bmp"
+				>
+			</File>
+			<File
+				RelativePath=".\Maintoolbar24Mask.bmp"
 				>
 			</File>
 			<File

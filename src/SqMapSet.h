@@ -137,7 +137,7 @@ public:
 	bool Load(CFile &file);
 	bool Save(CFile &file);
 	bool LoadFromRom(CFile &file);
-	bool MakeRom(CFile &file);
+	bool MakeRom(CFile &file,bool v2=true);
 	void Dump(FILE* pf);
 	inline bool IsLoaded(){return m_Loaded;}
 

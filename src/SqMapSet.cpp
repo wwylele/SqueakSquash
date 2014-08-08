@@ -984,7 +984,7 @@ u32 SqMapSet::GetSubFileCount()
 	return count;
 }
 
-bool SqMapSet::MakeRom(CFile &file)
+bool SqMapSet::MakeRom(CFile &file,bool v2)
 {
 	PrintLog("SqMapSet::MakeRom>\n");
 	ASSERT(m_Loaded);
@@ -1159,26 +1159,42 @@ bool SqMapSet::MakeRom(CFile &file)
 	file.Read(&fntdir,sizeof(fntdir));
 	fpos_fnt=rom_header.fnt_offset+fntdir.entry_start;
 	fpos_fat=rom_header.fat_offset+fntdir.entry_file_id*sizeof(Nitro::ROM_FAT);
-	/*//Search for the data end
-	PrintLog("Search for FIM entry\n");
-	u32 flen=(u32)file.GetLength();
-	u8* psrc,*psrce;
-	{
-		HANDLE hFileMapping=CreateFileMapping(file.m_hFile,0,PAGE_READONLY,0,0,0);
-		psrc=(u8*)MapViewOfFile(hFileMapping,FILE_MAP_READ,0,0,0);
-		psrce=psrc+flen-1;
-		for(;*psrce==0xFF;--psrce);
-		UnmapViewOfFile(psrc);
-		CloseHandle(hFileMapping);
+	
+	u32 fpos_fim_region0end,fpos_fim_region1begin;
+	if(v2)
+	{	
+		//*v2 Get the count of files int the ROM
+		u32 filecount=0;
+		file.Seek(fpos_fnt,CFile::begin);
+		u8 namelength;
+		while(1)
+		{
+			file.Read(&namelength,1);
+			if(!namelength)break;
+			++filecount;
+			file.Seek(namelength,CFile::current);
+		}
+
+		file.Seek(fpos_fat,CFile::begin);
+		file.Read(&fpos_fim,4);
+		file.Seek(fpos_fat+(filecount-1)*sizeof(Nitro::ROM_FAT)+4,CFile::begin);
+		file.Read(&fpos_fim_region0end,4);
+		fpos_fim_region1begin=(rom_header.ROMSize+512)&0xFFFFFF00;
 	}
-	fpos_fim=(psrce-psrc+0x18)&0xFFFFFFF0;*/
-	fpos_fim=(rom_header.ROMSize+32)&0xFFFFFFF0;
+	else
+	{
+		fpos_fim=(rom_header.ROMSize+512)&0xFFFFFF00;
+	}
 	//Write all file in
 	PrintLog("Write all file in\n");
 	Nitro::ROM_FAT fat;
 	for(pos=nsfal.GetHeadPosition();pos;)
 	{
 		nsfa=nsfal.GetNext(pos);
+		if(v2 && fpos_fim+nsfa.DataLen>fpos_fim_region0end)
+		{
+			fpos_fim=fpos_fim_region1begin;
+		}
 		//FNT
 		file.Seek(fpos_fnt,CFile::begin);
 		fh=nsfa.name.GetLength();
@@ -1194,7 +1210,7 @@ bool SqMapSet::MakeRom(CFile &file)
 		//FIM
 		file.Seek(fpos_fim,CFile::begin);
 		file.Write(nsfa.pData,nsfa.DataLen);
-		fpos_fim=((u32)file.GetPosition()+0x10)&0xFFFFFFF0;
+		fpos_fim=((u32)file.GetPosition()+0x100)&0xFFFFFF00;
 	}
 	//FNT end
 	file.Seek(fpos_fnt,CFile::begin);
@@ -1203,8 +1219,11 @@ bool SqMapSet::MakeRom(CFile &file)
 
 	//ROM Header;
 	memcpy(&rom_header.id,&m_RomInfo.Rom_id,10);
-	++rom_header.device_caps;
-	file.Seek(fpos_fim,CFile::begin);rom_header.ROMSize=(u32)file.GetPosition();
+	if(!(v2 && fpos_fim>=fpos_fim_region1begin))
+	{
+		file.Seek(fpos_fim,CFile::begin);rom_header.ROMSize=(u32)file.GetPosition();
+	}
+	if(rom_header.ROMSize>0x4000000)++rom_header.device_caps;
 	rom_header.headerCRC16=Nitro::Crc16(&rom_header,0x15E);
 	file.Seek(0,CFile::begin);
 	file.Write(&rom_header,sizeof(rom_header));
