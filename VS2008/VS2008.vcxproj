@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{911FB6F0-4540-42FB-B138-3492E05EF8F5}</ProjectGuid>
+    <RootNamespace>VS2008</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.23107.0</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)/../bin/$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)/../bin/$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)/../bin/$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)/../bin/$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0804</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <OutputFile>$(OutDir)SqueakSquash.exe</OutputFile>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Bgm.cpp" />
+    <ClCompile Include="..\src\Canvas.cpp" />
+    <ClCompile Include="..\src\CheckForUpdates.cpp" />
+    <ClCompile Include="..\src\clrred_MedianCut.cpp" />
+    <ClCompile Include="..\src\Det.cpp" />
+    <ClCompile Include="..\src\DlgBgScript.cpp" />
+    <ClCompile Include="..\src\DlgChangeLib.cpp" />
+    <ClCompile Include="..\src\DlgColor555.cpp" />
+    <ClCompile Include="..\src\DlgGl.cpp" />
+    <ClCompile Include="..\src\DlgGuide.cpp" />
+    <ClCompile Include="..\src\DlgGuideResize.cpp" />
+    <ClCompile Include="..\src\DlgImportBg.cpp" />
+    <ClCompile Include="..\src\DlgMakeRom.cpp" />
+    <ClCompile Include="..\src\DlgMapEdit.cpp" />
+    <ClCompile Include="..\src\DlgObj.cpp" />
+    <ClCompile Include="..\src\DlgPal.cpp" />
+    <ClCompile Include="..\src\DlgPalAni.cpp" />
+    <ClCompile Include="..\src\DlgResize.cpp" />
+    <ClCompile Include="..\src\DlgRomInfo.cpp" />
+    <ClCompile Include="..\src\DlgTexMapping.cpp" />
+    <ClCompile Include="..\src\DlgTmani.cpp" />
+    <ClCompile Include="..\src\DlgTmResize.cpp" />
+    <ClCompile Include="..\src\Door.cpp" />
+    <ClCompile Include="..\src\Evc.cpp" />
+    <ClCompile Include="..\src\Foe.cpp" />
+    <ClCompile Include="..\src\HexEdit.cpp" />
+    <ClCompile Include="..\src\LogoIn.cpp" />
+    <ClCompile Include="..\src\Main.cpp" />
+    <ClCompile Include="..\src\MainFrm.cpp" />
+    <ClCompile Include="..\src\NitroCompress.cpp" />
+    <ClCompile Include="..\src\NitroRom.cpp" />
+    <ClCompile Include="..\src\SqB.cpp" />
+    <ClCompile Include="..\src\SqDe.cpp" />
+    <ClCompile Include="..\src\SqMa.cpp" />
+    <ClCompile Include="..\src\SqMapSet.cpp" />
+    <ClCompile Include="..\src\SqMx.cpp" />
+    <ClCompile Include="..\src\SqPl1.cpp" />
+    <ClCompile Include="..\src\SqStepPack.cpp" />
+    <ClCompile Include="..\src\stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\src\Treasure.cpp" />
+    <ClCompile Include="..\src\WndWait.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\Bgm.h" />
+    <ClInclude Include="..\src\Canvas.h" />
+    <ClInclude Include="..\src\CheckForUpdates.h" />
+    <ClInclude Include="..\src\Det.h" />
+    <ClInclude Include="..\src\DlgBgScript.h" />
+    <ClInclude Include="..\src\DlgChangeLib.h" />
+    <ClInclude Include="..\src\DlgColor555.h" />
+    <ClInclude Include="..\src\DlgGl.h" />
+    <ClInclude Include="..\src\DlgGuide.h" />
+    <ClInclude Include="..\src\DlgGuideResize.h" />
+    <ClInclude Include="..\src\DlgImportBg.h" />
+    <ClInclude Include="..\src\DlgMakeRom.h" />
+    <ClInclude Include="..\src\DlgMapEdit.h" />
+    <ClInclude Include="..\src\DlgObj.h" />
+    <ClInclude Include="..\src\DlgPal.h" />
+    <ClInclude Include="..\src\DlgPalAni.h" />
+    <ClInclude Include="..\src\DlgResize.h" />
+    <ClInclude Include="..\src\DlgRomInfo.h" />
+    <ClInclude Include="..\src\DlgTexMapping.h" />
+    <ClInclude Include="..\src\DlgTmani.h" />
+    <ClInclude Include="..\src\DlgTmResize.h" />
+    <ClInclude Include="..\src\Door.h" />
+    <ClInclude Include="..\src\Evc.h" />
+    <ClInclude Include="..\src\Foe.h" />
+    <ClInclude Include="..\src\HexEdit.h" />
+    <ClInclude Include="..\src\LogoIn.h" />
+    <ClInclude Include="..\src\MaDeComm.h" />
+    <ClInclude Include="..\src\Main.h" />
+    <ClInclude Include="..\src\MainFrm.h" />
+    <ClInclude Include="..\src\Nitro.h" />
+    <ClInclude Include="..\src\NitroCompress.h" />
+    <ClInclude Include="..\src\NitroRom.h" />
+    <ClInclude Include="..\src\SqB.h" />
+    <ClInclude Include="..\src\SqDe.h" />
+    <ClInclude Include="..\src\SqMa.h" />
+    <ClInclude Include="..\src\SqMapSet.h" />
+    <ClInclude Include="..\src\SqMx.h" />
+    <ClInclude Include="..\src\SqPl1.h" />
+    <ClInclude Include="..\src\SqStepPack.h" />
+    <ClInclude Include="..\src\stdafx.h" />
+    <ClInclude Include="..\src\targetver.h" />
+    <ClInclude Include="..\src\Treasure.h" />
+    <ClInclude Include="..\src\WndWait.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap1.bmp" />
+    <Image Include="det0.bmp" />
+    <Image Include="det1.bmp" />
+    <Image Include="logo.bmp" />
+    <Image Include="Main.ico" />
+    <Image Include="Maintoolbar.bmp" />
+    <Image Include="Maintoolbar24.bmp" />
+    <Image Include="Maintoolbar24Mask.bmp" />
+    <Image Include="MAKEROM.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VS2008.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_00" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_08" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_0A" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_1A" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_20A" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_25" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_19" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_1D" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_24" />
+    <None Include="NSBTX_TEMP\nsbtx_temp_VERT" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="VS2008.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Windows">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="res">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="res\nsbtx_temp">
+      <UniqueIdentifier>{01d12b85-b423-4434-840f-211476f638fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SqsqData">
+      <UniqueIdentifier>{b2818650-13c9-4250-ae69-6c8b9be2f8ab}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\Canvas.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\CheckForUpdates.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgBgScript.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgChangeLib.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgColor555.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgGl.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgGuide.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgGuideResize.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgImportBg.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgMakeRom.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgMapEdit.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgObj.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgPal.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgPalAni.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgResize.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgRomInfo.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgTexMapping.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgTmani.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\DlgTmResize.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\HexEdit.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Main.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\MainFrm.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\stdafx.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\WndWait.cpp">
+      <Filter>Windows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Bgm.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\clrred_MedianCut.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Det.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Door.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Evc.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Foe.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\LogoIn.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NitroCompress.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\NitroRom.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqB.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqDe.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqMa.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqMapSet.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqMx.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqPl1.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\SqStepPack.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Treasure.cpp">
+      <Filter>SqsqData</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\Canvas.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\CheckForUpdates.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgBgScript.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgChangeLib.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgColor555.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgGl.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgGuide.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgGuideResize.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgImportBg.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgMakeRom.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgMapEdit.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgObj.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgPal.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgPalAni.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgResize.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgRomInfo.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgTexMapping.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgTmani.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\DlgTmResize.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\HexEdit.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Main.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MainFrm.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\stdafx.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\targetver.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\WndWait.h">
+      <Filter>Windows</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Bgm.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Det.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Door.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Evc.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Foe.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\LogoIn.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\MaDeComm.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Nitro.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NitroCompress.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\NitroRom.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqB.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqDe.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqMa.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqMapSet.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqMx.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqPl1.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\SqStepPack.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Treasure.h">
+      <Filter>SqsqData</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="bitmap1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="det0.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="det1.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="logo.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="Main.ico">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="Maintoolbar.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="Maintoolbar24.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="Maintoolbar24Mask.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="MAKEROM.bmp">
+      <Filter>res</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="VS2008.rc">
+      <Filter>res</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_00">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_08">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_0A">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_1A">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_20A">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_HORI_25">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_19">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_1D">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_SQUA_24">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+    <None Include="NSBTX_TEMP\nsbtx_temp_VERT">
+      <Filter>res\nsbtx_temp</Filter>
+    </None>
+  </ItemGroup>
+</Project>

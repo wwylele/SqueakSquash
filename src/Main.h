@@ -18,7 +18,7 @@ void PrintLogDummy(const char*,...);
 #endif
 
 #ifdef _DEBUG
-#define RES_PATH _T("..\\..\\..\\res\\")
+#define RES_PATH _T("..\\..\\res\\")
 #else 
 #define RES_PATH _T("res\\")
 #endif
