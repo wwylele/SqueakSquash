@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VS2008", "VS2008.vcxproj", "{911FB6F0-4540-42FB-B138-3492E05EF8F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SqueakSquash", "SqueakSquash.vcxproj", "{911FB6F0-4540-42FB-B138-3492E05EF8F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

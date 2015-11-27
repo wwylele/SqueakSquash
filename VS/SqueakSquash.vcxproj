@@ -12,8 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{911FB6F0-4540-42FB-B138-3492E05EF8F5}</ProjectGuid>
-    <RootNamespace>VS2008</RootNamespace>
+    <RootNamespace>SqueakSquash</RootNamespace>
     <Keyword>MFCProj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -43,8 +44,8 @@
     <_ProjectFileVersion>14.0.23107.0</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)/../bin/$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)/../bin/$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)..\bin\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)..\bin\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -216,7 +217,7 @@
     <Image Include="MAKEROM.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="VS2008.rc" />
+    <ResourceCompile Include="resource.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="NSBTX_TEMP\nsbtx_temp_HORI_00" />
@@ -235,7 +236,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="VS2008.rc" />
+      <UserProperties RESOURCE_FILE="resource.rc" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

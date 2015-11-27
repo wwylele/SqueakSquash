@@ -6,7 +6,7 @@
 	#error "stdafx.h"
 #endif
 
-#include "../VS2008/resource.h"      
+#include "../VS/resource.h"      
 #include "afxwin.h"
 
 void OpenConsole();

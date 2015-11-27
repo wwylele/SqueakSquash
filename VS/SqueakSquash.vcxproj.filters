@@ -305,7 +305,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="VS2008.rc">
+    <ResourceCompile Include="resource.rc">
       <Filter>res</Filter>
     </ResourceCompile>
   </ItemGroup>
