@@ -368,7 +368,7 @@ bool SqMapSet::LoadFromRom(CFile &file)
 		PrintLog("Wrong CRC\n");
 		return false;
 	}
-	if(Nitro::GetSubFileId(file,"map/"ROM_LOCK_FILE)!=0xFFFF)
+	if(Nitro::GetSubFileId(file,"map/" ROM_LOCK_FILE)!=0xFFFF)
 	{
 		PrintLog("Detected ROM_LOCK_FILE\n");
 		return false;
@@ -999,7 +999,7 @@ bool SqMapSet::MakeRom(CFile &file,bool v2)
 		PrintLog("Wrong ROM Magic\n");
 		return false;
 	}
-	if(Nitro::GetSubFileId(file,"map/"ROM_LOCK_FILE)!=0xFFFF)
+	if(Nitro::GetSubFileId(file,"map/" ROM_LOCK_FILE)!=0xFFFF)
 	{
 		PrintLog("Detected ROM_LOCK_FILE\n");
 		return false;

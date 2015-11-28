@@ -6,7 +6,7 @@
 	#error "stdafx.h"
 #endif
 
-#include "../VS2008/resource.h"      
+#include "../VS/resource.h"      
 #include "afxwin.h"
 
 void OpenConsole();
@@ -18,7 +18,7 @@ void PrintLogDummy(const char*,...);
 #endif
 
 #ifdef _DEBUG
-#define RES_PATH _T("..\\..\\..\\res\\")
+#define RES_PATH _T("..\\..\\res\\")
 #else 
 #define RES_PATH _T("res\\")
 #endif

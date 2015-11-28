@@ -108,8 +108,8 @@ void CDlgColor555::OnPaint()
 		py=y-R;
 		if(px*px+py*py<=R*R)
 		{
-			r=sqrt((float)(px*px+py*py));
-			theta=atan2((float)px,(float)py);
+			r=(float)sqrt((px*px+py*py));
+			theta=(float)atan2(px,py);
 			chsl.hue=theta/(2*3.14159265358979323846f)*360.0f;
 			chsl.luminance=50.0f;
 			chsl.saturation=r*100.0f/R;
