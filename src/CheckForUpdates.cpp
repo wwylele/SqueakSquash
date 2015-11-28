@@ -48,7 +48,7 @@ bool CheckForUpdates()
 {
 	char buf[1024];
 	if(!GetInternetURLText(
-		"https://raw.github.com/wwylele/SqueakSquash/master/VS2008/ver",
+		"https://raw.github.com/wwylele/SqueakSquash/master/VS/ver",
 		buf,1024))return false;
 	UINT VerI,VerT;
 	int a,b,c,d;
